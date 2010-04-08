@@ -1,0 +1,66 @@
+{
+    "height": 6,
+    "name": "Blank",
+    "objectType": "map",
+    "personInitialPositions": [
+        [{
+            "x": 0,
+            "y": 0
+        }],
+        [{
+            "x": 2,
+            "y": 2
+        }]
+    ],
+    "terrains": [
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ]
+    ],
+    "width": 6
+}

@@ -1,0 +1,7 @@
+{
+    objectType: "terrain",
+    name: "Log",
+    allowMoviment: false,
+    allowAction: false,
+    image: "log.png"
+}

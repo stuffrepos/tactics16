@@ -1,0 +1,38 @@
+{
+    objectType: "job",
+    name: "Magical Mickey",
+    defense: 1,
+    agility: 3,
+    spriteActions: {
+        "stopped": {
+            "changeFrameInterval": 1000,
+            "images": ["stopped-0.png"]
+        },
+        "damaged": {
+            "changeFrameInterval": 100,
+            "images": ["damaged-0.png","damaged-1.png","damaged-0.png","damaged-2.png",]
+        },
+        "walking": {
+            "changeFrameInterval": 150,
+            "images": ["walking-0.png","walking-1.png","walking-2.png",
+                "walking-3.png","walking-4.png","walking-5.png"]
+        },
+        "attacking": {
+            "changeFrameInterval": 150,
+            "images": ["stopped-0.png","attacking-0.png","attacking-1.png","attacking-2.png",
+                "attacking-3.png","attacking-4.png"]
+        }
+    },
+    actions: [{
+        "name": "Magic",
+        "type": "MENTAL",
+        "power": 3,
+        "dificulty": 2,
+        "reach": {
+            "min": 1,
+            "max": 4,
+            "ray": 0,
+            "clearTrajectory": true
+        }
+    }]
+}

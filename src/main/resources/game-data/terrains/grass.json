@@ -1,0 +1,1 @@
+{objectType: "terrain",name: "Grass",allowMoviment: true, allowAction: true, image: "grass.png"}
