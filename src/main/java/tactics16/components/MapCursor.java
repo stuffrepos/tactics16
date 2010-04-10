@@ -1,6 +1,5 @@
 package tactics16.components;
 
-import tactics16.game.Coordinate;
 import tactics16.game.Map;
 import tactics16.util.Cursor2D;
 import tactics16.util.listeners.Listener;
@@ -13,18 +12,15 @@ import java.awt.event.KeyEvent;
  */
 public class MapCursor {
 
-    private final Map map;
-    private final Coordinate mapPosition;
+    private final VisualMap visualMap;    
     private Cursor2D cursor;
     private GlowingRectangle visualCursor;
 
-    public MapCursor(Map map, Coordinate mapPosition) {
-        this.map = map;
-        this.mapPosition = mapPosition;
-
+    public MapCursor(VisualMap visualMap) {
+        this.visualMap = visualMap;        
         this.visualCursor = new GlowingRectangle(Map.TERRAIN_SIZE);
         this.cursor = new Cursor2D();
-        this.cursor.setDimension(this.map.getWidth(), this.map.getHeight());
+        this.cursor.setDimension(this.visualMap.getMap().getWidth(), this.visualMap.getMap().getHeight());
         this.cursor.setKeys(
                 KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
                 KeyEvent.VK_UP, KeyEvent.VK_DOWN);
@@ -32,8 +28,8 @@ public class MapCursor {
 
             public void onChange(Cursor2D source) {
                 MapCursor.this.visualCursor.getPosition().setXY(
-                        MapCursor.this.mapPosition.getX() + Map.TERRAIN_SIZE * source.getX(),
-                        MapCursor.this.mapPosition.getY() + Map.TERRAIN_SIZE * source.getY());
+                        MapCursor.this.visualMap.getPosition().getX() + Map.TERRAIN_SIZE * source.getX(),
+                        MapCursor.this.visualMap.getPosition().getY() + Map.TERRAIN_SIZE * source.getY());
             }
         });
     }

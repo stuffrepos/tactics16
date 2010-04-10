@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import tactics16.components.VisualMap;
 
 /**
  *
@@ -23,14 +24,12 @@ class PersonMoviment {
     private Coordinate terrainTarget;
     private MultiLinearMoviment moviment;
     private Coordinate mapPosition;
-    private final Map map;
+    private final VisualMap visualMap;
 
-    public PersonMoviment(Person person, Map map, Coordinate mapPosition, Coordinate terrainTarget) {
+    public PersonMoviment(Person person, VisualMap visualMap, Coordinate terrainTarget) {
         this.person = person;
-        this.map = map;
-        this.terrainTarget = terrainTarget;
-        this.mapPosition = mapPosition;
-
+        this.visualMap = visualMap;
+        this.terrainTarget = terrainTarget;        
         this.person.setCurrentGameAction(GameAction.WALKING);
 
         this.moviment = new MultiLinearMoviment(
@@ -52,9 +51,6 @@ class PersonMoviment {
                 }
             }
         });
-
-
-
     }
 
     private List<Coordinate> getMinPathGrouped() {
@@ -77,13 +73,13 @@ class PersonMoviment {
                     (current.getY() == c.getY() && current.getY() == origin.getY())) {
                 current = c;
             } else {
-                grouped.add(Map.getPersonPosition(mapPosition, current));
+                grouped.add(visualMap.getPersonPosition(current));
                 origin = current;
                 current = c;
             }
         }
 
-        grouped.add(Map.getPersonPosition(mapPosition, minPath.get(minPath.size() - 1)));
+        grouped.add(visualMap.getPersonPosition(minPath.get(minPath.size() - 1)));
 
         return grouped;
     }
@@ -180,8 +176,8 @@ class PersonMoviment {
             List<Coordinate> inMap = new LinkedList<Coordinate>();
 
             for (Coordinate neighboor : neighboors) {
-                if (neighboor.inRectangle(0, 0, map.getWidth(), map.getHeight())) {
-                    if (map.getTerrain(neighboor).getAllowMoviment()) {
+                if (neighboor.inRectangle(0, 0, visualMap.getMap().getWidth(), visualMap.getMap().getHeight())) {
+                    if (visualMap.getMap().getTerrain(neighboor).getAllowMoviment()) {
                         inMap.add(neighboor);
                     }
                 }

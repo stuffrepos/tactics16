@@ -5,7 +5,6 @@ import tactics16.util.Nameable;
 import tactics16.util.Thumbnail;
 import tactics16.util.listeners.Listener;
 import tactics16.util.listeners.ListenerManager;
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -18,15 +17,13 @@ import java.util.TreeSet;
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class Map implements Nameable {
-
-    public static Coordinate getPersonPosition(Coordinate mapPosition, Coordinate terrain) {
-        return new Coordinate(
-                mapPosition.getX() + terrain.getX() * Map.TERRAIN_SIZE + (Map.TERRAIN_SIZE / 2),
-                mapPosition.getY() + terrain.getY() * Map.TERRAIN_SIZE + (Map.TERRAIN_SIZE / 2));
-    }
-
+    
     public Terrain getTerrain(Coordinate position) {
         return getTerrain(position.getX(), position.getY());
+    }
+
+    public PersonInitialPositions getPersonInitialPositions() {
+        return personInitialPositions;
     }
 
     // <editor-fold defaultstate="collapsed" desc="class Terrains">
@@ -70,7 +67,7 @@ public class Map implements Nameable {
     }// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="class PersonInitialPositions">
-    private static class PersonInitialPositions {
+    public static class PersonInitialPositions {
 
         private java.util.Map<Coordinate, Integer> positions = new TreeMap<Coordinate, Integer>();
         private java.util.Map<Integer, Set<Coordinate>> players = new TreeMap<Integer, Set<Coordinate>>();
@@ -119,7 +116,7 @@ public class Map implements Nameable {
         }
     }// </editor-fold>
     public static final int TERRAIN_SIZE = 32;
-    public static final int MIN_SIZE = 3;
+    public static final int MIN_SIZE = 6;
     public static final int MAX_SIZE = 32;
 
     public interface Iterator {
@@ -140,51 +137,6 @@ public class Map implements Nameable {
 
     public String getName() {
         return name;
-    }
-
-    public void render(final Graphics2D g, final int mapX, final int mapY) {
-        this.render(g, mapX, mapY, null);
-    }
-
-    public void render(Graphics2D g, Coordinate mapPosition) {
-        render(g, mapPosition, null);
-    }
-
-    public void render(Graphics2D g, Coordinate mapPosition, int[] playerColors) {
-        render(g, mapPosition.getX(), mapPosition.getY(), playerColors);
-    }
-
-    public void render(final Graphics2D g, final int mapX, final int mapY, int[] playerColors) {
-        iterate(new Iterator() {
-
-            public void check(int x, int y, Terrain terrain) {
-                if (terrain != null) {
-                    g.drawImage(
-                            getTerrainImage(terrain),
-                            mapX + x * TERRAIN_SIZE,
-                            mapY + y * TERRAIN_SIZE, null);
-                } else {
-                    g.setColor(Color.BLACK);
-                    g.drawRect(
-                            mapX + x * TERRAIN_SIZE,
-                            mapY + y * TERRAIN_SIZE,
-                            Map.TERRAIN_SIZE - 1,
-                            Map.TERRAIN_SIZE - 1);
-                }
-            }
-        });
-
-        if (playerColors != null) {
-            for (Coordinate position : personInitialPositions.getAllPositions()) {
-                g.setColor(new Color(playerColors[personInitialPositions.getPlayerFromPosition(position)]));
-                g.fillRect(
-                        mapX + position.getX() * TERRAIN_SIZE,
-                        mapY + position.getY() * TERRAIN_SIZE,
-                        TERRAIN_SIZE,
-                        TERRAIN_SIZE);
-
-            }
-        }
     }
 
     public void setWidthHeight(int w, int h) {
@@ -256,28 +208,7 @@ public class Map implements Nameable {
 
     public Set<Coordinate> getPlayerInitialPosition(int player) {
         return this.personInitialPositions.getPlayerInitialPositions(player);
-    }
-
-    public Image getThumbnail() {
-        if (thumb == null) {
-            final int THUMBNAIL_TERRAIN_SIZE = TERRAIN_SIZE / 2;
-            thumb = new BufferedImage(
-                    THUMBNAIL_TERRAIN_SIZE * this.getWidth(),
-                    THUMBNAIL_TERRAIN_SIZE * this.getHeight(),
-                    BufferedImage.TYPE_INT_RGB);
-            final Graphics2D g = thumb.createGraphics();
-            this.iterate(new Iterator() {
-
-                public void check(int x, int y, Terrain terrain) {
-                    BufferedImage terrainThumbnail = Thumbnail.getThumbnail(terrain.getImages().get(0), THUMBNAIL_TERRAIN_SIZE, THUMBNAIL_TERRAIN_SIZE, null);
-                    g.drawImage(terrainThumbnail, THUMBNAIL_TERRAIN_SIZE * x, THUMBNAIL_TERRAIN_SIZE * y, null);
-                }
-            });
-            g.dispose();
-        }
-
-        return thumb;
-    }
+    }    
 
     public void update(long elapsedTime) {
         this.elapsedTime += elapsedTime;

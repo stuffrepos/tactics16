@@ -2,8 +2,8 @@ package tactics16.scenes.mapbuilder;
 
 import tactics16.game.Map;
 import tactics16.phase.Phase;
-import tactics16.util.listeners.Listener;
 import java.awt.Graphics2D;
+import tactics16.phase.PhaseManager;
 
 /**
  *
@@ -11,11 +11,11 @@ import java.awt.Graphics2D;
  */
 public class MapBuilderScene implements Phase {
 
-    private static final MapBuilderScene instance = new MapBuilderScene();
-    private Mode currentMode;
+    private static final MapBuilderScene instance = new MapBuilderScene();    
     private final MenuMode menuMode = new MenuMode(this);
     private final TerrainEditMode terrainEditMode = new TerrainEditMode(this);
     private final PersonsPositionMode personsPositionMode = new PersonsPositionMode(this);
+    private PhaseManager phaseManager = new PhaseManager();
     private Map map;
 
     public static MapBuilderScene getInstance() {
@@ -23,15 +23,15 @@ public class MapBuilderScene implements Phase {
     }
 
     public void toMenuMode() {
-        this.currentMode = menuMode;
+        phaseManager.change(menuMode);
     }
 
     public void toPersonsPositionMode() {
-        this.currentMode = personsPositionMode;
+        phaseManager.change(personsPositionMode);
     }
 
     public void toTerrainEditMode() {
-        this.currentMode = terrainEditMode;
+        phaseManager.change(terrainEditMode);
     }
 
     public void onAdd() {
@@ -42,38 +42,26 @@ public class MapBuilderScene implements Phase {
     }
 
     public void update(long elapsedTime) {
-        currentMode.update(elapsedTime);
+        phaseManager.getCurrentPhase().update(elapsedTime);
     }
 
     public void render(Graphics2D g) {
-        currentMode.render(g);
+        phaseManager.getCurrentPhase().render(g);
     }
 
     public Map getMap() {
         return map;
     }
 
-    public void setMap(Map map) {
-        Map oldMap = this.map;
+    public void setMap(Map map) {        
         this.map = map;
-
-        if (oldMap != this.map && this.map != null) {
-            map.addListener(new Listener<Map>() {
-
-                public void onChange(Map source) {
-                    terrainEditMode.getTerrainCursor().getCursor().setDimension(
-                            source.getWidth(), source.getHeight());
-                    personsPositionMode.getTerrainCursor().getCursor().setDimension(
-                            source.getWidth(), source.getHeight());
-
-                }
-            });
-        }
+        this.menuMode.onEnter();
     }
 
     public void onExit() {
     }
 
     public void onEnter() {
+        toMenuMode();
     }
 }

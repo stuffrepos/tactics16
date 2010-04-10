@@ -5,20 +5,20 @@ import tactics16.MyGame;
 import tactics16.components.Menu;
 import tactics16.components.MenuOption;
 import tactics16.components.TextDialog;
-import tactics16.game.Coordinate;
 import tactics16.game.Map;
 import tactics16.game.Terrain;
-import tactics16.scenes.MainMenuScene;
 import tactics16.scenes.SelectMapScene;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import tactics16.components.VisualMap;
+import tactics16.phase.Phase;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MenuMode implements Mode {
+public class MenuMode implements Phase {
 
     private SelectMapScene selectMapScene;
     private Menu menu = new Menu(new MenuOption[]{
@@ -159,13 +159,13 @@ public class MenuMode implements Mode {
                 }// </editor-fold>
             });
     private final MapBuilderScene scene;
-    private Coordinate mapPosition;
+    private VisualMap visualMap;
     private TextDialog status = new TextDialog();
 
     public MenuMode(MapBuilderScene scene) {
         this.scene = scene;
         menu.getPosition().setXY(Layout.OBJECT_GAP, Layout.OBJECT_GAP);
-        mapPosition = new Coordinate(Layout.getRightGap(menu), Layout.OBJECT_GAP);
+        
         status.getPosition().setXY(
                 menu.getLeft(),
                 Layout.getBottom(menu) + Layout.OBJECT_GAP);
@@ -190,8 +190,8 @@ public class MenuMode implements Mode {
 
     public void render(Graphics2D g) {
         menu.render(g);
-        if (scene.getMap() != null) {
-            scene.getMap().render(g, mapPosition);
+        if (visualMap != null) {
+            visualMap.render(g);
         }
         status.render(g);
     }
@@ -210,9 +210,7 @@ public class MenuMode implements Mode {
     }
 
     private void updateStatusText() {
-        StringBuilder builder = new StringBuilder();
-
-        //builder.append(String.format("On: %s\n", edit.toString()));
+        StringBuilder builder = new StringBuilder();        
         builder.append("Map name: ");
 
         if (scene.getMap() == null) {
@@ -222,15 +220,27 @@ public class MenuMode implements Mode {
             builder.append("\nMap size:");
             builder.append(String.format("\n %dx%d",
                     scene.getMap().getWidth(), scene.getMap().getHeight()));
-
-            /*
-            if (Edit.TERRAIN.equals(edit)) {
-            builder.append("\nCursor");
-            builder.append(String.format("\n x=%d,y=%d",
-            terrainCursor.cursor.getX(), terrainCursor.cursor.getY()));
-            }*/
         }
 
         status.setText(builder.toString());
+    }
+
+    public void onAdd() {
+    }
+
+    public void onRemove() {
+    }
+
+    public void onExit() {
+    }
+
+    public void onEnter() {
+        if (scene.getMap() == null) {
+            visualMap = null;
+        }
+        else {
+            visualMap = new VisualMap(scene.getMap());
+            visualMap.getPosition().setXY(Layout.getRightGap(menu), Layout.OBJECT_GAP);
+        }               
     }
 }

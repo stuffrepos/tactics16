@@ -26,7 +26,7 @@ class MovimentSubPhase implements Phase {
     }
 
     public void onAdd() {
-        this.mapCursor = new MapCursor(parentScene.getGeoGame().getMap(), parentScene.getMapPosition());
+        this.mapCursor = new MapCursor(parentScene.getVisualMap());
     }
 
     public void onRemove() {
@@ -60,8 +60,8 @@ class MovimentSubPhase implements Phase {
                 if (person != null) {
                     selectedPerson = person;
                     visualSelectedPerson.getPosition().setXY(
-                            parentScene.getMapPosition().getX() + selectedPerson.getMapPosition().getX() * Map.TERRAIN_SIZE,
-                            parentScene.getMapPosition().getY() + selectedPerson.getMapPosition().getY() * Map.TERRAIN_SIZE);
+                            parentScene.getVisualMap().getPosition().getX() + selectedPerson.getMapPosition().getX() * Map.TERRAIN_SIZE,
+                            parentScene.getVisualMap().getPosition().getY() + selectedPerson.getMapPosition().getY() * Map.TERRAIN_SIZE);
 
                 }
             }
@@ -69,12 +69,11 @@ class MovimentSubPhase implements Phase {
             if (MyGame.getInstance().keyPressed(KeyEvent.VK_BACK_SPACE)) {
                 selectedPerson = null;
             } else if (MyGame.getInstance().keyPressed(KeyEvent.VK_SPACE)) {
-                if (parentScene.getGeoGame().getMap().getTerrain(mapCursor.getCursor().getPosition()).getAllowMoviment() &&
-                        parentScene.getGeoGame().getPersonOnMapPosition(mapCursor.getCursor().getPosition()) == null) {
+                if (parentScene.getGeoGame().getMap().getTerrain(mapCursor.getCursor().getPosition()).getAllowMoviment()
+                        && parentScene.getGeoGame().getPersonOnMapPosition(mapCursor.getCursor().getPosition()) == null) {
                     moviment = new PersonMoviment(
                             selectedPerson,
-                            parentScene.getGeoGame().getMap(),
-                            parentScene.getMapPosition(),
+                            parentScene.getVisualMap(),
                             mapCursor.getCursor().getPosition().clone());
                 }
             }

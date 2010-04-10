@@ -3,19 +3,21 @@ package tactics16.scenes.mapbuilder;
 import tactics16.Layout;
 import tactics16.MyGame;
 import tactics16.components.TextDialog;
-import tactics16.game.Coordinate;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import tactics16.components.MapCursor;
+import tactics16.components.VisualMap;
+import tactics16.phase.Phase;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-class TerrainEditMode implements Mode {
+class TerrainEditMode implements Phase {
 
-    private TerrainCursor terrainCursor;
+    private MapCursor mapCursor;
     private TerrainPallete terrainPallete;
-    private Coordinate mapPosition;
+    private VisualMap visualMap;
     private final MapBuilderScene scene;
     private TextDialog status;
 
@@ -26,11 +28,7 @@ class TerrainEditMode implements Mode {
                 Layout.OBJECT_GAP,
                 Layout.OBJECT_GAP);
 
-        this.mapPosition = new Coordinate(
-                Layout.OBJECT_GAP,
-                Layout.getBottomGap(terrainPallete));
-
-        this.terrainCursor = new TerrainCursor(this.mapPosition);
+        
         this.status = new TextDialog();
         this.status.setWidth(200);
         this.status.getPosition().setXY(
@@ -40,13 +38,13 @@ class TerrainEditMode implements Mode {
 
     public void update(long elapsedTime) {
         terrainPallete.update(elapsedTime);
-        terrainCursor.update(elapsedTime);
+        mapCursor.update(elapsedTime);
 
         if (MyGame.getInstance().keyPressed(KeyEvent.VK_ESCAPE)) {
             scene.toMenuMode();
         } else if (MyGame.getInstance().keyPressed(KeyEvent.VK_SPACE)) {
             scene.getMap().setTerrain(
-                    terrainCursor.getCursor().getPosition(),
+                    mapCursor.getCursor().getPosition(),
                     terrainPallete.getCursor().getSelected());
         }
 
@@ -54,16 +52,11 @@ class TerrainEditMode implements Mode {
     }
 
     public void render(Graphics2D g) {
-
         terrainPallete.render(g);
-        scene.getMap().render(g, mapPosition);
+        visualMap.render(g);
         status.render(g);
-        terrainCursor.render(g);
-    }
-
-    public Coordinate getMapPosition() {
-        return this.mapPosition;
-    }
+        mapCursor.render(g);
+    }    
 
     private void updateStatusText() {
         StringBuilder builder = new StringBuilder();
@@ -75,14 +68,31 @@ class TerrainEditMode implements Mode {
             builder.append(String.format("\n %dx%d",
                     scene.getMap().getWidth(), scene.getMap().getHeight()));
 
-            builder.append("\nCursor: " + terrainCursor.getCursor().toString());
+            builder.append("\nCursor: " + mapCursor.getCursor().toString());
 
         }
 
         status.setText(builder.toString());
     }
 
-    public TerrainCursor getTerrainCursor() {
-        return terrainCursor;
+    public MapCursor getTerrainCursor() {
+        return mapCursor;
+    }
+
+    public void onAdd() {
+    }
+
+    public void onRemove() {
+    }
+
+    public void onExit() {        
+    }
+
+    public void onEnter() {
+        visualMap = new VisualMap(scene.getMap());
+        visualMap.getPosition().setXY(
+                Layout.OBJECT_GAP,
+                Layout.getBottomGap(terrainPallete));        
+        mapCursor = new MapCursor(visualMap);
     }
 }

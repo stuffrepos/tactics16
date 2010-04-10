@@ -10,35 +10,31 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import tactics16.components.MapCursor;
+import tactics16.components.VisualMap;
+import tactics16.phase.Phase;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-class PersonsPositionMode implements Mode {
+class PersonsPositionMode implements Phase {
 
     private PlayerPallete playerPallete = new PlayerPallete();
     private final MapBuilderScene scene;
-    private Coordinate mapPosition;
+    private VisualMap visualMap;
     private TextDialog status;
-    private TerrainCursor terrainCursor;
+    private MapCursor mapCursor;
     private Map<Integer, List<GlowingRectangle>> playerPanels = new TreeMap<Integer, List<GlowingRectangle>>();
 
     public PersonsPositionMode(MapBuilderScene scene) {
-
         this.scene = scene;
         playerPallete.getPosition().setXY(Layout.OBJECT_GAP, Layout.OBJECT_GAP);
-        mapPosition = new Coordinate(
-                Layout.OBJECT_GAP,
-                Layout.getBottomGap(playerPallete));
-
         status = new TextDialog();
         status.setWidth(200);
         status.getPosition().setXY(
                 Layout.getScreenWidth() - Layout.OBJECT_GAP - status.getWidth(),
-                Layout.OBJECT_GAP);
-
-        terrainCursor = new TerrainCursor(mapPosition);
+                Layout.OBJECT_GAP);        
     }
 
     public void update(long elapsedTime) {
@@ -50,7 +46,7 @@ class PersonsPositionMode implements Mode {
         }
 
         updateStatusDialog();
-        terrainCursor.update(elapsedTime);
+        mapCursor.update(elapsedTime);
         for (Integer player : playerPanels.keySet()) {
             for (GlowingRectangle glowingRectangle : playerPanels.get(player)) {
                 glowingRectangle.update(elapsedTime);
@@ -74,9 +70,9 @@ class PersonsPositionMode implements Mode {
 
     public void render(Graphics2D g) {
         playerPallete.render(g);
-        scene.getMap().render(g, mapPosition, this.playerPallete.getPlayerColors());
+        visualMap.render(g, this.playerPallete.getPlayerColors());
         status.render(g);
-        terrainCursor.render(g);
+        mapCursor.render(g);
 
         for (Integer player : playerPanels.keySet()) {
             for (GlowingRectangle glowingRectangle : playerPanels.get(player)) {
@@ -85,19 +81,36 @@ class PersonsPositionMode implements Mode {
         }
     }
 
-    public TerrainCursor getTerrainCursor() {
-        return terrainCursor;
+    public MapCursor getMapCursor() {
+        return mapCursor;
     }
 
     private void tooglePersonPosition() {
-        Integer player = scene.getMap().getPlayerFromPosition(terrainCursor.getCursor().getPosition());
+        Integer player = scene.getMap().getPlayerFromPosition(mapCursor.getCursor().getPosition());
 
         if (player != null && player == this.playerPallete.getCursor().getCurrent()) {
-            scene.getMap().setPersonInitialPosition(null, terrainCursor.getCursor().getPosition());
+            scene.getMap().setPersonInitialPosition(null, mapCursor.getCursor().getPosition());
         } else {
             scene.getMap().setPersonInitialPosition(
                     playerPallete.getCursor().getCurrent(),
-                    terrainCursor.getCursor().getPosition());
+                    mapCursor.getCursor().getPosition());
         }
+    }
+
+    public void onAdd() {
+    }
+
+    public void onRemove() {
+    }
+
+    public void onExit() {
+    }
+
+    public void onEnter() {
+        visualMap = new VisualMap(scene.getMap());
+        visualMap.getPosition().setXY(
+                Layout.OBJECT_GAP,
+                Layout.getBottomGap(playerPallete));
+        mapCursor = new MapCursor(visualMap);
     }
 }

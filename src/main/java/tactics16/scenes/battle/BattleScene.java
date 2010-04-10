@@ -17,6 +17,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import tactics16.components.VisualMap;
 
 /**
  *
@@ -29,13 +30,15 @@ public class BattleScene implements Phase {
     // Layout
     public static final int MAP_GAP = Layout.OBJECT_GAP * 5;
     private TextDialog statusDialog = new TextDialog();
-    private Coordinate mapPosition;
+    private VisualMap visualMap;
+
     // Phases
     private final MovimentSubPhase selectMovimentSubPhase = new MovimentSubPhase(this);
     private PhaseManager phaseManager = new PhaseManager();
 
     public BattleScene(BattleGame geoGame) {
         this.geoGame = geoGame;
+        this.visualMap = new VisualMap(geoGame.getMap());
 
         List<Job.GameAction> gameActionList = new ArrayList<Job.GameAction>();
         for (Job.GameAction gameAction : Job.GameAction.values()) {
@@ -55,7 +58,7 @@ public class BattleScene implements Phase {
         statusDialog.getPosition().setXY(
                 Layout.getScreenWidth() - Layout.OBJECT_GAP - statusDialog.getWidth(),
                 Layout.OBJECT_GAP);
-        mapPosition = new Coordinate(MAP_GAP, MAP_GAP);
+        visualMap.getPosition().setXY(MAP_GAP, MAP_GAP);
 
         // Persons Positions
         for (int player = 0; player < geoGame.getPlayers().size(); ++player) {
@@ -96,7 +99,7 @@ public class BattleScene implements Phase {
 
     @Override
     public void render(Graphics2D g) {
-        geoGame.getMap().render(g, mapPosition);
+        visualMap.render(g);        
         statusDialog.render(g);
         phaseManager.getCurrentPhase().render(g);
         for (Player player : geoGame.getPlayers()) {
@@ -131,8 +134,8 @@ public class BattleScene implements Phase {
         return geoGame;
     }
 
-    public Coordinate getMapPosition() {
-        return mapPosition;
+    public VisualMap getVisualMap() {
+        return visualMap;
     }
 
     public PhaseManager getPhaseManager() {
@@ -141,6 +144,6 @@ public class BattleScene implements Phase {
 
     public void putPersonOnPosition(Person person, Coordinate personMapPosition) {
         person.getMapPosition().set(personMapPosition);
-        person.getPosition().set(Map.getPersonPosition(mapPosition, personMapPosition));
+        person.getPosition().set(visualMap.getPersonPosition(personMapPosition));
     }
 }
