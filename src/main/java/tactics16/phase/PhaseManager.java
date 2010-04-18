@@ -53,4 +53,8 @@ public class PhaseManager {
     public Phase getCurrentPhase() {
         return phaseStack.peek();
     }
+
+    public void clear() {
+        phaseStack.clear();
+    }
 }

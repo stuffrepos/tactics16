@@ -25,10 +25,14 @@ public class MultiLinearMoviment {
         this.targets = new LinkedList<Coordinate>(targets);
         this.speed = speed;
 
-        double dx = targets.get(targets.size() - 1).getDoubleX() - objectPosition.getDoubleX();
-        double dy = targets.get(targets.size() - 1).getDoubleY() - objectPosition.getDoubleY();
-        double d = Math.sqrt(dx * dx + dy * dy);
-        this.absoluteSpeed = new Coordinate((dx / d) * speed, (dy / d) * speed);
+        if (targets.isEmpty()) {
+            this.absoluteSpeed = new Coordinate(0, 0);
+        } else {
+            double dx = targets.get(targets.size() - 1).getDoubleX() - objectPosition.getDoubleX();
+            double dy = targets.get(targets.size() - 1).getDoubleY() - objectPosition.getDoubleY();
+            double d = Math.sqrt(dx * dx + dy * dy);
+            this.absoluteSpeed = new Coordinate((dx / d) * speed, (dy / d) * speed);
+        }
 
 
         nextMoviment();

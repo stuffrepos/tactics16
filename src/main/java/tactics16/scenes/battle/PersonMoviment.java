@@ -3,7 +3,6 @@ package tactics16.scenes.battle;
 import tactics16.game.Coordinate;
 import tactics16.game.Job.GameAction;
 import tactics16.game.Map;
-import tactics16.game.Person;
 import tactics16.util.MultiLinearMoviment;
 import tactics16.util.listeners.Listener;
 import java.util.LinkedList;

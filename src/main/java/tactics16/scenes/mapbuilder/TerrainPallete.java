@@ -10,7 +10,7 @@ import tactics16.util.Cursor1D;
 import tactics16.util.ObjectCursor1D;
 import tactics16.util.listeners.Listener;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
+import tactics16.GameKey;
 
 /**
  *
@@ -23,7 +23,7 @@ public class TerrainPallete implements Object2D {
     private Coordinate position = new Coordinate();
 
     public TerrainPallete() {
-        cursor.getCursor().setKeys(KeyEvent.VK_PAGE_UP, KeyEvent.VK_PAGE_DOWN);
+        cursor.getCursor().setKeys(GameKey.PREVIOUS,GameKey.NEXT);
         for (Terrain t : MyGame.getInstance().getLoader().getTerrains()) {
             cursor.getList().add(t);
         }

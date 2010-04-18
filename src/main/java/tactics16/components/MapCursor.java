@@ -4,17 +4,19 @@ import tactics16.game.Map;
 import tactics16.util.Cursor2D;
 import tactics16.util.listeners.Listener;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
+import tactics16.GameKey;
+import tactics16.animation.VisualEntity;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MapCursor {
+public class MapCursor implements VisualEntity{
 
     private final VisualMap visualMap;    
     private Cursor2D cursor;
     private GlowingRectangle visualCursor;
+    private boolean finalized = false;
 
     public MapCursor(VisualMap visualMap) {
         this.visualMap = visualMap;        
@@ -22,8 +24,8 @@ public class MapCursor {
         this.cursor = new Cursor2D();
         this.cursor.setDimension(this.visualMap.getMap().getWidth(), this.visualMap.getMap().getHeight());
         this.cursor.setKeys(
-                KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT,
-                KeyEvent.VK_UP, KeyEvent.VK_DOWN);
+                GameKey.LEFT, GameKey.RIGHT,
+                GameKey.UP, GameKey.DOWN);
         this.cursor.addListener(new Listener<Cursor2D>() {
 
             public void onChange(Cursor2D source) {
@@ -45,5 +47,13 @@ public class MapCursor {
 
     public Cursor2D getCursor() {
         return cursor;
+    }
+
+    public void finalizeEntity() {
+        finalized = true;
+    }
+
+    public boolean isFinalized() {
+        return finalized;
     }
 }

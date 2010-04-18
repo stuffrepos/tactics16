@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import tactics16.GameKey;
 
 /**
  *
@@ -56,7 +57,7 @@ public class PlayerPallete implements Object2D {
             }
         });
 
-        cursor.setKeys(KeyEvent.VK_PAGE_UP, KeyEvent.VK_PAGE_DOWN);
+        cursor.setKeys(GameKey.PREVIOUS,GameKey.NEXT);
     }
 
     private void updateVisualCursor() {

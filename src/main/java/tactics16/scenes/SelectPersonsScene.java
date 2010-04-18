@@ -1,18 +1,20 @@
 package tactics16.scenes;
 
+import tactics16.GameKey;
 import tactics16.Layout;
 import tactics16.scenes.battle.BattleScene;
 import tactics16.MyGame;
-import tactics16.components.Menu;
-import tactics16.components.MenuOption;
+import tactics16.components.menu.Menu;
+import tactics16.components.menu.MenuOption;
 import tactics16.components.TextDialog;
 import tactics16.scenes.battle.BattleGame;
 import tactics16.game.Job;
-import tactics16.game.Person;
-import tactics16.game.Player;
+import tactics16.scenes.battle.Person;
+import tactics16.scenes.battle.Player;
 import tactics16.phase.Phase;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import tactics16.components.menu.CommonMenuOption;
 
 /**
  *
@@ -29,12 +31,11 @@ public class SelectPersonsScene implements Phase {
     }
 
     // <editor-fold defaultstate="collapsed" desc="class JobOption">
-    private class JobOption extends MenuOption {
+    private class JobOption implements MenuOption {
 
         private final Job job;
 
-        public JobOption(Job job) {
-            super(job.getName());
+        public JobOption(Job job) {            
             this.job = job;
         }
 
@@ -42,6 +43,7 @@ public class SelectPersonsScene implements Phase {
         public void executeAction() {
             getCurrentPlayer().getPersons().add(
                     new Person(
+                    getCurrentPlayer(),
                     String.format(
                     "Person %d.%d",
                     currentPlayer + 1,
@@ -61,6 +63,18 @@ public class SelectPersonsScene implements Phase {
 
         public Job getJob() {
             return job;
+        }
+
+        public String getText() {
+            return job.getName();
+        }
+
+        public GameKey getKey() {
+            return null;
+        }
+
+        public boolean isEnabled() {
+            return true;
         }
     }// </editor-fold>
     private BattleGame geoGame;
@@ -88,7 +102,9 @@ public class SelectPersonsScene implements Phase {
 
     private Player getCurrentPlayer() {
         while (this.currentPlayer >= geoGame.getPlayers().size()) {
-            geoGame.getPlayers().add(new Player("Player " + (geoGame.getPlayers().size() + 1)));
+            geoGame.getPlayers().add(new Player(
+                    "Player " + (geoGame.getPlayers().size() + 1),
+                    geoGame.getPlayers().size()));
         }
 
         return this.geoGame.getPlayers().get(currentPlayer);
@@ -110,7 +126,7 @@ public class SelectPersonsScene implements Phase {
             jobSelector.addOption(new JobOption(job));
         }
 
-        jobSelector.addOption(new MenuOption("Back", KeyEvent.VK_ESCAPE) {
+        jobSelector.addOption(new CommonMenuOption("Back", GameKey.CANCEL) {
 
             @Override
             public void executeAction() {
@@ -162,7 +178,7 @@ public class SelectPersonsScene implements Phase {
             buffer.append("Job: " + job.getName() + "\n");
             buffer.append("\tDefense: " + job.getDefense());
             buffer.append('\n');
-            buffer.append("\tAgility: " + job.getAgility());
+            buffer.append("\tAgility: " + job.getEvasiveness());
 
             personStatus.setText(buffer.toString());
         }

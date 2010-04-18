@@ -62,4 +62,8 @@ public class LifoQueue<T> implements Iterable<T>, Cloneable {
     public LifoQueue<T> clone() {        
         return new LifoQueue<T>(stack);
     }
+
+    public void clear() {
+        stack.clear();
+    }
 }

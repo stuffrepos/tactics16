@@ -29,6 +29,12 @@ public class VisualMap {
                 position.getY() + terrainPosition.getY() * Map.TERRAIN_SIZE + (Map.TERRAIN_SIZE / 2));
     }
 
+    public Coordinate getTerrainPosition(Coordinate terrainPosition) {
+        return new Coordinate(
+                position.getX() + terrainPosition.getX() * Map.TERRAIN_SIZE,
+                position.getY() + terrainPosition.getY() * Map.TERRAIN_SIZE);
+    }
+
     public void render(final Graphics2D g) {
         map.iterate(new Map.Iterator() {
 
@@ -85,5 +91,8 @@ public class VisualMap {
             }
         }
 
+    }
+
+    public void update(long elapsedTime) {
     }
 }

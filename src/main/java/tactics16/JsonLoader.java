@@ -3,12 +3,10 @@ package tactics16;
 import com.golden.gamedev.Game;
 import com.golden.gamedev.util.FileUtil;
 import tactics16.game.Action;
-import tactics16.game.ActionType;
 import tactics16.game.Coordinate;
 import tactics16.game.Job;
 import tactics16.game.Map;
 import tactics16.game.Reach;
-import tactics16.game.SpriteAction;
 import tactics16.game.Terrain;
 import tactics16.util.DataGroup;
 import java.io.File;
@@ -20,6 +18,9 @@ import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import tactics16.animation.ImageGroup;
+import tactics16.animation.SpriteAnimation;
+import tactics16.scenes.battle.Player;
 
 /**
  *
@@ -46,7 +47,7 @@ public class JsonLoader {
         for (File files : directory.listFiles()) {
             if (files.isDirectory()) {
                 loadDirectory(files);
-            } else {                
+            } else {
                 try {
                     if ("json".equals(FileUtil.getExtension(files))) {
 
@@ -115,7 +116,7 @@ public class JsonLoader {
 
     public Job loadJob(JSONObject jsonObject, File directory) throws JSONException {
         Job job = new Job(jsonObject.getString("name"));
-        job.setAgility(jsonObject.getInt("agility"));
+        job.setEvasiveness(jsonObject.getInt("evasiveness"));
         job.setDefense(jsonObject.getInt("defense"));
 
         JSONObject spriteActions = jsonObject.getJSONObject("spriteActions");
@@ -125,21 +126,45 @@ public class JsonLoader {
         while (spriteActionIterator.hasNext()) {
             String key = spriteActionIterator.next();
             Job.GameAction gameAction = Job.GameAction.valueOf(key.toUpperCase());
-            job.getSpriteActions().put(
+            job.getSpriteActionGroup().addAction(
                     gameAction,
-                    loadSpriteAction(spriteActions.getJSONObject(key), directory));
+                    loadSpriteAction(
+                    spriteActions.getJSONObject(key),
+                    job.getSpriteActionGroup().getImages(),
+                    directory));
+        }
+
+        JSONArray actions = jsonObject.getJSONArray("actions");
+
+        for (int i = 0; i < actions.length(); ++i) {
+            job.getActions().add(loadAction(actions.getJSONObject(i)));
+        }
+
+        JSONObject playerColorsMapping = jsonObject.getJSONObject("playerColorsMapping");
+
+        Iterator<String> playerColorMapping = playerColorsMapping.keys();
+
+        while (playerColorMapping.hasNext()) {
+            String key = playerColorMapping.next();
+            job.getSpriteActionGroup().setMapping(
+                    Integer.parseInt(key, 16),
+                    Player.Color.valueOf(playerColorsMapping.getString(key)));
         }
 
         return job;
     }
 
-    public SpriteAction loadSpriteAction(JSONObject jsonObject, File directory) throws JSONException {
-        SpriteAction spriteAction = new SpriteAction();
+    public SpriteAnimation loadSpriteAction(JSONObject jsonObject, ImageGroup imageGroup, File directory) throws JSONException {
+        SpriteAnimation spriteAction = new SpriteAnimation();
         spriteAction.setChangeFrameInterval(jsonObject.getInt("changeFrameInterval"));
 
         JSONArray images = jsonObject.getJSONArray("images");
         for (int i = 0; i < images.length(); ++i) {
             File imageFile = new File(directory, images.getString(i));
+            if (!imageGroup.hasImage(imageFile.getName())) {
+                imageGroup.addImage(imageFile.getName(), MyGame.getInstance().getImage(imageFile.getPath()));
+            }
+
             try {
                 spriteAction.addImage(MyGame.getInstance().getImage(imageFile.getPath()));
             } catch (RuntimeException ex) {
@@ -258,10 +283,9 @@ public class JsonLoader {
 
     public Action loadAction(JSONObject jsonObject) throws JSONException {
         Action action = new Action(jsonObject.getString("name"));
-        action.setDificulty(jsonObject.getInt("dificulty"));
+        action.setAgility(jsonObject.getInt("agility"));
         action.setPower(jsonObject.getInt("power"));
         action.setReach(loadReach(jsonObject.getJSONObject("reach")));
-        action.setType(ActionType.valueOf(jsonObject.getString("type")));
         return action;
     }
 
@@ -281,8 +305,6 @@ public class JsonLoader {
     public DataGroup<Terrain> getTerrains() {
         return terrains;
     }
-
-    
 
     public DataGroup<Map> getMaps() {
         return maps;

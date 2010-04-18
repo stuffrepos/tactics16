@@ -3,12 +3,12 @@ package tactics16.scenes;
 import tactics16.Layout;
 import tactics16.scenes.mapbuilder.MapBuilderScene;
 import tactics16.MyGame;
-import tactics16.components.Menu;
-import tactics16.components.MenuOption;
 import tactics16.components.TextDialog;
 import tactics16.phase.Phase;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
+import tactics16.GameKey;
+import tactics16.components.menu.CommonMenuOption;
+import tactics16.components.menu.Menu;
 
 /**
  *
@@ -18,7 +18,7 @@ public class MainMenuScene implements Phase {
 
     private static final MainMenuScene instance = new MainMenuScene();
     private final Menu mainMenu = new Menu(
-            new MenuOption("Play") {
+            new CommonMenuOption("Play") {
 
                 @Override
                 public void executeAction() {
@@ -26,7 +26,7 @@ public class MainMenuScene implements Phase {
 
                 }
             },
-            new MenuOption("Map Creator") {
+            new CommonMenuOption("Map Creator") {
 
                 @Override
                 public void executeAction() {
@@ -34,7 +34,7 @@ public class MainMenuScene implements Phase {
 
                 }
             },
-            new MenuOption("Quit", KeyEvent.VK_ESCAPE) {
+            new CommonMenuOption("Quit", GameKey.CANCEL) {
 
                 @Override
                 public void executeAction() {
@@ -64,7 +64,7 @@ public class MainMenuScene implements Phase {
     public void onAdd() {
 
         dialog = new TextDialog();
-        dialog.setText("Geo Tactics");
+        dialog.setText("Tactics16");
     }
 
     public void onRemove() {

@@ -17,7 +17,7 @@ import java.util.TreeSet;
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class Map implements Nameable {
-    
+
     public Terrain getTerrain(Coordinate position) {
         return getTerrain(position.getX(), position.getY());
     }
@@ -208,7 +208,7 @@ public class Map implements Nameable {
 
     public Set<Coordinate> getPlayerInitialPosition(int player) {
         return this.personInitialPositions.getPlayerInitialPositions(player);
-    }    
+    }
 
     public void update(long elapsedTime) {
         this.elapsedTime += elapsedTime;
@@ -224,5 +224,105 @@ public class Map implements Nameable {
 
     public Integer getPlayerFromPosition(Coordinate position) {
         return personInitialPositions.getPlayerFromPosition(position);
+    }
+
+    public java.util.Map<Coordinate, Integer> calculateMovimentDistances(Coordinate target) {
+        java.util.Map<Coordinate, Integer> distances = new TreeMap<Coordinate, Integer>();
+        Set<Coordinate> visited = new TreeSet<Coordinate>();
+        Set<Coordinate> current = new TreeSet<Coordinate>();
+
+        current.add(target);
+        visited.add(target);
+        int n = 0;
+
+        while (!current.isEmpty()) {
+            Set<Coordinate> forTest = new TreeSet<Coordinate>();
+
+            for (Coordinate c : current) {
+                distances.put(c, n);
+
+                for (Coordinate next : getMovimentNeighboors(c)) {
+                    if (!visited.contains(next)) {
+                        visited.add(next);
+                        forTest.add(next);
+                    }
+                }
+            }
+
+            n++;
+            current = forTest;
+        }
+
+        return distances;
+    }
+
+    public Iterable<Coordinate> getMovimentNeighboors(Coordinate c) {
+        Set<Coordinate> neighboors = new TreeSet<Coordinate>();
+
+        for (Coordinate neighboor : new Coordinate[]{
+                    new Coordinate(c, 0, -1),
+                    new Coordinate(c, 0, 1),
+                    new Coordinate(c, -1, 0),
+                    new Coordinate(c, 1, 0)
+                }) {
+            if (inMap(neighboor) && getTerrain(neighboor).getAllowMoviment()) {
+                neighboors.add(neighboor);
+            }
+        }
+
+        return neighboors;
+    }
+
+    public java.util.Map<Coordinate, Integer> calculateActionDistances(Coordinate target) {
+        java.util.Map<Coordinate, Integer> distances = new TreeMap<Coordinate, Integer>();
+        Set<Coordinate> visited = new TreeSet<Coordinate>();
+        Set<Coordinate> current = new TreeSet<Coordinate>();
+
+        current.add(target);
+        visited.add(target);
+        int n = 0;
+
+        while (!current.isEmpty()) {
+            Set<Coordinate> forTest = new TreeSet<Coordinate>();
+
+            for (Coordinate c : current) {
+                if (getTerrain(c).getAllowAction()) {
+                    distances.put(c, n);
+                }
+
+                for (Coordinate next : getActionNeighboors(c)) {
+                    if (!visited.contains(next)) {
+                        visited.add(next);
+                        forTest.add(next);
+                    }
+                }
+            }
+
+            n++;
+            current = forTest;
+        }
+
+        return distances;
+    }
+
+    public Iterable<Coordinate> getActionNeighboors(Coordinate c) {
+        Set<Coordinate> neighboors = new TreeSet<Coordinate>();
+
+        for (Coordinate neighboor : new Coordinate[]{
+                    new Coordinate(c, 0, -1),
+                    new Coordinate(c, 0, 1),
+                    new Coordinate(c, -1, 0),
+                    new Coordinate(c, 1, 0)
+                }) {
+            if (inMap(neighboor)) {
+                neighboors.add(neighboor);
+            }
+        }
+
+        return neighboors;
+    }
+
+    public boolean inMap(Coordinate c) {
+        return c.inRectangle(0, 0, getWidth(), getHeight());
     }
 }

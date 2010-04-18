@@ -5,137 +5,86 @@ import tactics16.MyGame;
 import tactics16.components.TextDialog;
 import tactics16.game.Coordinate;
 import tactics16.game.Job;
-import tactics16.game.Map;
-import tactics16.game.Person;
-import tactics16.game.Player;
-import tactics16.phase.Phase;
 import tactics16.phase.PhaseManager;
-import tactics16.util.Cursor1D;
-import tactics16.util.ObjectCursor1D;
-import tactics16.util.listeners.Listener;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import tactics16.components.VisualMap;
+import tactics16.phase.AbstractPhase;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class BattleScene implements Phase {
-
-    private final BattleGame geoGame;
-    private ObjectCursor1D<Job.GameAction> gameActionCursor;
+public class BattleScene extends AbstractPhase {
+    
     // Layout
     public static final int MAP_GAP = Layout.OBJECT_GAP * 5;
     private TextDialog statusDialog = new TextDialog();
-    private VisualMap visualMap;
 
     // Phases
-    private final MovimentSubPhase selectMovimentSubPhase = new MovimentSubPhase(this);
+    private final PersonActionSubPhase personActionSubPhase = new PersonActionSubPhase(this);
     private PhaseManager phaseManager = new PhaseManager();
+    private VisualBattleMap visualBattleMap;
 
-    public BattleScene(BattleGame geoGame) {
-        this.geoGame = geoGame;
-        this.visualMap = new VisualMap(geoGame.getMap());
+    public BattleScene(BattleGame battleGame) {
+        this.visualBattleMap = new VisualBattleMap(battleGame);
 
         List<Job.GameAction> gameActionList = new ArrayList<Job.GameAction>();
         for (Job.GameAction gameAction : Job.GameAction.values()) {
             gameActionList.add(gameAction);
         }
-        this.gameActionCursor = new ObjectCursor1D<Job.GameAction>(gameActionList);
-        this.gameActionCursor.getCursor().setKeys(KeyEvent.VK_PAGE_UP, KeyEvent.VK_PAGE_DOWN);
-        this.gameActionCursor.getCursor().addListener(new Listener<Cursor1D>() {
-
-            public void onChange(Cursor1D source) {
-                changePersonsGameAction();
-            }
-        });
 
         // Positions and Dimensions
-        statusDialog.setWidth(100);
+        statusDialog.setWidth(200);
         statusDialog.getPosition().setXY(
                 Layout.getScreenWidth() - Layout.OBJECT_GAP - statusDialog.getWidth(),
                 Layout.OBJECT_GAP);
-        visualMap.getPosition().setXY(MAP_GAP, MAP_GAP);
+        getVisualBattleMap().getVisualMap().getPosition().setXY(MAP_GAP, MAP_GAP);
 
         // Persons Positions
-        for (int player = 0; player < geoGame.getPlayers().size(); ++player) {
-            for (int person = 0; person < geoGame.getPlayers().get(player).getPersons().size(); ++person) {
+        for (int player = 0; player < battleGame.getPlayers().size(); ++player) {
+            for (int person = 0; person < battleGame.getPlayers().get(player).getPersons().size(); ++person) {
                 putPersonOnPosition(
-                        geoGame.getPlayers().get(player).getPersons().get(person),
-                        geoGame.getPersonInitialPosition(player, person));
+                        battleGame.getPlayers().get(player).getPersons().get(person),
+                        battleGame.getPersonInitialPosition(player, person));
             }
         }
 
-        phaseManager.change(selectMovimentSubPhase);
-    }
-
-    public void onAdd() {
-    }
-
-    public void onRemove() {
+        phaseManager.change(personActionSubPhase);
     }
 
     @Override
     public void update(long elapsedTime) {
-        geoGame.getMap().update(elapsedTime);
         updateStatusDialog();
 
         if (MyGame.getInstance().keyPressed(KeyEvent.VK_ESCAPE)) {
             MyGame.getInstance().getPhaseManager().back();
         }
 
-        for (Player player : geoGame.getPlayers()) {
+        for (Player player : getVisualBattleMap().getBattleGame().getPlayers()) {
             for (Person person : player.getPersons()) {
                 person.update(elapsedTime);
             }
         }
 
-        gameActionCursor.update(elapsedTime);
+        getVisualBattleMap().update(elapsedTime);
         phaseManager.getCurrentPhase().update(elapsedTime);
     }
 
     @Override
     public void render(Graphics2D g) {
-        visualMap.render(g);        
+        getVisualBattleMap().render(g);
         statusDialog.render(g);
         phaseManager.getCurrentPhase().render(g);
-        for (Player player : geoGame.getPlayers()) {
-            for (Person person : player.getPersons()) {
-                person.render(g);
-            }
-        }
-
-    }
-
-    private void changePersonsGameAction() {
-        for (Player player : geoGame.getPlayers()) {
-            for (Person person : player.getPersons()) {
-                person.setCurrentGameAction(gameActionCursor.getSelected());
-            }
-        }
     }
 
     private void updateStatusDialog() {
         StringBuilder b = new StringBuilder();
-//        b.append("Cursor: " + mapCursor.getCursor());
+        if (phaseManager.getCurrentPhase() != null) {
+            b.append(phaseManager.getCurrentPhase().toString());
+        }
         statusDialog.setText(b.toString());
-    }
-
-    public void onExit() {
-    }
-
-    public void onEnter() {
-    }
-
-    public BattleGame getGeoGame() {
-        return geoGame;
-    }
-
-    public VisualMap getVisualMap() {
-        return visualMap;
     }
 
     public PhaseManager getPhaseManager() {
@@ -144,6 +93,10 @@ public class BattleScene implements Phase {
 
     public void putPersonOnPosition(Person person, Coordinate personMapPosition) {
         person.getMapPosition().set(personMapPosition);
-        person.getPosition().set(visualMap.getPersonPosition(personMapPosition));
+        person.getPosition().set(getVisualBattleMap().getVisualMap().getPersonPosition(personMapPosition));
+    }
+
+    public VisualBattleMap getVisualBattleMap() {
+        return visualBattleMap;
     }
 }

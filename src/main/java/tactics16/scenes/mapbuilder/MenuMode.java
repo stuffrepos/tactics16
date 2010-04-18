@@ -2,15 +2,15 @@ package tactics16.scenes.mapbuilder;
 
 import tactics16.Layout;
 import tactics16.MyGame;
-import tactics16.components.Menu;
-import tactics16.components.MenuOption;
+import tactics16.components.menu.Menu;
+import tactics16.components.menu.CommonMenuOption;
 import tactics16.components.TextDialog;
 import tactics16.game.Map;
 import tactics16.game.Terrain;
 import tactics16.scenes.SelectMapScene;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
+import tactics16.GameKey;
 import tactics16.components.VisualMap;
 import tactics16.phase.Phase;
 
@@ -21,9 +21,9 @@ import tactics16.phase.Phase;
 public class MenuMode implements Phase {
 
     private SelectMapScene selectMapScene;
-    private Menu menu = new Menu(new MenuOption[]{
+    private Menu menu = new Menu(new CommonMenuOption[]{
                 // <editor-fold defaultstate="collapsed" desc="comment">
-                new MenuOption("New Map") {
+                new CommonMenuOption("New Map") {
 
             @Override
             public void executeAction() {
@@ -40,14 +40,14 @@ public class MenuMode implements Phase {
 
             }
         },
-                new MenuOption("Open Map") {
+                new CommonMenuOption("Open Map") {
 
                     @Override
                     public void executeAction() {
                         MyGame.getInstance().getPhaseManager().advance(selectMapScene);
                     }
                 },
-                new MenuOption("Edit Map Terrain") {
+                new CommonMenuOption("Edit Map Terrain") {
 
                     @Override
                     public void executeAction() {
@@ -59,7 +59,7 @@ public class MenuMode implements Phase {
                         return scene.getMap() != null;
                     }
                 },
-                new MenuOption("Person's Positions") {
+                new CommonMenuOption("Person's Positions") {
 
                     @Override
                     public void executeAction() {
@@ -71,7 +71,7 @@ public class MenuMode implements Phase {
                         return scene.getMap() != null;
                     }
                 },
-                new MenuOption("Save Map") {
+                new CommonMenuOption("Save Map") {
 
                     @Override
                     public void executeAction() {
@@ -90,7 +90,7 @@ public class MenuMode implements Phase {
                         return scene.getMap() != null;
                     }
                 },
-                new MenuOption("Close Map") {
+                new CommonMenuOption("Close Map") {
 
                     @Override
                     public void executeAction() {
@@ -102,7 +102,7 @@ public class MenuMode implements Phase {
                         return scene.getMap() != null;
                     }
                 },
-                new MenuOption("-W") {
+                new CommonMenuOption("-W") {
 
                     @Override
                     public void executeAction() {
@@ -114,7 +114,7 @@ public class MenuMode implements Phase {
                         return scene.getMap() != null;
                     }
                 },
-                new MenuOption("+W") {
+                new CommonMenuOption("+W") {
 
                     @Override
                     public void executeAction() {
@@ -126,7 +126,7 @@ public class MenuMode implements Phase {
                         return scene.getMap() != null;
                     }
                 },
-                new MenuOption("-H") {
+                new CommonMenuOption("-H") {
 
                     @Override
                     public void executeAction() {
@@ -138,7 +138,7 @@ public class MenuMode implements Phase {
                         return scene.getMap() != null;
                     }
                 },
-                new MenuOption("+H") {
+                new CommonMenuOption("+H") {
 
                     @Override
                     public void executeAction() {
@@ -150,7 +150,7 @@ public class MenuMode implements Phase {
                         return scene.getMap() != null;
                     }
                 },
-                new MenuOption("Quit", KeyEvent.VK_ESCAPE) {
+                new CommonMenuOption("Quit", GameKey.CANCEL) {
 
                     @Override
                     public void executeAction() {

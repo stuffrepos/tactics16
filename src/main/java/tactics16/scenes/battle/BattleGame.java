@@ -1,11 +1,10 @@
 package tactics16.scenes.battle;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import tactics16.game.Coordinate;
 import tactics16.game.Map;
-import tactics16.game.Person;
-import tactics16.game.Player;
 
 /**
  *
@@ -54,5 +53,17 @@ public class BattleGame {
             }
         }
         return null;
+    }
+
+    public List<Coordinate> calculateTargetActionRayArea(Coordinate target, int ray) {
+        List<Coordinate> area = new LinkedList<Coordinate>();
+
+        for (java.util.Map.Entry<Coordinate, Integer> e : map.calculateActionDistances(target).entrySet()) {
+            if (e.getValue() <= ray) {
+                area.add(e.getKey());
+            }
+        }
+
+        return area;
     }
 }

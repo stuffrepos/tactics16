@@ -12,8 +12,8 @@ import java.awt.Graphics2D;
 public class TextDialog implements Object2D {
 
     private static final int H_MARGIN = 5;
-    public static final Color DEFAULT_FOREGROUND_COLOR = Color.BLUE;
-    public static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
+    public static final Color DEFAULT_FOREGROUND_COLOR = Color.WHITE;
+    public static final Color DEFAULT_BACKGROUND_COLOR = Color.DARK_GRAY;
     private final Coordinate position = new Coordinate();
     private Integer minHeight;
     private Integer maxHeight;
@@ -69,10 +69,9 @@ public class TextDialog implements Object2D {
         int h = this.getHeight();
 
         g.setColor(this.getBackgroundColor());
-        g.fillRect(getPosition().getX(), getPosition().getY(), w - 1, h - 1);
+        g.fill3DRect(getPosition().getX(), getPosition().getY(), w - 1, h - 1,true);
         g.setColor(this.getForegroundColor());
-        g.drawRect(getPosition().getX(), getPosition().getY(), w - 1, h - 1);
-
+        
         int i = 0;
         for (String line : textLines) {
             g.drawString(
@@ -82,7 +81,7 @@ public class TextDialog implements Object2D {
                     g.getFontMetrics().getLeading());
             i++;
         }
-
+        
     }
 
     public Coordinate getPosition() {

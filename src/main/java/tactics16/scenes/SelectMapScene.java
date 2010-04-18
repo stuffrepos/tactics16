@@ -1,14 +1,14 @@
 package tactics16.scenes;
 
 import tactics16.MyGame;
-import tactics16.components.Menu;
-import tactics16.components.MenuOption;
 import tactics16.game.Map;
 import tactics16.phase.Phase;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
+import tactics16.GameKey;
 import tactics16.Layout;
 import tactics16.components.VisualThumbnailMap;
+import tactics16.components.menu.Menu;
+import tactics16.components.menu.CommonMenuOption;
 import tactics16.util.Cursor1D;
 import tactics16.util.listeners.Listener;
 
@@ -44,7 +44,7 @@ public class SelectMapScene implements Phase {
             mapSelector.addOption(new MapOption(map));
         }
 
-        mapSelector.addOption(new MenuOption("Cancel", KeyEvent.VK_ESCAPE) {
+        mapSelector.addOption(new CommonMenuOption("Cancel", GameKey.CANCEL) {
 
             @Override
             public void executeAction() {
@@ -88,7 +88,7 @@ public class SelectMapScene implements Phase {
     }
 
     // <editor-fold defaultstate="collapsed" desc="class MapOption">
-    private class MapOption extends MenuOption {
+    private class MapOption extends CommonMenuOption {
 
         private final Map map;
 
