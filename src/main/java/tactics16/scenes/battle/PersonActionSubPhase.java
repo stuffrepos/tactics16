@@ -227,7 +227,7 @@ class PersonActionSubPhase extends AbstractPhase {
                     // <editor-fold defaultstate="collapsed" desc="implementation">
                     @Override
                     public void update(long elapsedTime) {
-                        actionMenu.update(elapsedTime);                        
+                        actionMenu.update(elapsedTime);
                     }
 
                     @Override
@@ -358,6 +358,7 @@ class PersonActionSubPhase extends AbstractPhase {
                             private Menu menu;
                             private MapCheckedArea targetRay;
                             private AgilityPointsSelector agilityPointsSelector;
+                            private List<Person> personsTargets;
 
                             // <editor-fold defaultstate="collapsed" desc="implementation">
                             public ConfirmActionStep(Coordinate targetPosition) {
@@ -394,17 +395,29 @@ class PersonActionSubPhase extends AbstractPhase {
                                 this.menu.getPosition().setXY(
                                         agilityPointsSelector.getLeft(),
                                         Layout.getBottomGap(agilityPointsSelector));
+                                personsTargets = new LinkedList<Person>();
+
+                                for (Coordinate c : this.targetRay.getTerrainPositions()) {
+                                    Person person = parentScene.getVisualBattleMap().getBattleGame().getPersonOnMapPosition(c);
+                                    if (person != null) {
+                                        personsTargets.add(person);
+                                        person.setCurrentGameAction(GameAction.SELECTED);
+                                    }
+                                }
                             }
 
                             @Override
                             public void onExit() {
                                 targetRay.finalizeEntity();
+                                for (Person person : personsTargets) {
+                                    person.setCurrentGameAction(GameAction.STOPPED);
+                                }
                             }
 
                             @Override
                             public void update(long elapsedTime) {
                                 menu.update(elapsedTime);
-                                agilityPointsSelector.update(elapsedTime);                                
+                                agilityPointsSelector.update(elapsedTime);
                             }
 
                             @Override
@@ -431,7 +444,8 @@ class PersonActionSubPhase extends AbstractPhase {
 
                                 private PersonActionAnimation actionAnimation;
 
-                                public PersonAction() {
+                                @Override
+                                public void onEnter() {
                                     actionAnimation = new PersonActionAnimation(
                                             parentScene.getVisualBattleMap(),
                                             selectedPerson,
