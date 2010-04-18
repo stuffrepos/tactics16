@@ -7,16 +7,18 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import tactics16.scenes.MainMenuScene;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class MyGame extends Game {
-    
+
     private static MyGame instance;
     private JsonLoader loader;
     private Graphics2D defaultGraphics2D;
@@ -35,20 +37,20 @@ public class MyGame extends Game {
 
     private MyGame(String dataPath) {
         loader = new JsonLoader(this, new File(dataPath));
-        keyMapping.setMapping(GameKey.UP,KeyEvent.VK_UP);
-        keyMapping.setMapping(GameKey.DOWN,KeyEvent.VK_DOWN);
-        keyMapping.setMapping(GameKey.LEFT,KeyEvent.VK_LEFT);
-        keyMapping.setMapping(GameKey.RIGHT,KeyEvent.VK_RIGHT);
-        keyMapping.setMapping(GameKey.CONFIRM,KeyEvent.VK_ENTER,KeyEvent.VK_SPACE);
-        keyMapping.setMapping(GameKey.CANCEL,KeyEvent.VK_ESCAPE,KeyEvent.VK_BACK_SPACE);
-        keyMapping.setMapping(GameKey.OPTIONS,KeyEvent.VK_F1);
-        keyMapping.setMapping(GameKey.PREVIOUS,KeyEvent.VK_PAGE_UP);
-        keyMapping.setMapping(GameKey.NEXT,KeyEvent.VK_PAGE_DOWN);
+        keyMapping.setMapping(GameKey.UP, KeyEvent.VK_UP);
+        keyMapping.setMapping(GameKey.DOWN, KeyEvent.VK_DOWN);
+        keyMapping.setMapping(GameKey.LEFT, KeyEvent.VK_LEFT);
+        keyMapping.setMapping(GameKey.RIGHT, KeyEvent.VK_RIGHT);
+        keyMapping.setMapping(GameKey.CONFIRM, KeyEvent.VK_ENTER, KeyEvent.VK_SPACE);
+        keyMapping.setMapping(GameKey.CANCEL, KeyEvent.VK_ESCAPE, KeyEvent.VK_BACK_SPACE);
+        keyMapping.setMapping(GameKey.OPTIONS, KeyEvent.VK_F1);
+        keyMapping.setMapping(GameKey.PREVIOUS, KeyEvent.VK_PAGE_UP);
+        keyMapping.setMapping(GameKey.NEXT, KeyEvent.VK_PAGE_DOWN);
     }
 
     @Override
     public void initResources() {
-        loader.loadDirectory(loader.getSaveDirectory());        
+        loader.loadDirectory(loader.getSaveDirectory());
     }
 
     @Override
@@ -99,25 +101,33 @@ public class MyGame extends Game {
         return keyMapping.isKeyPressed(key);
     }
 
-    private class KeyMapping {
+    public KeyMapping getKeyMapping() {
+        return keyMapping;
+    }
 
-        private Map<GameKey,List<Integer>> mapping = new TreeMap<GameKey, List<Integer>>();
+    public class KeyMapping {
 
-        private void setMapping(GameKey gameKey,int... keys) {
+        private Map<GameKey, List<Integer>> mapping = new TreeMap<GameKey, List<Integer>>();
+
+        private void setMapping(GameKey gameKey, int... keys) {
             List<Integer> keysList = new ArrayList<Integer>();
-            for(int key: keys) {
+            for (int key : keys) {
                 keysList.add(key);
             }
             mapping.put(gameKey, keysList);
         }
 
         private boolean isKeyPressed(GameKey gameKey) {
-            for(Integer key: mapping.get(gameKey)) {
+            for (Integer key : mapping.get(gameKey)) {
                 if (keyPressed(key)) {
                     return true;
                 }
             }
             return false;
+        }
+
+        public Collection<Integer> getKeys(GameKey gameKey) {
+            return mapping.get(gameKey);
         }
     }
 }

@@ -4,19 +4,23 @@ import tactics16.Layout;
 import tactics16.scenes.mapbuilder.MapBuilderScene;
 import tactics16.MyGame;
 import tactics16.components.TextDialog;
-import tactics16.phase.Phase;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
 import tactics16.GameKey;
 import tactics16.components.menu.CommonMenuOption;
 import tactics16.components.menu.Menu;
+import tactics16.phase.AbstractPhase;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MainMenuScene implements Phase {
+public class MainMenuScene extends AbstractPhase {
 
     private static final MainMenuScene instance = new MainMenuScene();
+    private boolean positioned = false;
+    private TextDialog title;
+    private TextDialog keysHelp;
     private final Menu mainMenu = new Menu(
             new CommonMenuOption("Play") {
 
@@ -58,50 +62,73 @@ public class MainMenuScene implements Phase {
     public static final MainMenuScene getInstance() {
         return instance;
     }
-    private TextDialog dialog;
-    private boolean positioned = false;
 
+    @Override
     public void onAdd() {
 
-        dialog = new TextDialog();
-        dialog.setText("Tactics16");
+        title = new TextDialog();
+        title.setText("Tactics16");
+
+        keysHelp = new TextDialog();
+        StringBuilder b = new StringBuilder();
+        b.append("Keys Help\n");
+        for (GameKey gameKey : GameKey.values()) {
+            b.append(gameKey.toString());
+            b.append(": ");
+            boolean first = true;
+            for (int key : MyGame.getInstance().getKeyMapping().getKeys(gameKey)) {
+                if (first) {
+                    first = false;
+                }
+                else {
+                    b.append(", ");
+                }
+                b.append(KeyEvent.getKeyText(key));
+            }
+            b.append('\n');
+        }
+        keysHelp.setText(b.toString());
     }
 
-    public void onRemove() {
-    }
-
+    @Override
     public void update(long elapsedTime) {
         mainMenu.update(elapsedTime);
+
+
     }
 
+    @Override
     public void render(Graphics2D g) {
+        mainMenu.render(g);
+        title.render(g);
+        keysHelp.render(g);
 
         if (!positioned) {
-            final int GAP = 10;
-
-            dialog.getPosition().setX(
-                    Layout.getCentralizedLeft(dialog));
-
-            dialog.getPosition().setY(
-                    (Layout.getScreenHeight() -
-                    (dialog.getHeight() + mainMenu.getOptionHeight() + Layout.OBJECT_GAP)) / 2);
+            title.getPosition().setX(
+                    Layout.getCentralizedLeft(title));
 
             mainMenu.getPosition().setX(
                     Layout.getCentralizedLeft(mainMenu));
 
+            keysHelp.getPosition().setX(
+                    Layout.getCentralizedLeft(keysHelp));
+
+            title.getPosition().setY(
+                    (Layout.getScreenHeight() -
+                    (title.getHeight() + mainMenu.getHeight() +
+                    keysHelp.getHeight() + Layout.OBJECT_GAP * 2)) / 2);
+
             mainMenu.getPosition().setY(
-                    Layout.getBottom(dialog) + Layout.OBJECT_GAP);
+                    Layout.getBottom(title) + Layout.OBJECT_GAP);
 
-            positioned = false;
+            keysHelp.getPosition().setY(
+                    Layout.getBottom(mainMenu) + Layout.OBJECT_GAP);
+
+            positioned = true;
         }
-
-        mainMenu.render(g);
-        dialog.render(g);
     }
 
-    public void onExit() {
-    }
-
+    @Override
     public void onEnter() {
     }
 }
