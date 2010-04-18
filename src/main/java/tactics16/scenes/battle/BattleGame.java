@@ -1,8 +1,11 @@
 package tactics16.scenes.battle;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import tactics16.game.Coordinate;
 import tactics16.game.Map;
 
@@ -55,8 +58,8 @@ public class BattleGame {
         return null;
     }
 
-    public List<Coordinate> calculateTargetActionRayArea(Coordinate target, int ray) {
-        List<Coordinate> area = new LinkedList<Coordinate>();
+    public Set<Coordinate> calculateTargetActionRayArea(Coordinate target, int ray) {
+        Set<Coordinate> area = new TreeSet<Coordinate>();
 
         for (java.util.Map.Entry<Coordinate, Integer> e : map.calculateActionDistances(target).entrySet()) {
             if (e.getValue() <= ray) {
@@ -65,5 +68,18 @@ public class BattleGame {
         }
 
         return area;
+    }
+
+    public Set<Person> getPersonsOnMapPositions(Collection<Coordinate> positions) {
+        Set<Person> persons = new HashSet<Person>();
+
+        for (Coordinate position : positions) {
+            Person person = getPersonOnMapPosition(position);
+            if (person != null) {
+                persons.add(person);
+            }
+        }
+
+        return persons;
     }
 }

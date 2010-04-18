@@ -1,5 +1,6 @@
-package tactics16.scenes.battle;
+package tactics16.scenes.battle.personaction;
 
+import tactics16.scenes.battle.*;
 import java.util.Iterator;
 import tactics16.game.Coordinate;
 import tactics16.game.Job.GameAction;

@@ -2,13 +2,12 @@ package tactics16.animation;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
 
 public class SpriteAnimation {
 
     public static final int DEFAULT_CHANGE_FRAME_INTERVAL = 250;
     private int changeFrameInterval = DEFAULT_CHANGE_FRAME_INTERVAL;
-    private List<BufferedImage> images = new ArrayList<BufferedImage>();
+    private ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
 
     public int getChangeFrameInterval() {
         return changeFrameInterval;
@@ -40,5 +39,9 @@ public class SpriteAnimation {
 
     public Iterable<BufferedImage> getImages() {
         return images;
+    }
+
+    public BufferedImage getImageByIndex(int index) {
+        return images.get(index);
     }
 }

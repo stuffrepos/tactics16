@@ -1,4 +1,4 @@
-package tactics16.scenes.battle;
+package tactics16.scenes.battle.personaction;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -91,6 +91,10 @@ public class AgilityPointsSelector implements VisualEntity, Object2D {
 
     public Coordinate getPosition() {
         return position;
+    }
+
+    public int getAgilityPoints() {
+        return this.count;
     }
 
     private class Spheres implements Object2D {

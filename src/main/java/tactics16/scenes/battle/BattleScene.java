@@ -1,34 +1,40 @@
 package tactics16.scenes.battle;
 
+import tactics16.scenes.battle.personaction.PersonActionSubPhase;
 import tactics16.Layout;
 import tactics16.MyGame;
 import tactics16.components.TextDialog;
+import tactics16.game.Action;
 import tactics16.game.Coordinate;
 import tactics16.game.Job;
 import tactics16.phase.PhaseManager;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import tactics16.GameKey;
 import tactics16.phase.AbstractPhase;
+import tactics16.scenes.battle.effects.EffectsSubPhase;
+import tactics16.scenes.battle.effects.EvadeSelector;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class BattleScene extends AbstractPhase {
-    
+
     // Layout
     public static final int MAP_GAP = Layout.OBJECT_GAP * 5;
     private TextDialog statusDialog = new TextDialog();
-
     // Phases
     private final PersonActionSubPhase personActionSubPhase = new PersonActionSubPhase(this);
+    private final OptionsSubPhase optionsSubPhase = new OptionsSubPhase(this);
     private PhaseManager phaseManager = new PhaseManager();
     private VisualBattleMap visualBattleMap;
+    private JobAnimationTest jobAnimationTest;
 
     public BattleScene(BattleGame battleGame) {
         this.visualBattleMap = new VisualBattleMap(battleGame);
+        this.jobAnimationTest = new JobAnimationTest(battleGame);
 
         List<Job.GameAction> gameActionList = new ArrayList<Job.GameAction>();
         for (Job.GameAction gameAction : Job.GameAction.values()) {
@@ -57,9 +63,10 @@ public class BattleScene extends AbstractPhase {
     @Override
     public void update(long elapsedTime) {
         updateStatusDialog();
+        jobAnimationTest.update(elapsedTime);
 
-        if (MyGame.getInstance().keyPressed(KeyEvent.VK_ESCAPE)) {
-            MyGame.getInstance().getPhaseManager().back();
+        if (MyGame.getInstance().isKeyPressed(GameKey.OPTIONS)) {
+            phaseManager.advance(optionsSubPhase);
         }
 
         for (Player player : getVisualBattleMap().getBattleGame().getPlayers()) {
@@ -98,5 +105,15 @@ public class BattleScene extends AbstractPhase {
 
     public VisualBattleMap getVisualBattleMap() {
         return visualBattleMap;
+    }
+
+    public void toEffectSubPhase(BattleAction battleAction) {
+        getPhaseManager().clear();
+        getPhaseManager().change(new EffectsSubPhase(this, battleAction));
+    }
+
+    public void toPersonActionSubPhase() {
+        getPhaseManager().clear();
+        getPhaseManager().change(personActionSubPhase);
     }
 }

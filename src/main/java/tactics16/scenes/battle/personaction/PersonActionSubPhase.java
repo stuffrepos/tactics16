@@ -1,5 +1,6 @@
-package tactics16.scenes.battle;
+package tactics16.scenes.battle.personaction;
 
+import tactics16.scenes.battle.*;
 import tactics16.MyGame;
 import tactics16.components.MapCursor;
 import java.awt.Graphics2D;
@@ -24,7 +25,7 @@ import tactics16.util.listeners.Listener;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-class PersonActionSubPhase extends AbstractPhase {
+public class PersonActionSubPhase extends AbstractPhase {
 
     private final BattleScene parentScene;
     private final SelectPersonStep selectPersonStep = new SelectPersonStep();
@@ -37,16 +38,6 @@ class PersonActionSubPhase extends AbstractPhase {
     @Override
     public void onEnter() {
         parentScene.getPhaseManager().change(selectPersonStep);
-    }
-
-    @Override
-    public void update(long elapsedTime) {
-        parentScene.getPhaseManager().getCurrentPhase().update(elapsedTime);
-    }
-
-    @Override
-    public void render(Graphics2D g) {
-        parentScene.getPhaseManager().getCurrentPhase().render(g);
     }
 
     @Override
@@ -455,17 +446,15 @@ class PersonActionSubPhase extends AbstractPhase {
 
                                 @Override
                                 public void update(long elapsedTime) {
-                                    actionAnimation.update(elapsedTime);
-
                                     if (actionAnimation.isFinalized()) {
-                                        parentScene.getPhaseManager().clear();
-                                        parentScene.getPhaseManager().change(selectPersonStep);
+                                        parentScene.toEffectSubPhase(
+                                                new BattleAction(
+                                                parentScene.getVisualBattleMap().getBattleGame(),
+                                                selectedPerson,
+                                                selectedAction,
+                                                targetCursor.getCursor().getPosition(),
+                                                agilityPointsSelector.getAgilityPoints()));
                                     }
-                                }
-
-                                @Override
-                                public void render(Graphics2D g) {
-                                    actionAnimation.render(g);
                                 }
                             }
                         }

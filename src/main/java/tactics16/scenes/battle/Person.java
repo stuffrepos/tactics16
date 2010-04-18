@@ -57,11 +57,15 @@ public class Person extends DataObject implements VisualEntity {
     public BufferedImage getCurrentImage() {
 
         SpriteAnimation spriteAction;
-        if (Job.GameAction.SELECTED.equals(this.currentGameAction)) {
-            spriteAction = player.getSelectedSpriteAnimation(job);
-        } else {
-            spriteAction = job.getSpriteActionGroup().getSpriteAction(currentGameAction);
+        switch(this.currentGameAction) {
+            case SELECTED:
+                spriteAction = player.getSelectedSpriteAnimation(job);
+                break;
+
+            default:
+                spriteAction = job.getSpriteActionGroup().getSpriteAction(currentGameAction);
         }
+        
         if (spriteAction.getImagesCount() > 0) {
             return player.getImage(job.getSpriteActionGroup(), spriteAction.getImage(elapsedTime));
         } else {
@@ -126,5 +130,9 @@ public class Person extends DataObject implements VisualEntity {
         } else {
             return spriteAction.getLoopCount(elapsedTime);
         }
+    }
+
+    public int getEvasiveness() {
+        return job.getEvasiveness();
     }
 }
