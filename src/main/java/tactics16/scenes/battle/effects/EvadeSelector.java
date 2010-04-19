@@ -1,7 +1,6 @@
 package tactics16.scenes.battle.effects;
 
 import java.awt.Graphics2D;
-import tactics16.GameKey;
 import tactics16.Layout;
 import tactics16.components.TextDialog;
 import tactics16.components.menu.CommonMenuOption;
@@ -18,20 +17,20 @@ import tactics16.util.listeners.Listener;
  */
 public class EvadeSelector {
 
-    private Response response = null;
+    private Boolean response = null;
     private final Coordinate position = new Coordinate();
     private final TextDialog title = new TextDialog();
     private final Menu confirmMenu = new Menu(new CommonMenuOption("Yes") {
 
         @Override
         public void executeAction() {
-            response = Response.YES;
+            response = true;
         }
     }, new CommonMenuOption("No") {
 
         @Override
         public void executeAction() {
-            response = Response.NO;
+            response = false;
         }
     });
 
@@ -73,13 +72,7 @@ public class EvadeSelector {
         return position;
     }
 
-    public Response getResponse() {
+    public Boolean getResponse() {
         return response;
-    }
-
-    public static enum Response {
-
-        YES,
-        NO
     }
 }

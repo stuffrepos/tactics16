@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
  */
 public class TextDialog implements Object2D {
 
-    private static final int H_MARGIN = 5;
+    private static final int MARGIN = 5;
     public static final Color DEFAULT_FOREGROUND_COLOR = Color.WHITE;
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.DARK_GRAY;
     private final Coordinate position = new Coordinate();
@@ -22,6 +22,7 @@ public class TextDialog implements Object2D {
     private Color backgroundColor = DEFAULT_BACKGROUND_COLOR;
     private Color foregroundColor = DEFAULT_FOREGROUND_COLOR;
     private String text = "";
+    private boolean flat = false;
 
     public static int getDefaultHeight() {
         return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight();
@@ -38,7 +39,7 @@ public class TextDialog implements Object2D {
             }
         }
 
-        int w = lineMaxWidth + H_MARGIN * 2;
+        int w = lineMaxWidth + MARGIN * 2;
 
         if (getMinWidth() != null && w < getMinWidth()) {
             w = getMinWidth();
@@ -51,7 +52,7 @@ public class TextDialog implements Object2D {
 
     public int getHeight() {
         String[] textLines = text.split("\n");
-        int h = MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight() * textLines.length;
+        int h = MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight() * textLines.length + 2 * MARGIN;
 
         if (getMinHeight() != null && h < getMinHeight()) {
             h = getMinHeight();
@@ -69,19 +70,23 @@ public class TextDialog implements Object2D {
         int h = this.getHeight();
 
         g.setColor(this.getBackgroundColor());
-        g.fill3DRect(getPosition().getX(), getPosition().getY(), w - 1, h - 1,true);
+        if (flat) {
+            g.fillRect(getPosition().getX(), getPosition().getY(), w - 1, h - 1);
+        } else {
+            g.fill3DRect(getPosition().getX(), getPosition().getY(), w - 1, h - 1, true);
+        }
         g.setColor(this.getForegroundColor());
-        
+
         int i = 0;
         for (String line : textLines) {
             g.drawString(
                     line,
-                    getPosition().getX() + H_MARGIN,
-                    getPosition().getY() + g.getFontMetrics().getHeight() * i + g.getFontMetrics().getAscent() +
+                    getPosition().getX() + MARGIN,
+                    getPosition().getY() + MARGIN + g.getFontMetrics().getHeight() * i + g.getFontMetrics().getAscent() +
                     g.getFontMetrics().getLeading());
             i++;
         }
-        
+
     }
 
     public Coordinate getPosition() {
@@ -95,7 +100,7 @@ public class TextDialog implements Object2D {
     public void setMinHeight(Integer minHeight) {
         this.minHeight = minHeight;
     }
-    
+
     public Integer getMaxHeight() {
         return maxHeight;
     }
@@ -155,5 +160,9 @@ public class TextDialog implements Object2D {
     public void setWidth(int width) {
         this.setMinWidth(width);
         this.setMaxWidth(width);
+    }
+
+    public void setFlat(boolean flat) {
+        this.flat = flat;
     }
 }

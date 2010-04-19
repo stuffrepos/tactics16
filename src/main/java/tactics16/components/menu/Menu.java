@@ -19,6 +19,7 @@ import tactics16.util.MathUtil;
 public class Menu implements Object2D {
 
     private final static int OPTION_GAP = 1;
+    private final static int TEXT_MARGIN = 5;
     private ObjectCursor1D<MenuOption> cursor = new ObjectCursor1D<MenuOption>();
     private Coordinate position = new Coordinate();
     private long elapsedTime = 0;
@@ -107,11 +108,11 @@ public class Menu implements Object2D {
             }
         }
 
-        return w + 10;
+        return w + 2 * TEXT_MARGIN;
     }
 
     public int getOptionHeight() {
-        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight();
+        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight() + 2 * TEXT_MARGIN;
     }
 
     public void clear() {
@@ -154,11 +155,10 @@ public class Menu implements Object2D {
             g.setColor(Colors.getDisabledForegroundColor());
         }
 
-        //g.drawRect(x, y, w, h - 1);
         g.drawString(
                 option.getText(),
                 x + (w - optionW) / 2,
-                y + g.getFontMetrics().getAscent() + g.getFontMetrics().getLeading());
+                y + TEXT_MARGIN + g.getFontMetrics().getAscent() + g.getFontMetrics().getLeading());
     }
 
     private static class Colors {

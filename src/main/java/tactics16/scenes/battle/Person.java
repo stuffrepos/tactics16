@@ -135,4 +135,8 @@ public class Person extends DataObject implements VisualEntity {
     public int getEvasiveness() {
         return job.getEvasiveness();
     }
+
+    public int getDefense() {
+        return job.getDefense();
+    }
 }

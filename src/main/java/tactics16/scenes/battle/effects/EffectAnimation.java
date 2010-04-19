@@ -8,6 +8,7 @@ import tactics16.game.Coordinate;
 import tactics16.game.Job.GameAction;
 import tactics16.scenes.battle.BattleAction;
 import tactics16.scenes.battle.Person;
+import tactics16.scenes.battle.PersonInfo;
 import tactics16.scenes.battle.VisualBattleMap;
 
 /**
@@ -17,14 +18,17 @@ import tactics16.scenes.battle.VisualBattleMap;
 public class EffectAnimation {
 
     private EntitiesLayer effects;
+    private EntitiesLayer info;
     private final BattleAction battleAction;
+    private final Map<Person, Boolean> personsEvaded;
 
     public EffectAnimation(
             VisualBattleMap visualBattleMap,
             BattleAction battleAction,
-            Map<Person, EvadeSelector.Response> personsEvaded) {
+            Map<Person, Boolean> personsEvaded) {
         this.battleAction = battleAction;
         this.battleAction.getAgent().setCurrentGameAction(GameAction.STOPPED);
+        this.personsEvaded = personsEvaded;
         effects = new EntitiesLayer();
         boolean first = true;
 
@@ -41,27 +45,55 @@ public class EffectAnimation {
             }
             effects.addEntity(effect);
             Person person = visualBattleMap.getBattleGame().getPersonOnMapPosition(rayTarget);
-            if (person != null && EvadeSelector.Response.NO.equals(personsEvaded.get(person))) {
+            if (person != null && !personsEvaded.get(person)) {
                 person.setCurrentGameAction(GameAction.DAMAGED);
             }
         }
     }
 
     public void update(long elapsedTime) {
-        effects.update(elapsedTime);
+        if (info == null) {
+            effects.update(elapsedTime);
+        } else {
+            info.update(elapsedTime);
+        }
 
-        if (isFinalized()) {
+        if (effects.isFinalized() && info == null) {
+            info = new EntitiesLayer();
             for (Person person : battleAction.getPersonsTargets()) {
                 person.setCurrentGameAction(GameAction.STOPPED);
+
+                PersonInfo.Type type;
+                String value;
+
+                if (personsEvaded.get(person)) {
+                    type = PersonInfo.Type.AGILITY;
+                    value = String.format("-%d AP", battleAction.agilityPointsNeededToEvade(person));
+                } else {
+                    type = PersonInfo.Type.DAMAGE;
+                    value = String.format("-%d HP", battleAction.calculateDamage(person));
+                }                
+
+                info.addEntity(new PersonInfo(
+                        person,
+                        type, value));
             }
         }
     }
 
     public void render(Graphics2D g) {
-        effects.render(g);
+        if (info == null) {
+            effects.render(g);
+        } else {
+            info.render(g);
+        }
     }
 
     public boolean isFinalized() {
-        return effects.isFinalized();
+        if (info == null) {
+            return false;
+        } else {
+            return info.isFinalized();
+        }
     }
 }

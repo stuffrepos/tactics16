@@ -71,8 +71,8 @@ public class EffectsSubPhase extends AbstractPhase {
             private int current;
             private final ArrayList<Person> personsTargets;
             private EvadeSelector evadeSelector;
-            private Map<Person, EvadeSelector.Response> personsEvaded =
-                    new HashMap<Person, EvadeSelector.Response>();
+            private Map<Person, Boolean> personsEvaded =
+                    new HashMap<Person, Boolean>();
 
             private PersonsTargets(Set<Person> personsTargets) {
                 this.personsTargets = new ArrayList<Person>(personsTargets);
@@ -130,7 +130,7 @@ public class EffectsSubPhase extends AbstractPhase {
                 return current >= this.personsTargets.size();
             }
 
-            public Map<Person,EvadeSelector.Response> getPersonsEvaded() {
+            public Map<Person,Boolean> getPersonsEvaded() {
                 return this.personsEvaded;
             }
 

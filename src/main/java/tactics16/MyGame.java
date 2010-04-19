@@ -3,6 +3,7 @@ package tactics16;
 import com.golden.gamedev.Game;
 import tactics16.phase.PhaseManager;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -11,10 +12,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import tactics16.scenes.MainMenuScene;
 
 /**
  *
+import tactics16.util.ObjectCursor1D;
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class MyGame extends Game {
@@ -24,6 +25,7 @@ public class MyGame extends Game {
     private Graphics2D defaultGraphics2D;
     private PhaseManager phaseManager = new PhaseManager();
     private KeyMapping keyMapping = new KeyMapping();
+    private Font font = new Font("Liberation Mono", Font.PLAIN, 12);
 
     public static MyGame getInstance() {
         return instance;
@@ -66,8 +68,9 @@ public class MyGame extends Game {
 
     @Override
     public void render(Graphics2D g) {
-        if (getDefaultGraphics2D() == null) {
-            defaultGraphics2D = g;
+        defaultGraphics2D = g;
+        if (font != null) {
+            g.setFont(font);
         }
 
         g.setColor(Color.BLACK);
@@ -103,6 +106,10 @@ public class MyGame extends Game {
 
     public KeyMapping getKeyMapping() {
         return keyMapping;
+    }
+
+    public void setFont(Font font) {
+        this.font = font;
     }
 
     public class KeyMapping {

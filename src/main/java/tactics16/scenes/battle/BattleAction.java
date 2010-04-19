@@ -53,4 +53,14 @@ public class BattleAction {
     public Set<Coordinate> getRayTargets() {
         return battleGame.calculateTargetActionRayArea(target, action.getReach().getRay());
     }
+
+    public int agilityPointsNeededToEvade(Person target) {
+        return Math.max(
+                0,
+                getAgentAgilityPoints() + getAction().getAgility() - target.getEvasiveness());
+    }
+
+    public int calculateDamage(Person person) {
+        return Math.max(0, getAction().getPower() - person.getDefense());
+    }
 }
