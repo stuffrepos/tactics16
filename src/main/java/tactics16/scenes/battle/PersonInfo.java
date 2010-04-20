@@ -13,7 +13,7 @@ import tactics16.game.Map;
  */
 public class PersonInfo implements VisualEntity {
 
-    private static final Color BACKGROUND_COLOR = new Color(0x77000000,true);
+    private static final Color BACKGROUND_COLOR = new Color(0x77000000, true);
     private static final double SPEED = 0.05;
     private TextMovimentAnimation textMovimentAnimation;
 

@@ -13,8 +13,9 @@ import tactics16.scenes.battle.Person;
 import tactics16.scenes.battle.Player;
 import tactics16.phase.Phase;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
+import tactics16.components.Object2D;
 import tactics16.components.menu.CommonMenuOption;
+import tactics16.util.listeners.Listener;
 
 /**
  *
@@ -35,7 +36,7 @@ public class SelectPersonsScene implements Phase {
 
         private final Job job;
 
-        public JobOption(Job job) {            
+        public JobOption(Job job) {
             this.job = job;
         }
 
@@ -137,16 +138,22 @@ public class SelectPersonsScene implements Phase {
         jobSelector.getPosition().setXY(Layout.OBJECT_GAP, Layout.OBJECT_GAP);
 
         statusDialog = new TextDialog();
-        statusDialog.setWidth(200);
+        statusDialog.setMinWidth(50);
         statusDialog.getPosition().setXY(
                 Layout.getRightGap(jobSelector),
                 jobSelector.getPosition().getX());
 
         personStatus = new TextDialog();
-        personStatus.setWidth(200);
-        personStatus.getPosition().setXY(
-                Layout.getRightGap(statusDialog),
-                jobSelector.getPosition().getX());
+        personStatus.setMinWidth(50);
+
+        statusDialog.addGeometryListener(new Listener<Object2D>() {
+
+            public void onChange(Object2D source) {
+                personStatus.getPosition().setXY(
+                        Layout.getRightGap(source),
+                        source.getTop());
+            }
+        });
     }
 
     private void updateStatusDialog() {

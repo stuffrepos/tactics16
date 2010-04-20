@@ -10,7 +10,6 @@ import tactics16.util.listeners.Listener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import tactics16.GameKey;

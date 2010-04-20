@@ -26,6 +26,7 @@ public class MyGame extends Game {
     private PhaseManager phaseManager = new PhaseManager();
     private KeyMapping keyMapping = new KeyMapping();
     private Font font = new Font("Liberation Mono", Font.PLAIN, 12);
+    //private Font font = new Font("Purisa", Font.PLAIN, 12);
 
     public static MyGame getInstance() {
         return instance;
@@ -110,6 +111,10 @@ public class MyGame extends Game {
 
     public void setFont(Font font) {
         this.font = font;
+    }
+
+    public Font getFont() {
+        return font;
     }
 
     public class KeyMapping {

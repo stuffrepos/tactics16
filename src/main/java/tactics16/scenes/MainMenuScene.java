@@ -99,6 +99,8 @@ public class MainMenuScene extends AbstractPhase {
         fontName = new TextDialog();
         fontName.getPosition().setXY(Layout.OBJECT_GAP, Layout.OBJECT_GAP);
 
+        final String initialFontName = MyGame.getInstance().getFont().getName();
+
         List<Font> fonts = new ArrayList<Font>();
 
         for (String fontName :
@@ -117,6 +119,19 @@ public class MainMenuScene extends AbstractPhase {
                 fontName.setText(fontsCursor.getSelected().getName());
             }
         });
+
+
+
+        while (true) {
+            if (initialFontName.equals(fontsCursor.getSelected().getName())) {
+                break;
+            }
+            if (fontsCursor.getCursor().getCurrent() == fontsCursor.getCursor().getLength()) {
+                break;
+            }
+            fontsCursor.getCursor().moveNext();
+        }
+
     }
 
     @Override

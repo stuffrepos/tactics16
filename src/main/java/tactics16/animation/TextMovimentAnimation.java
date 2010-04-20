@@ -1,6 +1,5 @@
 package tactics16.animation;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import tactics16.components.TextDialog;
 import tactics16.game.Coordinate;
@@ -20,6 +19,8 @@ public class TextMovimentAnimation implements VisualEntity {
     public TextMovimentAnimation(Coordinate source, Coordinate target, long delay, double speed) {
         this.textDialog = new TextDialog();
         this.textDialog.getPosition().set(source);
+        this.textDialog.setHorizontalPosition(TextDialog.HorizontalAlign.CENTER);
+        this.textDialog.setVerticalPosition(TextDialog.VerticalAlign.MIDDLE);
         this.moviment = new LinearMoviment(this.textDialog.getPosition(), target, speed);
         this.delay = delay;
     }

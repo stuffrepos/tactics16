@@ -40,9 +40,11 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable {
     }
 
     public void setXY(double x, double y) {
-        this.y = y;
-        this.x = x;
-        listenerManager.fireChange();
+        if (this.x != x || this.y != y) {
+            this.y = y;
+            this.x = x;
+            listenerManager.fireChange();
+        }
     }
 
     public int getY() {
