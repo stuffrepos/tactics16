@@ -1,8 +1,11 @@
 package tactics16;
 
+import tactics16.datamanager.DataManager;
 import com.golden.gamedev.Game;
+import com.golden.gamedev.GameLoader;
 import tactics16.phase.PhaseManager;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
@@ -12,16 +15,40 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import tactics16.animation.GameImage;
 
 /**
  *
 import tactics16.util.ObjectCursor1D;
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MyGame extends Game {
+public class MyGame {
 
     private static MyGame instance;
-    private JsonLoader loader;
+    private Game game = new Game() {
+
+        @Override
+        public void initResources() {
+            MyGame.this.initResources();
+        }
+
+        @Override
+        public void update(long elapsedTime) {
+            MyGame.this.update(elapsedTime);
+        }
+
+        @Override
+        public void render(Graphics2D g) {
+            MyGame.this.render(g);
+        }
+
+        @Override
+        protected void notifyError(Throwable error) {
+            System.out.println("Notificado!");
+            super.notifyError(error);         
+        }
+    };
+    private DataManager loader;
     private Graphics2D defaultGraphics2D;
     private PhaseManager phaseManager = new PhaseManager();
     private KeyMapping keyMapping = new KeyMapping();
@@ -39,7 +66,7 @@ public class MyGame extends Game {
     }
 
     private MyGame(String dataPath) {
-        loader = new JsonLoader(this, new File(dataPath));
+        loader = new DataManager(this, new File(dataPath));
         keyMapping.setMapping(GameKey.UP, KeyEvent.VK_UP);
         keyMapping.setMapping(GameKey.DOWN, KeyEvent.VK_DOWN);
         keyMapping.setMapping(GameKey.LEFT, KeyEvent.VK_LEFT);
@@ -51,12 +78,10 @@ public class MyGame extends Game {
         keyMapping.setMapping(GameKey.NEXT, KeyEvent.VK_PAGE_DOWN);
     }
 
-    @Override
     public void initResources() {
         loader.loadDirectory(loader.getSaveDirectory());
     }
 
-    @Override
     public void update(long elapsedTime) {
         try {
             this.phaseManager.getCurrentPhase().update(elapsedTime);
@@ -67,7 +92,6 @@ public class MyGame extends Game {
 
     }
 
-    @Override
     public void render(Graphics2D g) {
         defaultGraphics2D = g;
         if (font != null) {
@@ -75,7 +99,7 @@ public class MyGame extends Game {
         }
 
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, getWidth(), getHeight());
+        g.fillRect(0, 0, game.getWidth(), game.getHeight());
         try {
             this.phaseManager.getCurrentPhase().render(g);
         } catch (Exception ex) {
@@ -86,10 +110,10 @@ public class MyGame extends Game {
     }
 
     public void quit() {
-        this.finish();
+        this.game.finish();
     }
 
-    public JsonLoader getLoader() {
+    public DataManager getLoader() {
         return this.loader;
     }
 
@@ -117,6 +141,24 @@ public class MyGame extends Game {
         return font;
     }
 
+    public GameImage getImage(File file) {
+        return new GameImage(game.getImage(file.getAbsolutePath()));
+    }
+
+    public int getHeight() {
+        return game.getHeight();
+    }
+
+    public int getWidth() {
+        return game.getWidth();
+    }
+
+    public void start() {
+        GameLoader gameLoader = new GameLoader();
+        gameLoader.setup(game, new Dimension(640, 480), false);
+        gameLoader.start();
+    }
+
     public class KeyMapping {
 
         private Map<GameKey, List<Integer>> mapping = new TreeMap<GameKey, List<Integer>>();
@@ -131,7 +173,7 @@ public class MyGame extends Game {
 
         private boolean isKeyPressed(GameKey gameKey) {
             for (Integer key : mapping.get(gameKey)) {
-                if (keyPressed(key)) {
+                if (game.keyPressed(key)) {
                     return true;
                 }
             }

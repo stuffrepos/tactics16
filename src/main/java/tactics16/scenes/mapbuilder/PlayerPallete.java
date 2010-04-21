@@ -1,6 +1,5 @@
 package tactics16.scenes.mapbuilder;
 
-import tactics16.MyGame;
 import tactics16.components.BorderRectangle;
 import tactics16.components.Object2D;
 import tactics16.components.TextDialog;
@@ -13,6 +12,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import tactics16.GameKey;
+import tactics16.scenes.battle.Player;
 
 /**
  *
@@ -20,17 +20,25 @@ import tactics16.GameKey;
  */
 public class PlayerPallete implements Object2D {
 
-    public static final int BOX_WIDTH = 60;
-    public static final int BOX_GAP = 1;
+    public static final int BOX_WIDTH = 80;
+    public static final int BOX_GAP = 10;
     private BorderRectangle visualCursor;
     private Cursor1D cursor;
     private Coordinate position = new Coordinate();
     private int playerCount = 2;
     private List<PlayerBox> boxes = new ArrayList<PlayerBox>();
-    private final int[] playerColors = new int[]{0x770000, 0x777700, 0x000077, 0x007700};
+    private static final int[] playerColors;
+
+    static {
+       playerColors = new int[Player.playersColors.size()];
+
+       for(int i=0; i<playerColors.length; ++i) {
+           playerColors[i] = Player.playersColors.get(i).getColor(Player.Color.DARK_0);
+       }
+    }
 
     public PlayerPallete() {
-        visualCursor = new BorderRectangle(new Dimension(BOX_WIDTH, TextDialog.getDefaultHeight()));
+        visualCursor = new BorderRectangle(new Dimension(BOX_WIDTH, getHeight()));
 
         for (int i = 0; i < playerCount; ++i) {
             boxes.add(new PlayerBox(i, 0xFFFF00));
@@ -56,7 +64,7 @@ public class PlayerPallete implements Object2D {
             }
         });
 
-        cursor.setKeys(GameKey.PREVIOUS,GameKey.NEXT);
+        cursor.setKeys(GameKey.PREVIOUS, GameKey.NEXT);
     }
 
     private void updateVisualCursor() {
@@ -101,7 +109,7 @@ public class PlayerPallete implements Object2D {
     }
 
     public int getHeight() {
-        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight();
+        return TextDialog.getDefaultHeight();
     }
 
     public Cursor1D getCursor() {
@@ -125,7 +133,7 @@ public class PlayerPallete implements Object2D {
             nameDialog.setMaxWidth(BOX_WIDTH);
             nameDialog.setMinWidth(BOX_WIDTH);
             nameDialog.setBackgroundColor(new Color(getColor()));
-            nameDialog.setForegroundColor(Color.BLACK);
+            nameDialog.setForegroundColor(Color.WHITE);
             this.position.addListener(new Listener<Coordinate>() {
 
                 public void onChange(Coordinate source) {

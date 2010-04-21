@@ -5,6 +5,7 @@ import tactics16.MyGame;
 import tactics16.components.TextDialog;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import tactics16.GameKey;
 import tactics16.components.MapCursor;
 import tactics16.components.VisualMap;
 import tactics16.phase.Phase;
@@ -40,9 +41,9 @@ class TerrainEditMode implements Phase {
         terrainPallete.update(elapsedTime);
         mapCursor.update(elapsedTime);
 
-        if (MyGame.getInstance().keyPressed(KeyEvent.VK_ESCAPE)) {
+        if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
             scene.toMenuMode();
-        } else if (MyGame.getInstance().keyPressed(KeyEvent.VK_SPACE)) {
+        } else if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
             scene.getMap().setTerrain(
                     mapCursor.getCursor().getPosition(),
                     terrainPallete.getCursor().getSelected());

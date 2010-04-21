@@ -1,0 +1,44 @@
+{
+    objectType: "job",
+    name: "Ryu Hayabusa",
+    defense: 3,
+    evasiveness: 4,
+    playerColorsMapping: {
+        "283180": "DARK_1",
+        "8888F8": "DARK_2",
+        "9880F8": "DARK_3"
+    },
+    spriteActions: {
+        "stopped": {
+            "changeFrameInterval": 500,
+            "images": ["stopped-0.png","stopped-1.png"]
+        },
+        "damaged": {
+            "changeFrameInterval": 1000,
+            "images": ["damaged-0.png"]
+        },
+        "walking": {
+            "changeFrameInterval": 200,
+            "images": ["walking-0.png","walking-1.png","walking-2.png"]
+        },
+        "attacking": {
+            "changeFrameInterval": 250,
+            "images": ["attacking-0.png","attacking-1.png","attacking-2.png"]
+        },
+        "effect": {
+            "changeFrameInterval": 100,
+            "images": ["effect-0.png","effect-1.png","effect-2.png","effect-3.png"]
+        }
+    },
+    actions: [{
+        "name": "Slash",
+        "power": 8,
+        "agility": 4,
+        "reach": {
+            "min": 1,
+            "max": 1,
+            "ray": 0,
+            "clearTrajectory": true
+        }
+    }]
+}

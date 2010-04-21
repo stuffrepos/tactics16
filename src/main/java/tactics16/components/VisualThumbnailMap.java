@@ -30,7 +30,7 @@ public class VisualThumbnailMap {
             getMap().iterate(new Map.Iterator() {
 
                 public void check(int x, int y, Terrain terrain) {
-                    BufferedImage terrainThumbnail = Thumbnail.getThumbnail(terrain.getImages().get(0), THUMBNAIL_TERRAIN_SIZE, THUMBNAIL_TERRAIN_SIZE, null);
+                    BufferedImage terrainThumbnail = Thumbnail.getThumbnail(terrain.getImages().get(0).getImage(), THUMBNAIL_TERRAIN_SIZE, THUMBNAIL_TERRAIN_SIZE, null);
                     g.drawImage(terrainThumbnail, THUMBNAIL_TERRAIN_SIZE * x, THUMBNAIL_TERRAIN_SIZE * y, null);
                 }
             });

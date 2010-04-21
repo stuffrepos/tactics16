@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 
 public class BorderRectangle {
 
-    private static Color DEFAULT_COLOR = Color.BLACK;
+    private static Color DEFAULT_COLOR = Color.WHITE;
     private Coordinate position = new Coordinate();
     private Color color;
     private Dimension size;
@@ -34,9 +34,11 @@ public class BorderRectangle {
 
     public void render(Graphics2D g) {
         g.setColor(color);
-        for (int i = 0; i < 3; ++i) {
-            drawRect(g, i);
-        }
+        drawRect(g,0);
+        g.setColor(Color.BLACK);
+        drawRect(g,1);
+        g.setColor(color);
+        drawRect(g,2);
     }
 
     private void drawRect(Graphics2D g, int level) {

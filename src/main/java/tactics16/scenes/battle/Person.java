@@ -6,6 +6,7 @@ import tactics16.util.TransformUtil;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import tactics16.animation.GameImage;
 import tactics16.animation.VisualEntity;
 
 /**
@@ -54,7 +55,7 @@ public class Person extends DataObject implements VisualEntity {
         this.elapsedTime += elapsedTime;
     }
 
-    public BufferedImage getCurrentImage() {
+    public GameImage getCurrentImage() {
 
         SpriteAnimation spriteAction;
         switch(this.currentGameAction) {
@@ -74,21 +75,14 @@ public class Person extends DataObject implements VisualEntity {
     }
 
     public void render(Graphics2D g) {
-        BufferedImage image = getCurrentImage();
+        GameImage image = getCurrentImage();
         if (image != null) {
-            if (side >= 0) {
-                g.drawImage(image, position.getX() - image.getWidth() / 2, position.getY() - image.getHeight(), null);
-            } else {
-                AffineTransform flipTransform = TransformUtil.getFlipHorizontalTransform(
-                        image);
-
-                flipTransform.preConcatenate(AffineTransform.getTranslateInstance(
-                        position.getX() - image.getWidth() / 2,
-                        position.getY() - image.getHeight()));
-
-                g.drawImage(image, flipTransform, null);
-            }
-
+            image.render(
+                    g,
+                    position.getX() - image.getImage().getWidth() / 2,
+                    position.getY() - image.getImage().getHeight(),
+                    side < 0,
+                    false);            
         }
     }
 

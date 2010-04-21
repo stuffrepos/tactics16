@@ -21,7 +21,7 @@ public class VisualAnimation {
         }
     }
 
-    public BufferedImage getCurrentImage() {
+    public GameImage getCurrentImage() {
         if (animation.getImagesCount() > 0 && elapsedTime >= 0l) {
             return animation.getImage(elapsedTime);
         } else {
@@ -30,7 +30,10 @@ public class VisualAnimation {
     }
 
     public void render(Graphics2D g) {
-        g.drawImage(getCurrentImage(), position.getX(), position.getY(), null);
+        GameImage image = getCurrentImage();
+        if (image != null) {
+            image.render(g, position);
+        }
     }
 
     public void update(long elapsedTime) {

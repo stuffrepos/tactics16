@@ -1,5 +1,6 @@
 package tactics16.scenes.battle;
 
+import tactics16.animation.GameImage;
 import tactics16.animation.SpriteAnimation;
 import tactics16.game.*;
 import java.awt.Transparency;
@@ -26,8 +27,8 @@ public class Player extends DataObject {
     private CacheableMapValue<Job, SpriteAnimation> selectedAnimations =
             new CacheableMapValue<Job, SpriteAnimation>() {
 
-                private Collection<BufferedImage> createImages(Job job,BufferedImage image) {
-                    List<BufferedImage> list = new LinkedList<BufferedImage>();
+                private Collection<GameImage> createImages(Job job, GameImage image) {
+                    List<GameImage> list = new LinkedList<GameImage>();
                     final int COUNT = 4;
                     for (int i = 0; i <= COUNT; ++i) {
                         float factor = ((float) i / COUNT) * 0.4f + 0.8f;
@@ -37,12 +38,12 @@ public class Player extends DataObject {
                     return list;
                 }
 
-                private BufferedImage createSelectedImage(BufferedImage image, final float factor) {
-                    
-                    final BufferedImage newImage =
-                            new BufferedImage(image.getWidth(), image.getHeight(), Transparency.BITMASK);
+                private GameImage createSelectedImage(GameImage image, final float factor) {
 
-                    new PixelImageIterator(image) {
+                    final BufferedImage newImage =
+                            new BufferedImage(image.getImage().getWidth(), image.getImage().getHeight(), Transparency.BITMASK);
+
+                    new PixelImageIterator(image.getImage()) {
 
                         @Override
                         public void iterate(int x, int y, int rgb) {
@@ -54,7 +55,10 @@ public class Player extends DataObject {
                         }
                     };
 
-                    return newImage;
+                    GameImage gameImage = new GameImage(newImage);
+                    gameImage.getCenter().set(image.getCenter());
+
+                    return gameImage;
                 }
 
                 @Override
@@ -63,8 +67,8 @@ public class Player extends DataObject {
                     SpriteAnimation stoppedAnimation = key.getSpriteActionGroup().getSpriteAction(GameAction.STOPPED);
                     animation.setChangeFrameInterval(SELECTED_ACTION_CHANGE_FRAME_INTERVAL);
 
-                    for (BufferedImage sourceImage : stoppedAnimation.getImages()) {
-                        for (BufferedImage selectedImage : createImages(key,sourceImage)) {
+                    for (GameImage sourceImage : stoppedAnimation.getImages()) {
+                        for (GameImage selectedImage : createImages(key, sourceImage)) {
                             animation.addImage(selectedImage);
                         }
                     }
@@ -73,14 +77,14 @@ public class Player extends DataObject {
                 }
             };
     private final int index;
-    private static final ArrayList<PlayerColors> playersColors;
+    public static final ArrayList<PlayerColors> playersColors;
 
     static {
         PlayerColors player1Colors = new PlayerColors();
         player1Colors.setMapping(Color.DARK_0, 0x400000);
         player1Colors.setMapping(Color.DARK_1, 0x980000);
         player1Colors.setMapping(Color.DARK_2, 0xE00000);
-        player1Colors.setMapping(Color.DARK_3, 0xFFFFFF);
+        player1Colors.setMapping(Color.DARK_3, 0xFF0000);
         player1Colors.setMapping(Color.LIGHT_0, 0x605000);
         player1Colors.setMapping(Color.LIGHT_1, 0xD0D000);
         player1Colors.setMapping(Color.LIGHT_2, 0xA08000);
@@ -90,25 +94,33 @@ public class Player extends DataObject {
         player2Colors.setMapping(Color.DARK_0, 0x000040);
         player2Colors.setMapping(Color.DARK_1, 0x000098);
         player2Colors.setMapping(Color.DARK_2, 0x0000E0);
-        player2Colors.setMapping(Color.DARK_3, 0xFFFFFF);
+        player2Colors.setMapping(Color.DARK_3, 0x0000FF);
         player2Colors.setMapping(Color.LIGHT_0, 0x005060);
         player2Colors.setMapping(Color.LIGHT_1, 0x00D0D0);
         player2Colors.setMapping(Color.LIGHT_2, 0x0080A0);
-        player2Colors.setMapping(Color.LIGHT_3, 0x00FFFF);
-
+        player2Colors.setMapping(Color.LIGHT_3, 0x00DDFF);
+        /*
+        player2Colors.setMapping(Color.DARK_0, 0x004000);
+        player2Colors.setMapping(Color.DARK_1, 0x009800);
+        player2Colors.setMapping(Color.DARK_2, 0x00E000);
+        player2Colors.setMapping(Color.DARK_3, 0x00FFFF);
+        player2Colors.setMapping(Color.LIGHT_0, 0x006050);
+        player2Colors.setMapping(Color.LIGHT_1, 0x00D0D0);
+        player2Colors.setMapping(Color.LIGHT_2, 0x00A080);
+        player2Colors.setMapping(Color.LIGHT_3, 0x00FFDD);
+         */
         playersColors = new ArrayList<PlayerColors>();
-        playersColors.add(player2Colors);
         playersColors.add(player1Colors);
+        playersColors.add(player2Colors);
     }
-
     private List<Person> persons = new ArrayList<Person>();
 
     public Player(String name, int index) {
         super(name);
-        this.index = index;        
+        this.index = index;
     }
 
-    public BufferedImage getImage(JobSpriteActionGroup jobSpriteActionGroup, BufferedImage spriteImage) {
+    public GameImage getImage(JobSpriteActionGroup jobSpriteActionGroup, GameImage spriteImage) {
         return playersColors.get(index).getMaskedImage(jobSpriteActionGroup, spriteImage);
     }
 
@@ -132,39 +144,39 @@ public class Player extends DataObject {
         LIGHT_3
     }
 
-    private static class PlayerColors {
+    public static class PlayerColors {
 
         private java.util.Map<Color, Integer> mapping = new TreeMap<Color, Integer>();
-        private java.util.Map<BufferedImage, CacheableValue<BufferedImage>> maskedImages =
-                new HashMap<BufferedImage, CacheableValue<BufferedImage>>();
+        private java.util.Map<GameImage, CacheableValue<GameImage>> maskedImages =
+                new HashMap<GameImage, CacheableValue<GameImage>>();
 
         public void setMapping(Color playerColor, int rgb) {
             mapping.put(playerColor, rgb);
         }
 
-        public BufferedImage getMaskedImage(final JobSpriteActionGroup jobSpriteActionGroup, final BufferedImage image) {
-            CacheableValue<BufferedImage> cachedMaskedImage = maskedImages.get(image);
+        public GameImage getMaskedImage(final JobSpriteActionGroup jobSpriteActionGroup, final GameImage image) {
+            CacheableValue<GameImage> cachedMaskedImage = maskedImages.get(image);
 
             if (cachedMaskedImage == null) {
-                cachedMaskedImage = new CacheableValue<BufferedImage>() {
+                cachedMaskedImage = new CacheableValue<GameImage>() {
 
                     @Override
-                    protected BufferedImage calculate() {
-                        BufferedImage maskedImage = new BufferedImage(
-                                image.getWidth(),
-                                image.getHeight(),
-                                Transparency.BITMASK);
+                    protected GameImage calculate() {
+                       final GameImage maskedImage = image.sameSize();
 
-                        for (int x = 0; x < maskedImage.getWidth(); ++x) {
-                            for (int y = 0; y < maskedImage.getHeight(); ++y) {
-                                int color = image.getRGB(x, y);
+                       new PixelImageIterator(image.getImage()) {
+
+                            @Override
+                            public void iterate(int x, int y, int rgb) {
+                                int color = image.getImage().getRGB(x, y);
                                 Player.Color playerColor = jobSpriteActionGroup.getMapping(color);
                                 if (playerColor != null) {
                                     color = ((color & 0xFF000000) | mapping.get(playerColor));
                                 }
-                                maskedImage.setRGB(x, y, color);
+                                maskedImage.getImage().setRGB(x, y, color);
                             }
-                        }
+                        };
+
                         return maskedImage;
                     }
                 };
@@ -172,6 +184,10 @@ public class Player extends DataObject {
             }
 
             return cachedMaskedImage.getValue();
+        }
+
+        public Integer getColor(Color playerColor) {
+            return mapping.get(playerColor);
         }
     }
 }

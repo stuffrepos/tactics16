@@ -2,15 +2,13 @@ package tactics16.game;
 
 import tactics16.MyGame;
 import tactics16.util.Nameable;
-import tactics16.util.Thumbnail;
 import tactics16.util.listeners.Listener;
 import tactics16.util.listeners.ListenerManager;
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import tactics16.animation.GameImage;
 
 /**
  *
@@ -214,7 +212,7 @@ public class Map implements Nameable {
         this.elapsedTime += elapsedTime;
     }
 
-    public BufferedImage getTerrainImage(Terrain terrain) {
+    public GameImage getTerrainImage(Terrain terrain) {
         return terrain.getImages().get((int) ((elapsedTime / 300L) % terrain.getImages().size()));
     }
 

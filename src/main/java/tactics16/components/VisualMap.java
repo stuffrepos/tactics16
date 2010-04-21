@@ -40,10 +40,10 @@ public class VisualMap {
 
             public void check(int x, int y, Terrain terrain) {
                 if (terrain != null) {
-                    g.drawImage(
-                            map.getTerrainImage(terrain),
+                    map.getTerrainImage(terrain).render(
+                            g,
                             position.getX() + x * Map.TERRAIN_SIZE,
-                            position.getY() + y * Map.TERRAIN_SIZE, null);
+                            position.getY() + y * Map.TERRAIN_SIZE);                    
                 } else {
                     g.setColor(Color.BLACK);
                     g.drawRect(
@@ -65,10 +65,10 @@ public class VisualMap {
 
             public void check(int x, int y, Terrain terrain) {
                 if (terrain != null) {
-                    g.drawImage(
-                            map.getTerrainImage(terrain),
+                    map.getTerrainImage(terrain).render(
+                            g,
                             position.getX() + x * Map.TERRAIN_SIZE,
-                            position.getY() + y * Map.TERRAIN_SIZE, null);
+                            position.getY() + y * Map.TERRAIN_SIZE);
                 } else {
                     g.setColor(Color.BLACK);
                     g.drawRect(

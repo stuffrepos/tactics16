@@ -9,13 +9,13 @@ import java.util.TreeMap;
  */
 public class ImageGroup {
 
-    private java.util.Map<String, BufferedImage> images = new TreeMap<String, BufferedImage>();
+    private java.util.Map<String, GameImage> images = new TreeMap<String, GameImage>();
 
-    public BufferedImage getImage(String name) {
+    public GameImage getImage(String name) {
         return images.get(name);
     }
 
-    public void addImage(String name, BufferedImage image) {
+    public void addImage(String name, GameImage image) {
         images.put(name, image);
     }
 

@@ -2,13 +2,13 @@ package tactics16.game;
 
 import tactics16.util.Nameable;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.List;
+import tactics16.animation.GameImage;
 
 public class Terrain implements Nameable {
 
-    private List<BufferedImage> images = new LinkedList<BufferedImage>();
+    private List<GameImage> images = new LinkedList<GameImage>();
     private String name;
     private Boolean allowMoviment;
     private Boolean allowAction;
@@ -41,11 +41,11 @@ public class Terrain implements Nameable {
         this.allowAction = allowAction;
     }
 
-    public List<BufferedImage> getImages() {
+    public List<GameImage> getImages() {
         return images;
     }
 
     public void render(Graphics2D g, int x, int y) {
-        g.drawImage(images.get(0), x, y, null);
+        images.get(0).render(g, x, y);
     }
 }

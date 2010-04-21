@@ -7,7 +7,7 @@ public class SpriteAnimation {
 
     public static final int DEFAULT_CHANGE_FRAME_INTERVAL = 250;
     private int changeFrameInterval = DEFAULT_CHANGE_FRAME_INTERVAL;
-    private ArrayList<BufferedImage> images = new ArrayList<BufferedImage>();
+    private ArrayList<GameImage> images = new ArrayList<GameImage>();
 
     public int getChangeFrameInterval() {
         return changeFrameInterval;
@@ -21,11 +21,11 @@ public class SpriteAnimation {
         return images.size();
     }
 
-    public BufferedImage getImage(long elapsedTime) {
+    public GameImage getImage(long elapsedTime) {
         return images.get(getImageIndex(elapsedTime));
     }
 
-    public void addImage(BufferedImage image) {
+    public void addImage(GameImage image) {
         images.add(image);
     }
 
@@ -37,11 +37,11 @@ public class SpriteAnimation {
         return elapsedTime / (changeFrameInterval * images.size());
     }
 
-    public Iterable<BufferedImage> getImages() {
+    public Iterable<GameImage> getImages() {
         return images;
     }
 
-    public BufferedImage getImageByIndex(int index) {
+    public GameImage getImageByIndex(int index) {
         return images.get(index);
     }
 }

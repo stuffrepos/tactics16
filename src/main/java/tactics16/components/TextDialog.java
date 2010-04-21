@@ -74,7 +74,7 @@ public class TextDialog implements Object2D {
     };
 
     public static int getDefaultHeight() {
-        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight();
+        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight() + MARGIN * 2;
     }
 
     public void render(Graphics2D g) {
@@ -212,13 +212,15 @@ public class TextDialog implements Object2D {
     }
 
     public void addGeometryListener(final Listener<Object2D> listener) {
-        this.size.addListener(new Listener<Coordinate>(){
+        this.size.addListener(new Listener<Coordinate>() {
+
             public void onChange(Coordinate source) {
                 listener.onChange(TextDialog.this);
             }
         });
 
-        this.position.addListener(new Listener<Coordinate>(){
+        this.position.addListener(new Listener<Coordinate>() {
+
             public void onChange(Coordinate source) {
                 listener.onChange(TextDialog.this);
             }

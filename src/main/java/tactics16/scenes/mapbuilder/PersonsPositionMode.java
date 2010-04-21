@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import tactics16.GameKey;
 import tactics16.components.MapCursor;
 import tactics16.components.VisualMap;
 import tactics16.phase.Phase;
@@ -39,9 +40,9 @@ class PersonsPositionMode implements Phase {
 
     public void update(long elapsedTime) {
         playerPallete.update(elapsedTime);
-        if (MyGame.getInstance().keyPressed(KeyEvent.VK_ESCAPE)) {
+        if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
             scene.toMenuMode();
-        } else if (MyGame.getInstance().keyPressed(KeyEvent.VK_SPACE)) {
+        } else if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
             tooglePersonPosition();
         }
 
