@@ -37,7 +37,7 @@ public class EffectAnimation {
                     this.battleAction.getAgent().getJob().getSpriteActionGroup().getSpriteAction(
                     GameAction.EFFECT),
                     1);
-            effect.getPosition().set(visualBattleMap.getVisualMap().getTerrainPosition(rayTarget));
+            effect.getPosition().set(visualBattleMap.getVisualMap().getPersonPosition(rayTarget));
             if (first) {
                 first = false;
             } else {

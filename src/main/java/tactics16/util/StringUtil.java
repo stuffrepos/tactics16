@@ -8,14 +8,13 @@ import java.util.List;
  */
 public class StringUtil {
 
-    public static String implode(String separator,List list) {
+    public static String implode(String separator, List list) {
         StringBuilder b = new StringBuilder();
         boolean first = true;
-        for(Object o: list) {
+        for (Object o : list) {
             if (first) {
                 first = false;
-            }
-            else {
+            } else {
                 b.append(separator);
             }
 
@@ -23,5 +22,20 @@ public class StringUtil {
         }
 
         return b.toString();
+    }
+
+    public static String parseString(String s) {
+
+        if (s == null) {
+            return null;
+        }
+
+        s = s.trim();
+
+        if (s.isEmpty()) {
+            return null;
+        } else {
+            return s;
+        }
     }
 }

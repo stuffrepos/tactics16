@@ -79,8 +79,7 @@ public class Person extends DataObject implements VisualEntity {
         if (image != null) {
             image.render(
                     g,
-                    position.getX() - image.getImage().getWidth() / 2,
-                    position.getY() - image.getImage().getHeight(),
+                    position,
                     side < 0,
                     false);            
         }

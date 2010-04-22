@@ -10,7 +10,7 @@ import tactics16.game.Terrain;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class TerrainJsonLoader extends AbstractObjectJsonLoader<Terrain>{    
+public class TerrainJsonLoader extends AbstractJsonFileLoader<Terrain>{
 
     public TerrainJsonLoader(File file) throws IOException, JSONException {
         super(file);

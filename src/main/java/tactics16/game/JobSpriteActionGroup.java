@@ -1,5 +1,6 @@
 package tactics16.game;
 
+import tactics16.animation.AnimationGroup;
 import tactics16.scenes.battle.Player;
 import tactics16.animation.SpriteAnimation;
 import java.util.TreeMap;
@@ -61,5 +62,11 @@ public class JobSpriteActionGroup {
 
     public ImageGroup getImages() {
         return images;
+    }
+
+    public void addAnimationGroup(AnimationGroup animationGroup) {
+        for(java.util.Map.Entry<String,SpriteAnimation> e: animationGroup.getAnimations()) {
+            spriteActions.put(GameAction.valueOf(e.getKey().toUpperCase()), e.getValue());
+        }
     }
 }

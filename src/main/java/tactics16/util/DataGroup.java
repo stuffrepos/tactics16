@@ -1,7 +1,10 @@
 package tactics16.util;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.TreeMap;
+import tactics16.animation.SpriteAnimation;
 
 /**
  *
@@ -46,5 +49,13 @@ public class DataGroup<T extends Nameable> implements Iterable<T> {
         if (this.get(o.getName()) == null) {
             add(o);
         }
+    }
+
+    public boolean has(String name) {
+        return this.get(name) != null;
+    }
+
+    public Iterable<Entry<String, T>> entrySet() {
+        return map.entrySet();
     }
 }

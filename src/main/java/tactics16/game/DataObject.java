@@ -1,10 +1,12 @@
 package tactics16.game;
 
+import tactics16.util.Nameable;
+
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class DataObject {
+public abstract class DataObject implements Nameable {
 
     private String name;
 
@@ -15,5 +17,4 @@ public class DataObject {
     public String getName() {
         return this.name;
     }
-
 }

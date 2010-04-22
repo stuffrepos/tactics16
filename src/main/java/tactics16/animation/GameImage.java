@@ -22,7 +22,7 @@ public class GameImage {
     }
 
     public void render(Graphics2D g, Coordinate position) {
-        render(g, position.getX(), position.getY());
+        render(g, position, false, false);
     }
 
     public void render(Graphics2D g, int x, int y) {
@@ -31,14 +31,14 @@ public class GameImage {
 
     public void render(Graphics2D g, int x, int y, boolean invertX, boolean invertY) {
 
-        assert invertY = true : "Not yet implemented Y invert";
+        assert invertY == false : "Not yet implemented Y invert";
 
         if (invertX) {
             AffineTransform flipTransform = TransformUtil.getFlipHorizontalTransform(
                     image);
 
             flipTransform.preConcatenate(AffineTransform.getTranslateInstance(
-                    x - center.getX(),
+                    x - (image.getWidth() - center.getX()),
                     y - center.getY()));
 
             g.drawImage(image, flipTransform, null);
@@ -70,5 +70,9 @@ public class GameImage {
         gameImage.getCenter().set(center);
 
         return gameImage;
+    }
+
+    public void render(Graphics2D g, Coordinate position, boolean invertX, boolean invertY) {
+        render(g, position.getX(), position.getY(), invertX, invertY);
     }
 }
