@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import tactics16.MyGame;
+import tactics16.animation.VisualEntity;
 import tactics16.game.Coordinate;
 import tactics16.util.cache.CacheableValue;
 
@@ -12,10 +13,8 @@ import tactics16.util.cache.CacheableValue;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Text implements Object2D {
-
-    public static final Font MAIN_TITLE_FONT = new Font("purisa", Font.BOLD, 48);
-    public static final Font PHASE_TITLE_FONT = new Font("purisa", Font.BOLD, 16);
+public class Text implements Object2D,VisualEntity {
+    
     public static final int MAX_MARGIN = 10;
     private Align align = Align.NEGATIVE;
     public static final Color DEFAULT_COLOR = Color.WHITE;
@@ -91,7 +90,10 @@ public class Text implements Object2D {
             g.drawString(
                     line,
                     x,
-                    position.getY() + getMargin() + g.getFontMetrics(getFont()).getHeight() * i + g.getFontMetrics(getFont()).getAscent() +
+                    position.getY() +
+                    getMargin() +
+                    g.getFontMetrics(getFont()).getHeight() * i +
+                    g.getFontMetrics(getFont()).getAscent() +
                     g.getFontMetrics(getFont()).getLeading());
             i++;
         }
@@ -152,5 +154,12 @@ public class Text implements Object2D {
         this.font = font;
         this.width.clear();
         this.height.clear();
+    }
+
+    public void update(long elapsedTime) {
+    }
+
+    public boolean isFinalized() {
+        return false;
     }
 }

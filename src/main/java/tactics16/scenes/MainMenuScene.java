@@ -26,13 +26,13 @@ import tactics16.util.listeners.Listener;
  */
 public class MainMenuScene extends AbstractPhase {
 
+    public static final Font MAIN_TITLE_FONT = new Font("purisa", Font.BOLD, 48);
     private static final MainMenuScene instance = new MainMenuScene();
     private boolean positioned = false;
     private Text title;
     private TextDialog keysHelp;
-    private ObjectCursor1D<Font> fontsCursor;
-    private TextDialog fontName;
-    private final Menu mainMenu = new Menu(           
+    
+    private final Menu mainMenu = new Menu(
             new CommonMenuOption("Play") {
 
                 @Override
@@ -46,6 +46,14 @@ public class MainMenuScene extends AbstractPhase {
                 @Override
                 public void executeAction() {
                     MyGame.getInstance().getPhaseManager().advance(MapBuilderScene.getInstance());
+
+                }
+            },
+            new CommonMenuOption("Text Font Tester") {
+
+                @Override
+                public void executeAction() {
+                    MyGame.getInstance().getPhaseManager().advance(FontTesterScene.getInstance());
 
                 }
             },
@@ -65,7 +73,7 @@ public class MainMenuScene extends AbstractPhase {
                 MyGame.getInstance().getPhaseManager().advance(new SelectPersonsScene(selectMapScene));
             }
         }
-    },true);
+    }, true);
 
     private MainMenuScene() {
     }
@@ -78,7 +86,7 @@ public class MainMenuScene extends AbstractPhase {
     public void onAdd() {
 
         title = new Text();
-        title.setFont(Text.MAIN_TITLE_FONT);
+        title.setFont(MAIN_TITLE_FONT);
         title.setColor(PhaseTitle.DEFAULT_COLOR);
         title.setText("Tactics16");
 
@@ -100,51 +108,17 @@ public class MainMenuScene extends AbstractPhase {
             b.append('\n');
         }
         keysHelp.setText(b.toString());
-        fontName = new TextDialog();
-        fontName.getPosition().setXY(Layout.OBJECT_GAP, Layout.OBJECT_GAP);
-
-        final String initialFontName = MyGame.getInstance().getFont().getName();
-
-        List<Font> fonts = new ArrayList<Font>();
-
-        for (String fontName :
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames()) {
-            fonts.add(new Font(fontName, Font.PLAIN, 12));
-        }
-
-        fontsCursor = new ObjectCursor1D<Font>(fonts);
-        fontsCursor.getCursor().setKeys(GameKey.PREVIOUS, GameKey.NEXT);
-        fontsCursor.getCursor().addListener(new Listener<Cursor1D>() {
-
-            public void onChange(Cursor1D source) {
-
-                MyGame.getInstance().setFont(fontsCursor.getSelected());
-
-                fontName.setText(fontsCursor.getSelected().getName());
-            }
-        });
-
-        while (true) {
-            if (initialFontName.equals(fontsCursor.getSelected().getName())) {
-                break;
-            }
-            if (fontsCursor.getCursor().getCurrent() == fontsCursor.getCursor().getLength()) {
-                break;
-            }
-            fontsCursor.getCursor().moveNext();
-        }
     }
 
     @Override
     public void update(long elapsedTime) {
-        fontsCursor.update(elapsedTime);
         mainMenu.update(elapsedTime);
     }
 
     @Override
     public void render(Graphics2D g) {
         mainMenu.render(g);
-        fontName.render(g);
+        
         title.render(g);
         keysHelp.render(g);
 

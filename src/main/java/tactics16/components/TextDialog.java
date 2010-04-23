@@ -4,7 +4,7 @@ import java.awt.Font;
 import tactics16.game.Coordinate;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import tactics16.Layout;
+import tactics16.animation.VisualEntity;
 import tactics16.util.Align;
 import tactics16.util.SizeConfig;
 import tactics16.util.listeners.Listener;
@@ -13,7 +13,7 @@ import tactics16.util.listeners.Listener;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class TextDialog implements Object2D {
+public class TextDialog implements Object2D, VisualEntity {
 
     public static final Color DEFAULT_FOREGROUND_COLOR = Color.WHITE;
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.DARK_GRAY;
@@ -185,6 +185,19 @@ public class TextDialog implements Object2D {
     }
 
     public void setFont(Font font) {
+        this.width.clear();
+        this.height.clear();
         text.setFont(font);
+    }
+
+    public Font getFont() {
+        return text.getFont();
+    }
+
+    public void update(long elapsedTime) {
+    }
+
+    public boolean isFinalized() {
+        return false;
     }
 }
