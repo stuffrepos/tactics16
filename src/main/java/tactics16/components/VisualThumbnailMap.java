@@ -6,8 +6,8 @@ import java.awt.image.BufferedImage;
 import tactics16.game.Coordinate;
 import tactics16.game.Map;
 import tactics16.game.Terrain;
-import tactics16.util.CacheableValue;
-import tactics16.util.Thumbnail;
+import tactics16.util.cache.CacheableValue;
+import tactics16.util.image.Thumbnail;
 
 /**
  *

@@ -1,4 +1,4 @@
-package tactics16.util;
+package tactics16.util.javabasic;
 
 import java.util.ArrayList;
 import java.util.Iterator;

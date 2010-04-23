@@ -1,4 +1,4 @@
-package tactics16.util;
+package tactics16.util.cursors;
 
 import tactics16.GameKey;
 import tactics16.MyGame;

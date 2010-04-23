@@ -64,6 +64,7 @@ public class Job implements Nameable {
         ATTACKING,
         SELECTED,
         EFFECT,
-        ON_ATTACKING
+        ON_ATTACKING,
+        USED
     }
 }

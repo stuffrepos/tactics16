@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import tactics16.animation.GameImage;
+import tactics16.components.Object2D;
 
 /**
  *
@@ -45,7 +46,7 @@ public class MyGame {
         @Override
         protected void notifyError(Throwable error) {
             System.out.println("Notificado!");
-            super.notifyError(error);         
+            super.notifyError(error);
         }
     };
     private DataManager loader;
@@ -54,6 +55,24 @@ public class MyGame {
     private KeyMapping keyMapping = new KeyMapping();
     private Font font = new Font("Liberation Mono", Font.PLAIN, 12);
     //private Font font = new Font("Purisa", Font.PLAIN, 12);
+    private Object2D screenObject2D = new Object2D() {
+
+        public int getTop() {
+            return 0;
+        }
+
+        public int getLeft() {
+            return 0;
+        }
+
+        public int getWidth() {
+            return MyGame.this.getWidth();
+        }
+
+        public int getHeight() {
+            return MyGame.this.getHeight();
+        }
+    };
 
     public static MyGame getInstance() {
         return instance;
@@ -66,7 +85,7 @@ public class MyGame {
     }
 
     private MyGame(String dataPath) {
-        loader = new DataManager(this, new File(dataPath));
+        loader = new DataManager(new File(dataPath));
         keyMapping.setMapping(GameKey.UP, KeyEvent.VK_UP);
         keyMapping.setMapping(GameKey.DOWN, KeyEvent.VK_DOWN);
         keyMapping.setMapping(GameKey.LEFT, KeyEvent.VK_LEFT);
@@ -79,7 +98,7 @@ public class MyGame {
     }
 
     public void initResources() {
-        loader.loadDirectory(loader.getSaveDirectory());
+        loader.loadDirectory(loader.getDataDirectory());
     }
 
     public void update(long elapsedTime) {
@@ -159,6 +178,10 @@ public class MyGame {
         gameLoader.start();
     }
 
+    public Object2D getScreenObject2D() {
+        return screenObject2D;
+    }
+
     public class KeyMapping {
 
         private Map<GameKey, List<Integer>> mapping = new TreeMap<GameKey, List<Integer>>();
@@ -178,6 +201,7 @@ public class MyGame {
                 }
             }
             return false;
+
         }
 
         public Collection<Integer> getKeys(GameKey gameKey) {

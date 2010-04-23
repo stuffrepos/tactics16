@@ -5,7 +5,7 @@ import java.awt.Transparency;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import tactics16.game.Coordinate;
-import tactics16.util.TransformUtil;
+import tactics16.util.image.TransformUtil;
 
 /**
  *

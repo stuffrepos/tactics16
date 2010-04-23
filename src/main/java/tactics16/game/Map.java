@@ -4,7 +4,6 @@ import tactics16.MyGame;
 import tactics16.util.Nameable;
 import tactics16.util.listeners.Listener;
 import tactics16.util.listeners.ListenerManager;
-import java.awt.image.BufferedImage;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -16,120 +15,19 @@ import tactics16.animation.GameImage;
  */
 public class Map implements Nameable {
 
-    public Terrain getTerrain(Coordinate position) {
-        return getTerrain(position.getX(), position.getY());
-    }
-
-    public PersonInitialPositions getPersonInitialPositions() {
-        return personInitialPositions;
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="class Terrains">
-    private class Terrains {
-
-        private int width;
-        private int height;
-        private Terrain[][] terrains;
-
-        public Terrains(int width, int height) {
-            setWidthHeight(width, height);
-        }
-
-        public void setWidthHeight(int width, int heigth) {
-            assert width >= 0;
-            assert heigth >= 0;
-            this.width = width;
-            this.height = heigth;
-            this.terrains = new Terrain[width][heigth];
-        }
-
-        public int getWidth() {
-            return width;
-        }
-
-        public int getHeight() {
-            return height;
-        }
-
-        public Terrain get(int x, int y) {
-            return terrains[x][y];
-        }
-
-        public void setTerrrain(int x, int y, Terrain terrain) {
-            terrains[x][y] = terrain;
-        }
-
-        private boolean inPoint(int x, int y) {
-            return (x >= 0 && x < width) && (y >= 0 && y < height);
-        }
-    }// </editor-fold>
-
-    // <editor-fold defaultstate="collapsed" desc="class PersonInitialPositions">
-    public static class PersonInitialPositions {
-
-        private java.util.Map<Coordinate, Integer> positions = new TreeMap<Coordinate, Integer>();
-        private java.util.Map<Integer, Set<Coordinate>> players = new TreeMap<Integer, Set<Coordinate>>();
-
-        public Iterable<Coordinate> getAllPositions() {
-            return positions.keySet();
-        }
-
-        public Integer getPlayerFromPosition(Coordinate position) {
-            return positions.get(position);
-        }
-
-        public int getPlayerCount() {
-            return players.size();
-        }
-
-        public void setPosition(Integer player, Coordinate position) {
-            removePosition(position);
-            if (player != null) {
-                addPosition(player, position);
-            }
-        }
-
-        public void addPosition(int player, Coordinate position) {
-            Coordinate positionClone = position.clone();
-            getPlayerInitialPositions(player).add(positionClone);
-            positions.put(positionClone, player);
-        }
-
-        public void removePosition(Coordinate position) {
-            if (positions.get(position) != null) {
-                players.get(positions.get(position)).remove(position);
-            }
-            positions.remove(position);
-        }
-
-        public Set<Coordinate> getPlayerInitialPositions(int player) {
-            Set<Coordinate> playerPositions = players.get(player);
-
-            if (playerPositions == null) {
-                playerPositions = new TreeSet<Coordinate>();
-                players.put(player, playerPositions);
-            }
-
-            return playerPositions;
-        }
-    }// </editor-fold>
     public static final int TERRAIN_SIZE = 32;
     public static final int MIN_SIZE = 6;
     public static final int MAX_SIZE = 32;
-
-    public interface Iterator {
-
-        public void check(int x, int y, Terrain terrain);
-    }
-    private final String name;
-    private BufferedImage thumb;
+    private String name;
     private long elapsedTime;
     private PersonInitialPositions personInitialPositions = new PersonInitialPositions();
     private Terrains terrains = new Terrains(0, 0);
     private ListenerManager<Map> listenerManager = new ListenerManager<Map>(this);
+    private String originalName;
 
     public Map(String name, int width, int height) {
         this.name = name;
+        this.originalName = this.name;
         setWidthHeight(width, height);
     }
 
@@ -137,11 +35,14 @@ public class Map implements Nameable {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public void setWidthHeight(int w, int h) {
         if ((h >= MIN_SIZE && h <= MAX_SIZE) && (w >= MIN_SIZE && w <= MAX_SIZE) && (w != this.getWidth() || h != this.getHeight())) {
             final Terrains oldTerrains = this.terrains;
             this.terrains = new Terrains(w, h);
-            thumb = null;
             if (oldTerrains != null) {
                 iterate(new Iterator() {
 
@@ -224,53 +125,6 @@ public class Map implements Nameable {
         return personInitialPositions.getPlayerFromPosition(position);
     }
 
-    public java.util.Map<Coordinate, Integer> calculateMovimentDistances(Coordinate target) {
-        java.util.Map<Coordinate, Integer> distances = new TreeMap<Coordinate, Integer>();
-        Set<Coordinate> visited = new TreeSet<Coordinate>();
-        Set<Coordinate> current = new TreeSet<Coordinate>();
-
-        current.add(target);
-        visited.add(target);
-        int n = 0;
-
-        while (!current.isEmpty()) {
-            Set<Coordinate> forTest = new TreeSet<Coordinate>();
-
-            for (Coordinate c : current) {
-                distances.put(c, n);
-
-                for (Coordinate next : getMovimentNeighboors(c)) {
-                    if (!visited.contains(next)) {
-                        visited.add(next);
-                        forTest.add(next);
-                    }
-                }
-            }
-
-            n++;
-            current = forTest;
-        }
-
-        return distances;
-    }
-
-    public Iterable<Coordinate> getMovimentNeighboors(Coordinate c) {
-        Set<Coordinate> neighboors = new TreeSet<Coordinate>();
-
-        for (Coordinate neighboor : new Coordinate[]{
-                    new Coordinate(c, 0, -1),
-                    new Coordinate(c, 0, 1),
-                    new Coordinate(c, -1, 0),
-                    new Coordinate(c, 1, 0)
-                }) {
-            if (inMap(neighboor) && getTerrain(neighboor).getAllowMoviment()) {
-                neighboors.add(neighboor);
-            }
-        }
-
-        return neighboors;
-    }
-
     public java.util.Map<Coordinate, Integer> calculateActionDistances(Coordinate target) {
         java.util.Map<Coordinate, Integer> distances = new TreeMap<Coordinate, Integer>();
         Set<Coordinate> visited = new TreeSet<Coordinate>();
@@ -323,4 +177,145 @@ public class Map implements Nameable {
     public boolean inMap(Coordinate c) {
         return c.inRectangle(0, 0, getWidth(), getHeight());
     }
+
+    public Terrain getTerrain(Coordinate position) {
+        return getTerrain(position.getX(), position.getY());
+    }
+
+    public PersonInitialPositions getPersonInitialPositions() {
+        return personInitialPositions;
+    }
+
+    public String getOriginalName() {
+        return originalName;
+    }
+
+    public void setOriginalName(String originalName) {
+        this.originalName = originalName;
+    }
+
+    public boolean isPlayable() {
+        return personInitialPositions.isPlayable() &&
+                terrains.isPlayable();        
+    }
+
+    public interface Iterator {
+
+        public void check(int x, int y, Terrain terrain);
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="class Terrains">
+    private class Terrains {
+
+        private int width;
+        private int height;
+        private Terrain[][] terrains;
+
+        public Terrains(int width, int height) {
+            setWidthHeight(width, height);
+        }
+
+        public void setWidthHeight(int width, int heigth) {
+            assert width >= 0;
+            assert heigth >= 0;
+            this.width = width;
+            this.height = heigth;
+            this.terrains = new Terrain[width][heigth];
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public Terrain get(int x, int y) {
+            return terrains[x][y];
+        }
+
+        public void setTerrrain(int x, int y, Terrain terrain) {
+            terrains[x][y] = terrain;
+        }
+
+        private boolean inPoint(int x, int y) {
+            return (x >= 0 && x < width) && (y >= 0 && y < height);
+        }
+
+        public boolean isPlayable() {
+            for(int x=0; x< width; ++x) {
+                for(int y=0; y < height; ++y) {
+                    if (terrains[x][y]==null) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }// </editor-fold>
+
+    // <editor-fold defaultstate="collapsed" desc="class PersonInitialPositions">
+    public static class PersonInitialPositions {
+
+        private java.util.Map<Coordinate, Integer> positions = new TreeMap<Coordinate, Integer>();
+        private java.util.Map<Integer, Set<Coordinate>> players = new TreeMap<Integer, Set<Coordinate>>();
+
+        public Iterable<Coordinate> getAllPositions() {
+            return positions.keySet();
+        }
+
+        public Integer getPlayerFromPosition(Coordinate position) {
+            return positions.get(position);
+        }
+
+        public int getPlayerCount() {
+            return players.size();
+        }
+
+        public void setPosition(Integer player, Coordinate position) {
+            removePosition(position);
+            if (player != null) {
+                addPosition(player, position);
+            }
+        }
+
+        public void addPosition(int player, Coordinate position) {
+            Coordinate positionClone = position.clone();
+            getPlayerInitialPositions(player).add(positionClone);
+            positions.put(positionClone, player);
+        }
+
+        public void removePosition(Coordinate position) {
+            if (positions.get(position) != null) {
+                players.get(positions.get(position)).remove(position);
+            }
+            positions.remove(position);
+        }
+
+        public Set<Coordinate> getPlayerInitialPositions(int player) {
+            Set<Coordinate> playerPositions = players.get(player);
+
+            if (playerPositions == null) {
+                playerPositions = new TreeSet<Coordinate>();
+                players.put(player, playerPositions);
+            }
+
+            return playerPositions;
+        }
+
+        private boolean isPlayable() {
+            if (players.size() >= 2) {
+                for(Set<Coordinate> playerPositions: players.values()) {
+                    if (playerPositions.size() < 1) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            else {
+                return false;
+            }
+        }
+    }// </editor-fold>
 }

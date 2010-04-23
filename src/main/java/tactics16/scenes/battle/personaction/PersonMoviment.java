@@ -30,7 +30,7 @@ class PersonMoviment {
         this.person = person;
         this.visualMap = visualMap;
         this.terrainTarget = terrainTarget;        
-        this.person.setCurrentGameAction(GameAction.WALKING);
+        this.person.getGameActionControl().advance(GameAction.WALKING);
 
         this.moviment = new MultiLinearMoviment(
                 this.person.getPosition(),
@@ -96,7 +96,7 @@ class PersonMoviment {
         moviment.update(elapsedTime);
 
         if (isFinalized()) {
-            person.setCurrentGameAction(GameAction.STOPPED);
+            person.getGameActionControl().back();
         }
     }
 

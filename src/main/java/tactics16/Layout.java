@@ -1,6 +1,7 @@
 package tactics16;
 
 import tactics16.components.Object2D;
+import tactics16.game.Coordinate;
 
 /**
  *
@@ -30,7 +31,11 @@ public class Layout {
     }
 
     public static int getCentralizedLeft(Object2D o) {
-        return (getScreenWidth() - o.getWidth()) / 2;
+        return getCentralizedLeft(o,MyGame.getInstance().getScreenObject2D());
+    }
+
+    public static int getCentralizedLeft(Object2D toCentralize,Object2D centralizeOn) {
+        return centralizeOn.getLeft() + (centralizeOn.getWidth() - toCentralize.getWidth()) / 2;
     }
 
     public static int getScreenHeight() {
@@ -47,5 +52,11 @@ public class Layout {
 
     public static int getBottomGap(Object2D o) {
         return getBottom(o) + OBJECT_GAP;
+    }
+
+    public static Coordinate getCentralizedOnObject2D(Object2D onCentralize, Object2D toCentralize) {
+        return new Coordinate(
+                onCentralize.getLeft() + (onCentralize.getWidth() - toCentralize.getWidth()) / 2,
+                onCentralize.getTop() + (onCentralize.getHeight() - toCentralize.getHeight()) / 2);
     }
 }

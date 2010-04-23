@@ -17,7 +17,7 @@ public class TerrainJsonLoader extends AbstractJsonFileLoader<Terrain>{
     }
     
     @Override
-    protected Terrain internalLoadObject() throws JSONException {
+    protected Terrain fromJson() throws JSONException {
         Terrain terrain = new Terrain(getRootJson().getString("name"));
         terrain.setAllowAction(getRootJson().getBoolean("allowAction"));
         terrain.setAllowMoviment(getRootJson().getBoolean("allowMoviment"));

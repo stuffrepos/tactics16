@@ -1,7 +1,7 @@
 package tactics16.components;
 
 import tactics16.game.Map;
-import tactics16.util.Cursor2D;
+import tactics16.util.cursors.Cursor2D;
 import tactics16.util.listeners.Listener;
 import java.awt.Graphics2D;
 import tactics16.GameKey;

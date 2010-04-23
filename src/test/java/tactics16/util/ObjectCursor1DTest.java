@@ -1,6 +1,6 @@
 package tactics16.util;
 
-import tactics16.util.ObjectCursor1D;
+import tactics16.util.cursors.ObjectCursor1D;
 import java.lang.Integer;
 import java.util.ArrayList;
 import java.util.List;

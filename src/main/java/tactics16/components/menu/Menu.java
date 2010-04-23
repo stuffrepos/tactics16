@@ -3,14 +3,17 @@ package tactics16.components.menu;
 import java.awt.Color;
 import tactics16.MyGame;
 import tactics16.game.Coordinate;
-import tactics16.util.ObjectCursor1D;
+import tactics16.util.cursors.ObjectCursor1D;
 import java.awt.Graphics2D;
 import java.util.Collections;
 import tactics16.GameKey;
+import tactics16.components.Button;
 import tactics16.components.Object2D;
-import tactics16.util.CacheableValue;
-import tactics16.util.ColorUtil;
-import tactics16.util.MathUtil;
+import tactics16.util.cache.CacheableValue;
+import tactics16.util.image.ColorUtil;
+import tactics16.util.javabasic.MathUtil;
+import tactics16.util.listeners.Listener;
+import tactics16.util.listeners.ListenerManager;
 
 /**
  *
@@ -18,7 +21,6 @@ import tactics16.util.MathUtil;
  */
 public class Menu implements Object2D {
 
-    private final static int OPTION_GAP = 1;
     private final static int TEXT_MARGIN = 5;
     private ObjectCursor1D<MenuOption> cursor = new ObjectCursor1D<MenuOption>();
     private Coordinate position = new Coordinate();
@@ -27,20 +29,41 @@ public class Menu implements Object2D {
 
         @Override
         protected Integer calculate() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return getOptionWidth();
         }
     };
     private CacheableValue<Integer> height = new CacheableValue<Integer>() {
 
         @Override
         protected Integer calculate() {
-            throw new UnsupportedOperationException("Not supported yet.");
+            return cursor.getList().size() * (getOptionHeight() + Button.BUTTON_GAP);
         }
     };
+    private ListenerManager<Object2D> listenerManager = new ListenerManager<Object2D>(this);
 
     public Menu(MenuOption... options) {
         cursor.getCursor().setKeys(GameKey.UP, GameKey.DOWN);
         Collections.addAll(this.cursor.getList(), options);
+
+        width.addListener(new Listener<CacheableValue<Integer>>() {
+
+            public void onChange(CacheableValue<Integer> source) {
+                listenerManager.fireChange();
+            }
+        });
+
+        height.addListener(new Listener<CacheableValue<Integer>>() {
+
+            public void onChange(CacheableValue<Integer> source) {
+                listenerManager.fireChange();
+            }
+        });
+
+        position.addListener(new Listener<Coordinate>() {
+            public void onChange(Coordinate source) {
+                listenerManager.fireChange();
+            }
+        });
     }
 
     public ObjectCursor1D getCursor() {
@@ -56,7 +79,7 @@ public class Menu implements Object2D {
                     g,
                     cursor.getCursor().getCurrent() == i,
                     position.getX(),
-                    position.getY() + i * (h + OPTION_GAP),
+                    position.getY() + i * (h + Button.BUTTON_GAP),
                     this.getOptionWidth(), h);
             i++;
         }
@@ -88,6 +111,8 @@ public class Menu implements Object2D {
 
     public void addOption(MenuOption option) {
         this.cursor.getList().add(option);
+        width.clear();
+        height.clear();
     }
 
     protected void onChangeSelectedOption() {
@@ -97,7 +122,7 @@ public class Menu implements Object2D {
         return position;
     }
 
-    public int getOptionWidth() {
+    private int getOptionWidth() {
         int w = 0;
 
         for (MenuOption option : this.cursor.getList()) {
@@ -111,12 +136,14 @@ public class Menu implements Object2D {
         return w + 2 * TEXT_MARGIN;
     }
 
-    public int getOptionHeight() {
+    private int getOptionHeight() {
         return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight() + 2 * TEXT_MARGIN;
     }
 
     public void clear() {
         this.cursor.clear();
+        this.height.clear();
+        this.width.clear();
     }
 
     public int getTop() {
@@ -128,11 +155,11 @@ public class Menu implements Object2D {
     }
 
     public int getWidth() {
-        return this.getOptionWidth();
+        return width.getValue();
     }
 
     public int getHeight() {
-        return this.cursor.getList().size() * (this.getOptionHeight() + OPTION_GAP);
+        return height.getValue();
     }
 
     private void renderOption(MenuOption option, Graphics2D g, boolean selected, int x, int y, int w, int h) {
@@ -161,6 +188,11 @@ public class Menu implements Object2D {
                 y + TEXT_MARGIN + g.getFontMetrics().getAscent() + g.getFontMetrics().getLeading());
     }
 
+    public void addGeometryListener(Listener<Object2D> listener) {
+        listenerManager.addListener(listener);
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="class Colors">
     private static class Colors {
 
         private static final Color ENABLED_FOREGROUND_COLOR = Color.WHITE;
@@ -207,5 +239,5 @@ public class Menu implements Object2D {
                     elapsedTime,
                     CHANGE_FRAME_INTERVAL)];
         }
-    }
+    }// </editor-fold>
 }

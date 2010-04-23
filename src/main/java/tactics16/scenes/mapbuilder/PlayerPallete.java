@@ -4,7 +4,7 @@ import tactics16.components.BorderRectangle;
 import tactics16.components.Object2D;
 import tactics16.components.TextDialog;
 import tactics16.game.Coordinate;
-import tactics16.util.Cursor1D;
+import tactics16.util.cursors.Cursor1D;
 import tactics16.util.listeners.Listener;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -21,6 +21,7 @@ import tactics16.scenes.battle.Player;
 public class PlayerPallete implements Object2D {
 
     public static final int BOX_WIDTH = 80;
+    public static final int BOX_HEIGHT = 30;
     public static final int BOX_GAP = 10;
     private BorderRectangle visualCursor;
     private Cursor1D cursor;
@@ -109,7 +110,7 @@ public class PlayerPallete implements Object2D {
     }
 
     public int getHeight() {
-        return TextDialog.getDefaultHeight();
+        return BOX_HEIGHT;
     }
 
     public Cursor1D getCursor() {

@@ -1,5 +1,6 @@
 package tactics16.phase;
 
+import tactics16.scenes.mapbuilder.MapBuilderScene;
 import tactics16.util.LifoQueue;
 
 /**
@@ -9,30 +10,37 @@ import tactics16.util.LifoQueue;
 public class PhaseManager {
 
     private LifoQueue<Phase> phaseStack = new LifoQueue<Phase>();
+    private boolean finalized = false;
 
     public void change(Phase phase) {
-        if (phaseStack.peek() != phase) {
-            removeHead();
-            addHead(phase);
+        if (!finalized) {
+            if (phaseStack.peek() != phase) {
+                removeHead();
+                addHead(phase);
+            }
         }
     }
 
     public void advance(Phase phase) {
-        if (phaseStack.peek() != phase) {
-            Phase previousPhase = phaseStack.peek();
-            if (previousPhase != null) {
-                previousPhase.onExit();
+        if (!finalized) {
+            if (phaseStack.peek() != phase) {
+                Phase previousPhase = phaseStack.peek();
+                if (previousPhase != null) {
+                    previousPhase.onExit();
+                }
+                addHead(phase);
             }
-            addHead(phase);
         }
     }
 
     public void back() {
-        removeHead();
+        if (!finalized) {
+            removeHead();
 
-        Phase phase = phaseStack.peek();
-        if (phase != null) {
-            phase.onEnter();
+            Phase phase = phaseStack.peek();
+            if (phase != null) {
+                phase.onEnter();
+            }
         }
     }
 
@@ -51,10 +59,21 @@ public class PhaseManager {
     }
 
     public Phase getCurrentPhase() {
-        return phaseStack.peek();
+        return finalized ? null : phaseStack.peek();
     }
 
     public void clear() {
         phaseStack.clear();
+    }
+
+    public void finalizeEntity() {
+        removeHead();
+        finalized = true;
+    }
+
+    public void resetTo(Phase phase) {
+        while (getCurrentPhase() != null && getCurrentPhase() != phase) {
+            back();
+        }
     }
 }

@@ -1,4 +1,4 @@
-package tactics16.util;
+package tactics16.util.image;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

@@ -14,14 +14,16 @@ import tactics16.scenes.battle.Player;
 import tactics16.phase.Phase;
 import java.awt.Graphics2D;
 import tactics16.components.Object2D;
+import tactics16.components.PhaseTitle;
 import tactics16.components.menu.CommonMenuOption;
+import tactics16.phase.AbstractPhase;
 import tactics16.util.listeners.Listener;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class SelectPersonsScene implements Phase {
+public class SelectPersonsScene extends AbstractPhase {
 
     public void onExit() {
     }
@@ -82,6 +84,7 @@ public class SelectPersonsScene implements Phase {
     private int currentPlayer = 0;
     private TextDialog statusDialog;
     private TextDialog personStatus;
+    private PhaseTitle title;
     private Menu jobSelector = new Menu() {
 
         @Override
@@ -121,6 +124,8 @@ public class SelectPersonsScene implements Phase {
 
     public void onAdd() {
 
+        title = new PhaseTitle("Select Persons");
+
         jobSelector.clear();
 
         for (Job job : MyGame.getInstance().getLoader().getJobs()) {
@@ -135,13 +140,19 @@ public class SelectPersonsScene implements Phase {
             }
         });
 
-        jobSelector.getPosition().setXY(Layout.OBJECT_GAP, Layout.OBJECT_GAP);
+        jobSelector.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(title));
 
         statusDialog = new TextDialog();
         statusDialog.setMinWidth(50);
-        statusDialog.getPosition().setXY(
-                Layout.getRightGap(jobSelector),
-                jobSelector.getPosition().getX());
+
+        jobSelector.addGeometryListener(new Listener<Object2D>() {
+            public void onChange(Object2D source) {
+                statusDialog.getPosition().setXY(
+                        Layout.getRightGap(jobSelector),
+                        jobSelector.getPosition().getY());
+            }
+        });
+
 
         personStatus = new TextDialog();
         personStatus.setMinWidth(50);
@@ -189,11 +200,6 @@ public class SelectPersonsScene implements Phase {
 
             personStatus.setText(buffer.toString());
         }
-
-
-    }
-
-    public void onRemove() {
     }
 
     public void update(long elapsedTime) {
@@ -203,7 +209,7 @@ public class SelectPersonsScene implements Phase {
     }
 
     public void render(Graphics2D g) {
-
+        title.render(g);
         statusDialog.render(g);
         personStatus.render(g);
         jobSelector.render(g);

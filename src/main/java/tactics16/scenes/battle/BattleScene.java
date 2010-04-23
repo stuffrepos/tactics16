@@ -4,17 +4,17 @@ import tactics16.scenes.battle.personaction.PersonActionSubPhase;
 import tactics16.Layout;
 import tactics16.MyGame;
 import tactics16.components.TextDialog;
-import tactics16.game.Action;
 import tactics16.game.Coordinate;
 import tactics16.game.Job;
 import tactics16.phase.PhaseManager;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import tactics16.GameKey;
 import tactics16.phase.AbstractPhase;
 import tactics16.scenes.battle.effects.EffectsSubPhase;
-import tactics16.scenes.battle.effects.EvadeSelector;
 
 /**
  *
@@ -31,6 +31,8 @@ public class BattleScene extends AbstractPhase {
     private PhaseManager phaseManager = new PhaseManager();
     private VisualBattleMap visualBattleMap;
     private JobAnimationTest jobAnimationTest;
+    private int currentPlayer;
+    private Set<Person> usedPersons;
 
     public BattleScene(BattleGame battleGame) {
         this.visualBattleMap = new VisualBattleMap(battleGame);
@@ -58,6 +60,12 @@ public class BattleScene extends AbstractPhase {
         }
 
         phaseManager.change(personActionSubPhase);
+    }
+
+    @Override
+    public void onAdd() {
+        currentPlayer = -1;
+        newTurn();
     }
 
     @Override
@@ -108,12 +116,40 @@ public class BattleScene extends AbstractPhase {
     }
 
     public void toEffectSubPhase(BattleAction battleAction) {
+        usedPersons.add(battleAction.getAgent());
+        battleAction.getAgent().getGameActionControl().set(Job.GameAction.USED);
+
         getPhaseManager().clear();
-        getPhaseManager().change(new EffectsSubPhase(this, battleAction));
+        if (battleAction.getAction() == null) {
+            toPersonActionSubPhase();
+        } else {
+            getPhaseManager().change(new EffectsSubPhase(this, battleAction));
+        }
     }
 
     public void toPersonActionSubPhase() {
+        if (usedPersons.size() == getCurrentPlayer().getPersons().size()) {
+            newTurn();
+        }
         getPhaseManager().clear();
         getPhaseManager().change(personActionSubPhase);
+    }
+
+    public boolean isUsed(Person person) {
+        return usedPersons.contains(person);
+    }
+
+    public Player getCurrentPlayer() {
+        return getVisualBattleMap().getBattleGame().getPlayers().get(currentPlayer);
+    }
+
+    public void newTurn() {
+        currentPlayer = (currentPlayer + 1) % getVisualBattleMap().getBattleGame().getPlayers().size();
+        if (usedPersons != null) {
+            for (Person person : usedPersons) {
+                person.getGameActionControl().set(Job.GameAction.STOPPED);
+            }
+        }
+        usedPersons = new HashSet<Person>();
     }
 }

@@ -1,10 +1,10 @@
 package tactics16.scenes.battle;
 
 import tactics16.GameKey;
-import tactics16.util.CollectionUtil;
+import tactics16.util.javabasic.CollectionUtil;
 import tactics16.game.Job;
-import tactics16.util.Cursor1D;
-import tactics16.util.ObjectCursor1D;
+import tactics16.util.cursors.Cursor1D;
+import tactics16.util.cursors.ObjectCursor1D;
 import tactics16.util.listeners.Listener;
 
 /**
@@ -26,7 +26,7 @@ public class JobAnimationTest {
             public void onChange(Cursor1D source) {
                 for (Player player : JobAnimationTest.this.battleGame.getPlayers()) {
                     for (Person person : player.getPersons()) {
-                        person.setCurrentGameAction(actionCursor.getSelected());
+                        person.getGameActionControl().set(actionCursor.getSelected());
                     }
                 }
             }

@@ -9,6 +9,7 @@ import tactics16.GameKey;
 import tactics16.MyGame;
 import tactics16.game.Job.GameAction;
 import tactics16.phase.AbstractPhase;
+import tactics16.phase.PhaseManager;
 import tactics16.scenes.battle.BattleAction;
 import tactics16.scenes.battle.BattleScene;
 import tactics16.scenes.battle.Person;
@@ -43,8 +44,7 @@ public class EffectsSubPhase extends AbstractPhase {
 
         @Override
         public void onEnter() {
-            battleAction.getAgent().setCurrentGameAction(GameAction.ON_ATTACKING);
-
+            battleAction.getAgent().getGameActionControl().advance(GameAction.ON_ATTACKING);
         }
 
         @Override
@@ -70,59 +70,43 @@ public class EffectsSubPhase extends AbstractPhase {
 
             private int current;
             private final ArrayList<Person> personsTargets;
-            private EvadeSelector evadeSelector;
             private Map<Person, Boolean> personsEvaded =
                     new HashMap<Person, Boolean>();
+            private PhaseManager phaseManager = new PhaseManager();
+            private boolean checkFinalized = false;
 
             private PersonsTargets(Set<Person> personsTargets) {
                 this.personsTargets = new ArrayList<Person>(personsTargets);
-                this.setTarget(0);
+                this.current = -1;
+                next();
             }
 
-            private void setTarget(int target) {
-                current = target;
-
-                if (current < 0) {
-                    current = 0;
-                } else if (current > personsTargets.size()) {
-                    current = personsTargets.size();
-                }
-
-                for (int i = 0; i < personsTargets.size(); ++i) {
-                    personsTargets.get(i).setCurrentGameAction(
-                            i == current
-                            ? GameAction.SELECTED
-                            : GameAction.STOPPED);
-                }
-
+            private void next() {
+                current++;
                 if (current < personsTargets.size()) {
-                    evadeSelector = new EvadeSelector(battleAction, personsTargets.get(current));
-                } else {
-                    evadeSelector = null;
+                    phaseManager.advance(new EvadeSelectPhase(personsTargets.get(current)));
                 }
             }
 
             public void previous() {
-                setTarget(current - 1);
+                if (current > 0) {
+                    current--;
+                    phaseManager.back();
+                }
             }
 
             public void update(long elapsedTime) {
-                if (evadeSelector != null) {
+                phaseManager.getCurrentPhase().update(elapsedTime);
 
-                    evadeSelector.update(elapsedTime);
-
-                    if (evadeSelector.isFinalized()) {
-                        personsEvaded.put(
-                                personsTargets.get(current),
-                                evadeSelector.getResponse());
-                        setTarget(current + 1);
-                    }
+                if (isFinalized() && !checkFinalized) {
+                    checkFinalized = true;
+                    phaseManager.finalizeEntity();
                 }
             }
 
             public void render(Graphics2D g) {
-                if (evadeSelector != null) {
-                    evadeSelector.render(g);
+                if (phaseManager.getCurrentPhase() != null) {
+                    phaseManager.getCurrentPhase().render(g);
                 }
             }
 
@@ -130,10 +114,51 @@ public class EffectsSubPhase extends AbstractPhase {
                 return current >= this.personsTargets.size();
             }
 
-            public Map<Person,Boolean> getPersonsEvaded() {
+            public Map<Person, Boolean> getPersonsEvaded() {
                 return this.personsEvaded;
             }
 
+            private class EvadeSelectPhase extends AbstractPhase {
+
+                private final Person person;
+                private EvadeSelector evadeSelector;
+
+                public EvadeSelectPhase(Person person) {
+                    this.person = person;
+                }
+
+                @Override
+                public void render(Graphics2D g) {
+                    evadeSelector.render(g);
+                }
+
+                @Override
+                public void update(long elapsedTime) {
+                    evadeSelector.update(elapsedTime);
+
+                    if (evadeSelector.isFinalized()) {
+                        personsEvaded.put(
+                                personsTargets.get(current),
+                                evadeSelector.getResponse());
+                        next();
+                    }
+                }
+
+                @Override
+                public void onAdd() {
+                    this.evadeSelector = new EvadeSelector(battleAction, person);
+                }
+
+                @Override
+                public void onEnter() {
+                    person.getGameActionControl().advance(GameAction.SELECTED);
+                }
+
+                @Override
+                public void onExit() {
+                    person.getGameActionControl().back();
+                }
+            }
         }// </editor-fold>
 
         private class EffectPhase extends AbstractPhase {

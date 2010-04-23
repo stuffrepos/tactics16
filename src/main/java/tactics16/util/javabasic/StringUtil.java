@@ -1,4 +1,4 @@
-package tactics16.util;
+package tactics16.util.javabasic;
 
 import java.util.List;
 
@@ -37,5 +37,13 @@ public class StringUtil {
         } else {
             return s;
         }
+    }
+
+    public static boolean isEmpty(String text) {
+        return parseString(text) == null;
+    }
+
+    public static String yesNo(boolean b) {
+        return b ? "Yes" : "No";
     }
 }

@@ -1,13 +1,13 @@
 package tactics16.scenes.battle;
 
-import tactics16.game.*;
 import tactics16.animation.SpriteAnimation;
-import tactics16.util.TransformUtil;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import tactics16.animation.GameImage;
 import tactics16.animation.VisualEntity;
+import tactics16.game.Coordinate;
+import tactics16.game.DataObject;
+import tactics16.game.Job;
+import tactics16.util.LifoQueue;
 
 /**
  *
@@ -28,6 +28,7 @@ public class Person extends DataObject implements VisualEntity {
     private Player player;
     private int healthPoints = MAX_HEALTH_POINTS;
     private int agilityPoints = MAX_AGILITY_POINTS;
+    private GameActionControl gameActionControl = new GameActionControl();
 
     public Person(Player player, String name, Job job) {
         super(name);
@@ -44,7 +45,7 @@ public class Person extends DataObject implements VisualEntity {
         return position;
     }
 
-    public void setCurrentGameAction(Job.GameAction gameAction) {
+    private void setCurrentGameAction(Job.GameAction gameAction) {
         if (gameAction != currentGameAction) {
             currentGameAction = gameAction;
             elapsedTime = 0l;
@@ -58,15 +59,19 @@ public class Person extends DataObject implements VisualEntity {
     public GameImage getCurrentImage() {
 
         SpriteAnimation spriteAction;
-        switch(this.currentGameAction) {
+        switch (this.currentGameAction) {
             case SELECTED:
                 spriteAction = player.getSelectedSpriteAnimation(job);
+                break;
+
+            case USED:
+                spriteAction = player.getUsedSpriteAnimation(job);
                 break;
 
             default:
                 spriteAction = job.getSpriteActionGroup().getSpriteAction(currentGameAction);
         }
-        
+
         if (spriteAction.getImagesCount() > 0) {
             return player.getImage(job.getSpriteActionGroup(), spriteAction.getImage(elapsedTime));
         } else {
@@ -81,7 +86,7 @@ public class Person extends DataObject implements VisualEntity {
                     g,
                     position,
                     side < 0,
-                    false);            
+                    false);
         }
     }
 
@@ -131,5 +136,32 @@ public class Person extends DataObject implements VisualEntity {
 
     public int getDefense() {
         return job.getDefense();
+    }
+
+    public GameActionControl getGameActionControl() {
+        return gameActionControl;
+    }
+
+    public class GameActionControl {
+
+        private LifoQueue<Job.GameAction> stack = new LifoQueue<Job.GameAction>();
+
+        public void set(Job.GameAction gameAction) {
+            stack.clear();
+            stack.add(gameAction);
+            setCurrentGameAction(gameAction);
+        }
+
+        public void advance(Job.GameAction gameAction) {
+            stack.add(gameAction);
+            setCurrentGameAction(gameAction);
+        }
+
+        public void back() {
+            if (stack.size() > 1) {
+                stack.poll();
+                setCurrentGameAction(stack.peek());
+            }
+        }
     }
 }

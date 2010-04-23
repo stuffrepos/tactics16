@@ -1,4 +1,4 @@
-package tactics16.util;
+package tactics16.util.cursors;
 
 import tactics16.GameKey;
 import tactics16.game.Coordinate;
@@ -27,6 +27,8 @@ public class Cursor2D {
 
         h.addListener(cursor1dListener);
         v.addListener(cursor1dListener);
+
+        setKeys(GameKey.LEFT, GameKey.RIGHT, GameKey.UP, GameKey.DOWN);
     }
 
     public void addListener(Listener<Cursor2D> listener) {
@@ -76,5 +78,17 @@ public class Cursor2D {
     public void moveTo(Coordinate position) {
         h.moveTo(position.getX());
         v.moveTo(position.getY());
+    }
+
+    public void moveX(int increment) {
+        h.moveTo(h.getCurrent() + increment);
+    }
+
+    public void moveY(int increment) {
+        v.moveTo(v.getCurrent() + increment);
+    }
+
+    public void moveXY(int incrementX, int incrementY) {
+        moveTo(new Coordinate(h.getCurrent() + incrementX, v.getCurrent() + incrementY));
     }
 }

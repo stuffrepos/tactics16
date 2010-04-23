@@ -1,10 +1,12 @@
 package tactics16.components;
 
-import tactics16.MyGame;
+import java.awt.Font;
 import tactics16.game.Coordinate;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import tactics16.util.CacheableValue;
+import tactics16.Layout;
+import tactics16.util.Align;
+import tactics16.util.SizeConfig;
 import tactics16.util.listeners.Listener;
 
 /**
@@ -13,115 +15,58 @@ import tactics16.util.listeners.Listener;
  */
 public class TextDialog implements Object2D {
 
-    private HorizontalAlign horizontalPosition = HorizontalAlign.LEFT;
-    private VerticalAlign verticalPosition = VerticalAlign.TOP;
-    private static final int MARGIN = 5;
     public static final Color DEFAULT_FOREGROUND_COLOR = Color.WHITE;
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.DARK_GRAY;
     private final Coordinate position = new Coordinate();
-    private final Coordinate size = new Coordinate();
-    private Integer minHeight;
-    private Integer maxHeight;
-    private Integer minWidth;
-    private Integer maxWidth;
-    private Color backgroundColor = DEFAULT_BACKGROUND_COLOR;
-    private Color foregroundColor = DEFAULT_FOREGROUND_COLOR;
-    private String text = "";
+    private final SizeConfig width = new SizeConfig() {
+
+        @Override
+        protected int calculate() {
+            return text.getWidth();
+        }
+    };
+    private final SizeConfig height = new SizeConfig() {
+
+        @Override
+        protected int calculate() {
+            return text.getHeight();
+        }
+    };
+    private Color backgroundColor;
+    private Text text;
     private boolean flat = false;
-    private CacheableValue<Integer> width = new CacheableValue<Integer>() {
 
-        @Override
-        protected Integer calculate() {
-            String[] textLines = text.split("\n");
+    public TextDialog() {
+        text = new Text();
+        text.setColor(DEFAULT_FOREGROUND_COLOR);
+        backgroundColor = DEFAULT_BACKGROUND_COLOR;
+        position.addListener(new Listener<Coordinate>() {
 
-            int lineMaxWidth = 0;
-            for (String line : textLines) {
-                int lineWidth = MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().stringWidth(line);
-                if (lineWidth > lineMaxWidth) {
-                    lineMaxWidth = lineWidth;
-                }
+            public void onChange(Coordinate source) {
+                text.getPosition().set(source);
             }
-
-            int w = lineMaxWidth + MARGIN * 2;
-
-            if (getMinWidth() != null && w < getMinWidth()) {
-                w = getMinWidth();
-            } else if (getMaxWidth() != null && w > getMaxWidth()) {
-                w = getMaxWidth();
-            }
-
-            size.setX(w);
-
-            return w;
-        }
-    };
-    private CacheableValue<Integer> height = new CacheableValue<Integer>() {
-
-        @Override
-        protected Integer calculate() {
-            String[] textLines = text.split("\n");
-            int h = MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight() * textLines.length + 2 * MARGIN;
-
-            if (getMinHeight() != null && h < getMinHeight()) {
-                h = getMinHeight();
-            } else if (getMaxHeight() != null && h > getMaxHeight()) {
-                h = getMaxHeight();
-            }
-
-            size.setY(h);
-            return h;
-        }
-    };
-
-    public static int getDefaultHeight() {
-        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight() + MARGIN * 2;
+        });
     }
 
     public void render(Graphics2D g) {
 
-        String[] textLines = text.split("\n");
-
-        int w = this.getWidth();
-        int h = this.getHeight();
-
-        Coordinate p = getPosition().clone();
-
-        switch (horizontalPosition) {
-            case CENTER:
-                p.addX(-w / 2);
-                break;
-            case RIGHT:
-                p.addX(-w);
-                break;
-        }
-
-        switch (verticalPosition) {
-            case MIDDLE:
-                p.addY(-h / 2);
-                break;
-            case BOTTOM:
-                p.addY(-h);
-                break;
-        }
-
         g.setColor(this.getBackgroundColor());
         if (flat) {
-            g.fillRect(p.getX(), p.getY(), w - 1, h - 1);
+            g.fillRect(
+                    position.getX(),
+                    position.getY(),
+                    getWidth() - 1,
+                    getHeight() - 1);
         } else {
-            g.fill3DRect(p.getX(), p.getY(), w - 1, h - 1, true);
+            g.fill3DRect(
+                    position.getX(),
+                    position.getY(),
+                    getWidth() - 1,
+                    getHeight() - 1,
+                    true);
         }
         g.setColor(this.getForegroundColor());
-
-        int i = 0;
-        for (String line : textLines) {
-            g.drawString(
-                    line,
-                    p.getX() + MARGIN,
-                    p.getY() + MARGIN + g.getFontMetrics().getHeight() * i + g.getFontMetrics().getAscent() +
-                    g.getFontMetrics().getLeading());
-            i++;
-        }
-
+        text.render(g);
     }
 
     public Coordinate getPosition() {
@@ -129,39 +74,35 @@ public class TextDialog implements Object2D {
     }
 
     public Integer getMinHeight() {
-        return minHeight;
+        return width.getMin();
     }
 
     public void setMinHeight(Integer minHeight) {
-        this.height.clear();
-        this.minHeight = minHeight;
+        this.height.setMin(minHeight);
     }
 
     public Integer getMaxHeight() {
-        return maxHeight;
+        return height.getMax();
     }
 
     public void setMaxHeight(Integer maxHeight) {
-        this.height.clear();
-        this.maxHeight = maxHeight;
+        this.height.setMax(maxHeight);
     }
 
     public Integer getMinWidth() {
-        return minWidth;
+        return width.getMin();
     }
 
     public void setMinWidth(Integer minWidth) {
-        this.width.clear();
-        this.minWidth = minWidth;
+        width.setMin(minWidth);
     }
 
     public Integer getMaxWidth() {
-        return maxWidth;
+        return width.getMax();
     }
 
     public void setMaxWidth(Integer maxWidth) {
-        this.width.clear();
-        this.maxWidth = maxWidth;
+        width.setMax(maxWidth);
     }
 
     public Color getBackgroundColor() {
@@ -173,21 +114,21 @@ public class TextDialog implements Object2D {
     }
 
     public Color getForegroundColor() {
-        return foregroundColor;
+        return text.getColor();
     }
 
     public void setForegroundColor(Color foregroundColor) {
-        this.foregroundColor = foregroundColor;
+        text.setColor(foregroundColor);
     }
 
     public String getText() {
-        return text;
+        return text.getText();
     }
 
     public void setText(String text) {
         this.width.clear();
         this.height.clear();
-        this.text = text;
+        this.text.setText(text);
     }
 
     public int getTop() {
@@ -212,13 +153,18 @@ public class TextDialog implements Object2D {
     }
 
     public void addGeometryListener(final Listener<Object2D> listener) {
-        this.size.addListener(new Listener<Coordinate>() {
+        this.width.addListener(new Listener<SizeConfig>() {
 
-            public void onChange(Coordinate source) {
+            public void onChange(SizeConfig source) {
                 listener.onChange(TextDialog.this);
             }
         });
+        this.height.addListener(new Listener<SizeConfig>() {
 
+            public void onChange(SizeConfig source) {
+                listener.onChange(TextDialog.this);
+            }
+        });
         this.position.addListener(new Listener<Coordinate>() {
 
             public void onChange(Coordinate source) {
@@ -231,35 +177,14 @@ public class TextDialog implements Object2D {
         this.flat = flat;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="alignment">
-    public HorizontalAlign getHorizontalPosition() {
-        return horizontalPosition;
+    public void setHorizontalPosition(Align align) {
+        text.setAlign(align);
     }
 
-    public void setHorizontalPosition(HorizontalAlign horizontalPosition) {
-        this.horizontalPosition = horizontalPosition;
+    public void setVerticalPosition(Align align) {
     }
 
-    public VerticalAlign getVerticalPosition() {
-        return verticalPosition;
+    public void setFont(Font font) {
+        text.setFont(font);
     }
-
-    public void setVerticalPosition(VerticalAlign verticalPosition) {
-        this.verticalPosition = verticalPosition;
-    }
-
-    public static enum HorizontalAlign {
-
-        CENTER,
-        LEFT,
-        RIGHT
-    }
-
-    public static enum VerticalAlign {
-
-        MIDDLE,
-        TOP,
-        BOTTOM
-    }
-    // </editor-fold>
 }

@@ -11,18 +11,19 @@ import tactics16.scenes.SelectMapScene;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import tactics16.GameKey;
+import tactics16.components.PhaseTitle;
 import tactics16.components.VisualMap;
-import tactics16.phase.Phase;
+import tactics16.phase.AbstractPhase;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MenuMode implements Phase {
+public class MenuMode extends AbstractPhase {
 
     private SelectMapScene selectMapScene;
     private Menu menu = new Menu(new CommonMenuOption[]{
-                // <editor-fold defaultstate="collapsed" desc="comment">
+                // <editor-fold defaultstate="collapsed" desc="menu options">
                 new CommonMenuOption("New Map") {
 
             @Override
@@ -39,133 +40,144 @@ public class MenuMode implements Phase {
                 scene.setMap(map);
 
             }
-        },
-                new CommonMenuOption("Open Map") {
 
-                    @Override
-                    public void executeAction() {
-                        MyGame.getInstance().getPhaseManager().advance(selectMapScene);
-                    }
-                },
-                new CommonMenuOption("Edit Map Terrain") {
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() == null;
+            }
+        }, new CommonMenuOption("Open Map") {
 
-                    @Override
-                    public void executeAction() {
-                        scene.toTerrainEditMode();
-                    }
+            @Override
+            public void executeAction() {
+                MyGame.getInstance().getPhaseManager().advance(selectMapScene);
+            }
 
-                    @Override
-                    public boolean isEnabled() {
-                        return scene.getMap() != null;
-                    }
-                },
-                new CommonMenuOption("Person's Positions") {
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() == null;
+            }
+        }, new CommonMenuOption("Rename Map") {
 
-                    @Override
-                    public void executeAction() {
-                        scene.toPersonsPositionMode();
-                    }
+            @Override
+            public void executeAction() {
+                scene.toRenameMode();
+            }
 
-                    @Override
-                    public boolean isEnabled() {
-                        return scene.getMap() != null;
-                    }
-                },
-                new CommonMenuOption("Save Map") {
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("Edit Map Terrain") {
 
-                    @Override
-                    public void executeAction() {
+            @Override
+            public void executeAction() {
+                scene.toTerrainEditMode();
+            }
 
-                        try {
-                            MyGame.getInstance().getLoader().saveMap(scene.getMap());
-                        } catch (IOException ex) {
-                            throw new RuntimeException(ex);
-                        }
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("Person's Positions") {
 
-                        MyGame.getInstance().getLoader().getMaps().addIgnore(scene.getMap());
-                    }
+            @Override
+            public void executeAction() {
+                scene.toPersonsPositionMode();
+            }
 
-                    @Override
-                    public boolean isEnabled() {
-                        return scene.getMap() != null;
-                    }
-                },
-                new CommonMenuOption("Close Map") {
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("Save Map") {
 
-                    @Override
-                    public void executeAction() {
-                        scene.setMap(null);
-                    }
+            @Override
+            public void executeAction() {
 
-                    @Override
-                    public boolean isEnabled() {
-                        return scene.getMap() != null;
-                    }
-                },
-                new CommonMenuOption("-W") {
+                try {
+                    MyGame.getInstance().getLoader().getMaps().save(scene.getMap());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
 
-                    @Override
-                    public void executeAction() {
-                        scene.getMap().addWidth(-1);
-                    }
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("Close Map") {
 
-                    @Override
-                    public boolean isEnabled() {
-                        return scene.getMap() != null;
-                    }
-                },
-                new CommonMenuOption("+W") {
+            @Override
+            public void executeAction() {
+                scene.setMap(null);
+            }
 
-                    @Override
-                    public void executeAction() {
-                        scene.getMap().addWidth(1);
-                    }
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("-W") {
 
-                    @Override
-                    public boolean isEnabled() {
-                        return scene.getMap() != null;
-                    }
-                },
-                new CommonMenuOption("-H") {
+            @Override
+            public void executeAction() {
+                scene.getMap().addWidth(-1);
+            }
 
-                    @Override
-                    public void executeAction() {
-                        scene.getMap().addHeight(-1);
-                    }
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("+W") {
 
-                    @Override
-                    public boolean isEnabled() {
-                        return scene.getMap() != null;
-                    }
-                },
-                new CommonMenuOption("+H") {
+            @Override
+            public void executeAction() {
+                scene.getMap().addWidth(1);
+            }
 
-                    @Override
-                    public void executeAction() {
-                        scene.getMap().addHeight(1);
-                    }
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("-H") {
 
-                    @Override
-                    public boolean isEnabled() {
-                        return scene.getMap() != null;
-                    }
-                },
-                new CommonMenuOption("Quit", GameKey.CANCEL) {
+            @Override
+            public void executeAction() {
+                scene.getMap().addHeight(-1);
+            }
 
-                    @Override
-                    public void executeAction() {
-                        MyGame.getInstance().getPhaseManager().back();
-                    }
-                }// </editor-fold>
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("+H") {
+
+            @Override
+            public void executeAction() {
+                scene.getMap().addHeight(1);
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return scene.getMap() != null;
+            }
+        }, new CommonMenuOption("Quit", GameKey.CANCEL) {
+
+            @Override
+            public void executeAction() {
+                scene.quit();
+            }
+        }// </editor-fold>
             });
     private final MapBuilderScene scene;
     private VisualMap visualMap;
     private TextDialog status = new TextDialog();
+    private PhaseTitle title;
 
     public MenuMode(MapBuilderScene scene) {
         this.scene = scene;
-        menu.getPosition().setXY(Layout.OBJECT_GAP, Layout.OBJECT_GAP);
-        
+        title = scene.createModeTitle("Main Menu");
+        menu.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(title));
+
         status.getPosition().setXY(
                 menu.getLeft(),
                 Layout.getBottom(menu) + Layout.OBJECT_GAP);
@@ -180,21 +192,10 @@ public class MenuMode implements Phase {
                 }
                 MyGame.getInstance().getPhaseManager().back();
             }
-        });
+        },false);
     }
 
-    public void update(long elapsedTime) {
-        menu.update(elapsedTime);
-        updateStatusText();
-    }
-
-    public void render(Graphics2D g) {
-        menu.render(g);
-        if (visualMap != null) {
-            visualMap.render(g);
-        }
-        status.render(g);
-    }
+    
 
     private String getNewMapName() {
         int i = 1;
@@ -210,7 +211,7 @@ public class MenuMode implements Phase {
     }
 
     private void updateStatusText() {
-        StringBuilder builder = new StringBuilder();        
+        StringBuilder builder = new StringBuilder();
         builder.append("Map name: ");
 
         if (scene.getMap() == null) {
@@ -220,27 +221,36 @@ public class MenuMode implements Phase {
             builder.append("\nMap size:");
             builder.append(String.format("\n %dx%d",
                     scene.getMap().getWidth(), scene.getMap().getHeight()));
+            builder.append("\nPlayable: " + (scene.getMap().isPlayable() ? "Yes" : "No"));
         }
 
         status.setText(builder.toString());
     }
 
-    public void onAdd() {
+    // <editor-fold defaultstate="collapsed" desc="Phase implementation">
+    @Override
+    public void update(long elapsedTime) {
+        menu.update(elapsedTime);
+        updateStatusText();
     }
 
-    public void onRemove() {
+    @Override
+    public void render(Graphics2D g) {
+        menu.render(g);
+        if (visualMap != null) {
+            visualMap.render(g);
+        }
+        status.render(g);
+        title.render(g);
     }
 
-    public void onExit() {
-    }
-
+    @Override
     public void onEnter() {
         if (scene.getMap() == null) {
             visualMap = null;
-        }
-        else {
+        } else {
             visualMap = new VisualMap(scene.getMap());
-            visualMap.getPosition().setXY(Layout.getRightGap(menu), Layout.OBJECT_GAP);
-        }               
-    }
+            visualMap.getPosition().setXY(Layout.getRightGap(menu), menu.getTop());
+        }
+    }// </editor-fold>
 }

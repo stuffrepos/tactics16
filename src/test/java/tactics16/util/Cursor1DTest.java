@@ -4,7 +4,7 @@
  */
 package tactics16.util;
 
-import tactics16.util.Cursor1D;
+import tactics16.util.cursors.Cursor1D;
 import junit.framework.TestCase;
 
 /**

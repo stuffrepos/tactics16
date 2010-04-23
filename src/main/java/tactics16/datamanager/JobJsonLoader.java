@@ -24,7 +24,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
     }
 
     @Override
-    protected Job internalLoadObject() throws JSONException {
+    protected Job fromJson() throws JSONException {
         final Job job = new Job(getRootJson().getString("name"));
         job.setEvasiveness(getRootJson().getInt("evasiveness"));
         job.setDefense(getRootJson().getInt("defense"));

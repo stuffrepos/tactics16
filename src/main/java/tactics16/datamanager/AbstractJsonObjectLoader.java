@@ -5,7 +5,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import tactics16.MyGame;
 import tactics16.animation.GameImage;
-import tactics16.util.CacheableValue;
+import tactics16.util.cache.CacheableValue;
 
 /**
  *
@@ -18,7 +18,7 @@ public abstract class AbstractJsonObjectLoader<T> {
         @Override
         protected T calculate() {
             try {
-                return internalLoadObject();
+                return fromJson();
             } catch (JSONException ex) {
                 throw new RuntimeException(ex);
             }
@@ -45,7 +45,7 @@ public abstract class AbstractJsonObjectLoader<T> {
 
     }
 
-    protected abstract T internalLoadObject() throws JSONException;
+    protected abstract T fromJson() throws JSONException;
 
     protected JSONObject getRootJson() {
         return rootJson;
@@ -59,9 +59,6 @@ public abstract class AbstractJsonObjectLoader<T> {
         return MyGame.getInstance().getImage(new File(getDirectory(), imageFileName));
     }
 
-    /**
-     * @return the file
-     */
     public File getFile() {
         return file;
     }

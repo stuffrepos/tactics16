@@ -6,7 +6,7 @@ import tactics16.animation.SpriteAnimation;
 import java.util.TreeMap;
 import tactics16.game.Job.GameAction;
 import tactics16.animation.ImageGroup;
-import tactics16.util.CacheableValue;
+import tactics16.util.cache.CacheableValue;
 
 /**
  *

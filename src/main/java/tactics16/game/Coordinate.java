@@ -143,6 +143,14 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable {
         return this.x >= x &&
                 this.x < x + width &&
                 this.y >= y &&
-                this.y < x + height;
+                this.y < y + height;
+    }
+
+    public void set(Coordinate p, int dx, int dy) {
+        this.setXY(p.x + dx, p.y + dy);
+    }
+
+    public boolean inRectangle(Coordinate position, Coordinate size) {
+        return inRectangle(position.getX(), position.getY(),size.getX(),size.getY());
     }
 }

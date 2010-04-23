@@ -4,7 +4,7 @@
     defense: 3,
     evasiveness: 4,
     playerColorsMapping: {
-        "283180": "DARK_1",
+        "283080": "DARK_1",
         "8888F8": "DARK_2",
         "9880F8": "DARK_3"
     },
@@ -35,6 +35,9 @@
             "targets": ["attacking-0.png","attacking-1.png",
                 "attacking-1-alternative.png","attacking-2.png"],
             "centerX": "9"
+        },{
+            "targets": ["effect-0.png","effect-1.png","effect-2.png","effect-3.png"],
+            "centerX": "center"
         }]
     },
     actions: [{

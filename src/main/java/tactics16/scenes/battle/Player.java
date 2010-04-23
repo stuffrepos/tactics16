@@ -12,10 +12,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
 import tactics16.game.Job.GameAction;
-import tactics16.util.CacheableMapValue;
-import tactics16.util.CacheableValue;
-import tactics16.util.ColorUtil;
-import tactics16.util.PixelImageIterator;
+import tactics16.util.cache.CacheableMapValue;
+import tactics16.util.cache.CacheableValue;
+import tactics16.util.image.ColorUtil;
+import tactics16.util.image.PixelImageIterator;
 
 /**
  *
@@ -66,6 +66,54 @@ public class Player extends DataObject {
                     SpriteAnimation animation = new SpriteAnimation();
                     SpriteAnimation stoppedAnimation = key.getSpriteActionGroup().getSpriteAction(GameAction.STOPPED);
                     animation.setChangeFrameInterval(SELECTED_ACTION_CHANGE_FRAME_INTERVAL);
+
+                    for (GameImage sourceImage : stoppedAnimation.getImages()) {
+                        for (GameImage selectedImage : createImages(key, sourceImage)) {
+                            animation.addImage(selectedImage);
+                        }
+                    }
+
+                    return animation;
+                }
+            };
+    private CacheableMapValue<Job, SpriteAnimation> usedAnimations =
+            new CacheableMapValue<Job, SpriteAnimation>() {
+
+                private Collection<GameImage> createImages(Job job, GameImage image) {
+                    List<GameImage> list = new LinkedList<GameImage>();
+                    list.add(createSelectedImage(Player.this.getImage(job.getSpriteActionGroup(), image)));
+
+                    return list;
+                }
+
+                private GameImage createSelectedImage(GameImage image) {
+
+                    final BufferedImage newImage =
+                            new BufferedImage(image.getImage().getWidth(), image.getImage().getHeight(), Transparency.BITMASK);
+
+                    new PixelImageIterator(image.getImage()) {
+
+                        @Override
+                        public void iterate(int x, int y, int rgb) {
+                            if (rgb == 0) {
+                                newImage.setRGB(x, y, 0);
+                            } else {
+                                newImage.setRGB(x, y, ColorUtil.grayScale(new java.awt.Color(rgb)).getRGB());
+                            }
+                        }
+                    };
+
+                    GameImage gameImage = new GameImage(newImage);
+                    gameImage.getCenter().set(image.getCenter());
+
+                    return gameImage;
+                }
+
+                @Override
+                protected SpriteAnimation calculate(Job key) {
+                    SpriteAnimation animation = new SpriteAnimation();
+                    SpriteAnimation stoppedAnimation = key.getSpriteActionGroup().getSpriteAction(GameAction.STOPPED);
+                    animation.setChangeFrameInterval(stoppedAnimation.getChangeFrameInterval());
 
                     for (GameImage sourceImage : stoppedAnimation.getImages()) {
                         for (GameImage selectedImage : createImages(key, sourceImage)) {
@@ -132,6 +180,10 @@ public class Player extends DataObject {
         return selectedAnimations.getValue(job);
     }
 
+    public SpriteAnimation getUsedSpriteAnimation(Job job) {
+        return usedAnimations.getValue(job);
+    }
+
     public static enum Color {
 
         DARK_0,
@@ -162,9 +214,9 @@ public class Player extends DataObject {
 
                     @Override
                     protected GameImage calculate() {
-                       final GameImage maskedImage = image.sameSize();
+                        final GameImage maskedImage = image.sameSize();
 
-                       new PixelImageIterator(image.getImage()) {
+                        new PixelImageIterator(image.getImage()) {
 
                             @Override
                             public void iterate(int x, int y, int rgb) {

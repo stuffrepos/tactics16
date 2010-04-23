@@ -21,13 +21,13 @@ class PersonMovimentAnimation {
     private Person person;
     private Coordinate terrainTarget;
     private MultiLinearMoviment moviment;
-    private final VisualMap visualMap;
+    private final VisualBattleMap visualBattleMap;
 
-    public PersonMovimentAnimation(Person person, VisualMap visualMap, Coordinate terrainTarget) {
+    public PersonMovimentAnimation(Person person, VisualBattleMap visualBattleMap, Coordinate terrainTarget) {
         this.person = person;
-        this.visualMap = visualMap;
+        this.visualBattleMap = visualBattleMap;
         this.terrainTarget = terrainTarget;
-        this.person.setCurrentGameAction(GameAction.WALKING);
+        this.person.getGameActionControl().advance(GameAction.WALKING);
         this.moviment = new MultiLinearMoviment(
                 this.person.getPosition(),
                 getMinPathGrouped(),
@@ -71,14 +71,14 @@ class PersonMovimentAnimation {
                         (current.getY() == next.getY() && current.getY() == origin.getY())) {
                     current = next;
                 } else {
-                    grouped.add(visualMap.getPersonPosition(current));
+                    grouped.add(visualBattleMap.getVisualMap().getPersonPosition(current));
                     origin = current;
                     current = next;
                 }
             }
 
             if (!minPathIterator.hasNext()) {
-                grouped.add(visualMap.getPersonPosition(next));
+                grouped.add(visualBattleMap.getVisualMap().getPersonPosition(next));
             }
         }
 
@@ -99,7 +99,7 @@ class PersonMovimentAnimation {
         moviment.update(elapsedTime);
 
         if (isFinalized()) {
-            person.setCurrentGameAction(GameAction.STOPPED);
+            person.getGameActionControl().back();
         }
     }
 
@@ -112,12 +112,12 @@ class PersonMovimentAnimation {
         private java.util.Map<Coordinate, Integer> costs;
 
         public PathSearch() {
-            costs = visualMap.getMap().calculateMovimentDistances(terrainTarget);
+            costs = visualBattleMap.getBattleGame().calculateMovimentDistances(terrainTarget,person.getPlayer());
         }
 
         private Coordinate getMinNeighboorCost(Coordinate c) {
             Coordinate minNeighboorCost = null;
-            for (Coordinate neighboor : visualMap.getMap().getMovimentNeighboors(c)) {
+            for (Coordinate neighboor : visualBattleMap.getBattleGame().getMovimentNeighboors(c,person.getPlayer())) {
                 Integer neighboorCost = costs.get(neighboor);
                 if (neighboorCost != null &&
                         (minNeighboorCost == null || neighboorCost < costs.get(minNeighboorCost))) {

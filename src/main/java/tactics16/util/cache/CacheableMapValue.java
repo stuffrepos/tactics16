@@ -1,4 +1,4 @@
-package tactics16.util;
+package tactics16.util.cache;
 
 import java.util.HashMap;
 import java.util.Map;

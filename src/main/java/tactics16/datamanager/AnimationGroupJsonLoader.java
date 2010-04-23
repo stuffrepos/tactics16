@@ -8,7 +8,7 @@ import org.json.JSONObject;
 import tactics16.animation.AnimationGroup;
 import tactics16.animation.AnimationGroupBuilder;
 import tactics16.animation.GameImage;
-import tactics16.util.StringUtil;
+import tactics16.util.javabasic.StringUtil;
 
 /**
  *
@@ -21,7 +21,7 @@ public class AnimationGroupJsonLoader extends AbstractJsonObjectLoader<Animation
     }
 
     @Override
-    protected AnimationGroup internalLoadObject() throws JSONException {
+    protected AnimationGroup fromJson() throws JSONException {
         final AnimationGroupBuilder builder = new AnimationGroupBuilder() {
 
             @Override

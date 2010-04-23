@@ -1,8 +1,6 @@
 package tactics16.scenes.battle.personaction;
 
-import java.util.List;
 import java.util.Set;
-import tactics16.animation.EntitiesLayer;
 import tactics16.game.Action;
 import tactics16.game.Coordinate;
 import tactics16.game.Job.GameAction;
@@ -15,10 +13,7 @@ import tactics16.scenes.battle.VisualBattleMap;
  */
 public class PersonActionAnimation {
 
-    private EntitiesLayer effects;
-    private List<Person> personsTargets;
     private Person selectedPerson;
-    private boolean personWasAnimated = false;
     private final Set<Coordinate> targets;
     private final VisualBattleMap visualBattleMap;
 
@@ -29,7 +24,7 @@ public class PersonActionAnimation {
             Coordinate target) {
         this.visualBattleMap = visualBattleMap;
         this.selectedPerson = selectedPerson;
-        this.selectedPerson.setCurrentGameAction(GameAction.ATTACKING);
+        this.selectedPerson.getGameActionControl().advance(GameAction.ATTACKING);
         this.selectedPerson.setSide(target.getX() - selectedPerson.getMapPosition().getX());
         this.targets = this.visualBattleMap.getBattleGame().calculateTargetActionRayArea(
                 target, selectedAction.getReach().getRay());

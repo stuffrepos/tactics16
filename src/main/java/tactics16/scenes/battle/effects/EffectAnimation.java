@@ -27,7 +27,7 @@ public class EffectAnimation {
             BattleAction battleAction,
             Map<Person, Boolean> personsEvaded) {
         this.battleAction = battleAction;
-        this.battleAction.getAgent().setCurrentGameAction(GameAction.STOPPED);
+        this.battleAction.getAgent().getGameActionControl().back();
         this.personsEvaded = personsEvaded;
         effects = new EntitiesLayer();
         boolean first = true;
@@ -46,7 +46,7 @@ public class EffectAnimation {
             effects.addEntity(effect);
             Person person = visualBattleMap.getBattleGame().getPersonOnMapPosition(rayTarget);
             if (person != null && !personsEvaded.get(person)) {
-                person.setCurrentGameAction(GameAction.DAMAGED);
+                person.getGameActionControl().advance(GameAction.DAMAGED);
             }
         }
     }
@@ -61,7 +61,7 @@ public class EffectAnimation {
         if (effects.isFinalized() && info == null) {
             info = new EntitiesLayer();
             for (Person person : battleAction.getPersonsTargets()) {
-                person.setCurrentGameAction(GameAction.STOPPED);
+                person.getGameActionControl().back();
 
                 PersonInfo.Type type;
                 String value;

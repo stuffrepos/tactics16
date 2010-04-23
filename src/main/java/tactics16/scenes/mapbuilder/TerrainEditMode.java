@@ -4,18 +4,21 @@ import tactics16.Layout;
 import tactics16.MyGame;
 import tactics16.components.TextDialog;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import tactics16.GameKey;
 import tactics16.components.MapCursor;
+import tactics16.components.PhaseTitle;
 import tactics16.components.VisualMap;
-import tactics16.phase.Phase;
+import tactics16.game.Terrain;
+import tactics16.phase.AbstractPhase;
+import tactics16.util.javabasic.StringUtil;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-class TerrainEditMode implements Phase {
+class TerrainEditMode extends AbstractPhase {
 
+    private PhaseTitle title;
     private MapCursor mapCursor;
     private TerrainPallete terrainPallete;
     private VisualMap visualMap;
@@ -24,19 +27,22 @@ class TerrainEditMode implements Phase {
 
     public TerrainEditMode(MapBuilderScene scene) {
         this.scene = scene;
+        this.title = scene.createModeTitle("Terrain Editor");
+
         this.terrainPallete = new TerrainPallete();
         this.terrainPallete.getPosition().setXY(
                 Layout.OBJECT_GAP,
-                Layout.OBJECT_GAP);
+                Layout.getBottomGap(title));
 
-        
+
         this.status = new TextDialog();
         this.status.setWidth(200);
         this.status.getPosition().setXY(
                 Layout.getScreenWidth() - Layout.OBJECT_GAP - this.status.getWidth(),
-                Layout.OBJECT_GAP);
+                this.terrainPallete.getTop());
     }
 
+    @Override
     public void update(long elapsedTime) {
         terrainPallete.update(elapsedTime);
         mapCursor.update(elapsedTime);
@@ -52,12 +58,14 @@ class TerrainEditMode implements Phase {
         updateStatusText();
     }
 
+    @Override
     public void render(Graphics2D g) {
         terrainPallete.render(g);
         visualMap.render(g);
         status.render(g);
         mapCursor.render(g);
-    }    
+        title.render(g);
+    }
 
     private void updateStatusText() {
         StringBuilder builder = new StringBuilder();
@@ -66,10 +74,20 @@ class TerrainEditMode implements Phase {
             builder.append("-");
         } else {
             builder.append("Map size:");
-            builder.append(String.format("\n %dx%d",
+            builder.append(String.format("\n\t%dx%d",
                     scene.getMap().getWidth(), scene.getMap().getHeight()));
 
-            builder.append("\nCursor: " + mapCursor.getCursor().toString());
+            Terrain terrain = terrainPallete.getCursor().getSelected();
+
+            if (terrain != null) {
+                builder.append("\nTerrain:");
+                builder.append("\n\tName: " + terrain.getName());
+                builder.append("\n\tAllow Moviment: " + StringUtil.yesNo(terrain.getAllowMoviment()));
+                builder.append("\n\tAllow Action: " + StringUtil.yesNo(terrain.getAllowMoviment()));
+            }
+
+            builder.append("\nCursor: ");
+            builder.append("\n\t" + mapCursor.getCursor().toString());
 
         }
 
@@ -80,20 +98,12 @@ class TerrainEditMode implements Phase {
         return mapCursor;
     }
 
-    public void onAdd() {
-    }
-
-    public void onRemove() {
-    }
-
-    public void onExit() {        
-    }
-
+    @Override
     public void onEnter() {
         visualMap = new VisualMap(scene.getMap());
         visualMap.getPosition().setXY(
                 Layout.OBJECT_GAP,
-                Layout.getBottomGap(terrainPallete));        
+                Layout.getBottomGap(terrainPallete));
         mapCursor = new MapCursor(visualMap);
     }
 }

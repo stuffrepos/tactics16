@@ -11,11 +11,13 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 import tactics16.GameKey;
+import tactics16.components.PhaseTitle;
+import tactics16.components.Text;
 import tactics16.components.menu.CommonMenuOption;
 import tactics16.components.menu.Menu;
 import tactics16.phase.AbstractPhase;
-import tactics16.util.Cursor1D;
-import tactics16.util.ObjectCursor1D;
+import tactics16.util.cursors.Cursor1D;
+import tactics16.util.cursors.ObjectCursor1D;
 import tactics16.util.listeners.Listener;
 
 /**
@@ -26,11 +28,11 @@ public class MainMenuScene extends AbstractPhase {
 
     private static final MainMenuScene instance = new MainMenuScene();
     private boolean positioned = false;
-    private TextDialog title;
+    private Text title;
     private TextDialog keysHelp;
     private ObjectCursor1D<Font> fontsCursor;
     private TextDialog fontName;
-    private final Menu mainMenu = new Menu(
+    private final Menu mainMenu = new Menu(           
             new CommonMenuOption("Play") {
 
                 @Override
@@ -63,7 +65,7 @@ public class MainMenuScene extends AbstractPhase {
                 MyGame.getInstance().getPhaseManager().advance(new SelectPersonsScene(selectMapScene));
             }
         }
-    });
+    },true);
 
     private MainMenuScene() {
     }
@@ -75,7 +77,9 @@ public class MainMenuScene extends AbstractPhase {
     @Override
     public void onAdd() {
 
-        title = new TextDialog();
+        title = new Text();
+        title.setFont(Text.MAIN_TITLE_FONT);
+        title.setColor(PhaseTitle.DEFAULT_COLOR);
         title.setText("Tactics16");
 
         keysHelp = new TextDialog();
@@ -120,8 +124,6 @@ public class MainMenuScene extends AbstractPhase {
             }
         });
 
-
-
         while (true) {
             if (initialFontName.equals(fontsCursor.getSelected().getName())) {
                 break;
@@ -131,7 +133,6 @@ public class MainMenuScene extends AbstractPhase {
             }
             fontsCursor.getCursor().moveNext();
         }
-
     }
 
     @Override
@@ -170,9 +171,5 @@ public class MainMenuScene extends AbstractPhase {
 
             positioned = true;
         }
-    }
-
-    @Override
-    public void onEnter() {
     }
 }

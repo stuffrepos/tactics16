@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import tactics16.game.Coordinate;
 import tactics16.game.Map;
@@ -81,5 +82,55 @@ public class BattleGame {
         }
 
         return persons;
+    }
+
+    public java.util.Map<Coordinate, Integer> calculateMovimentDistances(Coordinate target, Player player) {
+        java.util.Map<Coordinate, Integer> distances = new TreeMap<Coordinate, Integer>();
+        Set<Coordinate> visited = new TreeSet<Coordinate>();
+        Set<Coordinate> current = new TreeSet<Coordinate>();
+
+        current.add(target);
+        visited.add(target);
+        int n = 0;
+
+        while (!current.isEmpty()) {
+            Set<Coordinate> forTest = new TreeSet<Coordinate>();
+
+            for (Coordinate c : current) {
+                distances.put(c, n);
+
+                for (Coordinate next : getMovimentNeighboors(c, player)) {
+                    if (!visited.contains(next)) {
+                        visited.add(next);
+                        forTest.add(next);
+                    }
+                }
+            }
+
+            n++;
+            current = forTest;
+        }
+
+        return distances;
+    }
+
+    public Iterable<Coordinate> getMovimentNeighboors(Coordinate c, Player player) {
+        Set<Coordinate> neighboors = new TreeSet<Coordinate>();
+
+        for (Coordinate neighboor : new Coordinate[]{
+                    new Coordinate(c, 0, -1),
+                    new Coordinate(c, 0, 1),
+                    new Coordinate(c, -1, 0),
+                    new Coordinate(c, 1, 0)
+                }) {
+            if (map.inMap(neighboor) && map.getTerrain(neighboor).getAllowMoviment()) {
+                Person person = this.getPersonOnMapPosition(neighboor);
+                if (person == null || person.getPlayer().equals(player)) {
+                    neighboors.add(neighboor);
+                }
+            }
+        }
+
+        return neighboors;
     }
 }

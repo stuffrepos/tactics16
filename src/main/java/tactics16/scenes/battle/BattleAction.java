@@ -1,6 +1,5 @@
 package tactics16.scenes.battle;
 
-import java.util.List;
 import java.util.Set;
 import tactics16.game.Action;
 import tactics16.game.Coordinate;
@@ -14,12 +13,12 @@ public class BattleAction {
     private Person agent;
     private Action action;
     private Coordinate target;
-    private int agentAgilityPoints;
+    private Integer agentAgilityPoints;
     private BattleGame battleGame;
 
     public BattleAction(
             BattleGame battleGame, Person agent, Action action,
-            Coordinate target, int agentAgilityPoints) {
+            Coordinate target, Integer agentAgilityPoints) {
         this.agent = agent;
         this.action = action;
         this.target = target;
@@ -39,7 +38,7 @@ public class BattleAction {
         return target;
     }
 
-    public int getAgentAgilityPoints() {
+    public Integer getAgentAgilityPoints() {
         return agentAgilityPoints;
     }
 
@@ -54,10 +53,14 @@ public class BattleAction {
         return battleGame.calculateTargetActionRayArea(target, action.getReach().getRay());
     }
 
-    public int agilityPointsNeededToEvade(Person target) {
-        return Math.max(
-                0,
-                getAgentAgilityPoints() + getAction().getAgility() - target.getEvasiveness());
+    public Integer agilityPointsNeededToEvade(Person target) {
+        if (agentAgilityPoints == null) {
+            return null;
+        } else {
+            return Math.max(
+                    0,
+                    getAgentAgilityPoints() + getAction().getAgility() - target.getEvasiveness());
+        }
     }
 
     public int calculateDamage(Person person) {

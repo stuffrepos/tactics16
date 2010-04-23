@@ -18,7 +18,7 @@ import tactics16.game.Job.GameAction;
 import tactics16.game.Map;
 import tactics16.game.Terrain;
 import tactics16.phase.AbstractPhase;
-import tactics16.util.Cursor1D;
+import tactics16.util.cursors.Cursor1D;
 import tactics16.util.listeners.Listener;
 
 /**
@@ -78,7 +78,7 @@ public class PersonActionSubPhase extends AbstractPhase {
         public void update(long elapsedTime) {
             if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
                 Person person = parentScene.getVisualBattleMap().getBattleGame().getPersonOnMapPosition(selectPersonCursor.getCursor().getPosition());
-                if (person != null) {
+                if (person != null && !parentScene.isUsed(person) && person.getPlayer().equals(parentScene.getCurrentPlayer())) {
                     parentScene.getPhaseManager().advance(new SelectMovimentTargetStep(person));
                 }
             }
@@ -135,8 +135,8 @@ public class PersonActionSubPhase extends AbstractPhase {
                 List<Coordinate> area = new LinkedList<Coordinate>();
 
                 for (java.util.Map.Entry<Coordinate, Integer> e :
-                        parentScene.getVisualBattleMap().getVisualMap().getMap().calculateMovimentDistances(
-                        selectedPerson.getMapPosition()).entrySet()) {
+                        parentScene.getVisualBattleMap().getBattleGame().calculateMovimentDistances(
+                        selectedPerson.getMapPosition(),selectedPerson.getPlayer()).entrySet()) {
                     Person personOnPosition = parentScene.getVisualBattleMap().getBattleGame().getPersonOnMapPosition(e.getKey());
                     if (e.getValue() <= selectedPerson.getMoviment() &&
                             (personOnPosition == null || personOnPosition == selectedPerson)) {
@@ -150,7 +150,7 @@ public class PersonActionSubPhase extends AbstractPhase {
             @Override
             public void onEnter() {
                 parentScene.putPersonOnPosition(selectedPerson, selectedPersonPosition);
-                selectedPerson.setCurrentGameAction(GameAction.SELECTED);
+                selectedPerson.getGameActionControl().advance(GameAction.SELECTED);
                 mapCheckedArea = parentScene.getVisualBattleMap().createMapCheckedArea(
                         calculateSelectedPersonMovimentArea(),
                         0x0000FF);
@@ -162,7 +162,7 @@ public class PersonActionSubPhase extends AbstractPhase {
             public void onExit() {
                 movimentCursor.finalizeEntity();
                 mapCheckedArea.finalizeEntity();
-                selectedPerson.setCurrentGameAction(GameAction.STOPPED);
+                selectedPerson.getGameActionControl().back();
             }
 
             @Override
@@ -191,7 +191,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                 public void onEnter() {
                     moviment = new PersonMovimentAnimation(
                             selectedPerson,
-                            parentScene.getVisualBattleMap().getVisualMap(),
+                            parentScene.getVisualBattleMap(),
                             movimentCursor.getCursor().getPosition().clone());
                 }
 
@@ -261,7 +261,11 @@ public class PersonActionSubPhase extends AbstractPhase {
                             @Override
                             public void executeAction() {
                                 cursorLastPosition = movimentCursor.getCursor().getPosition().clone();
-                                parentScene.getPhaseManager().change(selectPersonStep);
+                                 parentScene.toEffectSubPhase(
+                                         new BattleAction(
+                                         parentScene.getVisualBattleMap().getBattleGame(),
+                                         selectedPerson, null, null, null)
+                                         );
                             }
                         });
 
@@ -392,7 +396,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                                     Person person = parentScene.getVisualBattleMap().getBattleGame().getPersonOnMapPosition(c);
                                     if (person != null) {
                                         personsTargets.add(person);
-                                        person.setCurrentGameAction(GameAction.SELECTED);
+                                        person.getGameActionControl().advance(GameAction.SELECTED);
                                     }
                                 }
                             }
@@ -401,7 +405,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                             public void onExit() {
                                 targetRay.finalizeEntity();
                                 for (Person person : personsTargets) {
-                                    person.setCurrentGameAction(GameAction.STOPPED);
+                                    person.getGameActionControl().back();
                                 }
                             }
 

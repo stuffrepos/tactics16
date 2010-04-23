@@ -6,22 +6,23 @@ import tactics16.components.GlowingRectangle;
 import tactics16.components.TextDialog;
 import tactics16.game.Coordinate;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import tactics16.GameKey;
 import tactics16.components.MapCursor;
+import tactics16.components.PhaseTitle;
 import tactics16.components.VisualMap;
-import tactics16.phase.Phase;
+import tactics16.phase.AbstractPhase;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-class PersonsPositionMode implements Phase {
+class PersonsPositionMode extends AbstractPhase {
 
     private PlayerPallete playerPallete = new PlayerPallete();
+    private PhaseTitle title;
     private final MapBuilderScene scene;
     private VisualMap visualMap;
     private TextDialog status;
@@ -30,12 +31,13 @@ class PersonsPositionMode implements Phase {
 
     public PersonsPositionMode(MapBuilderScene scene) {
         this.scene = scene;
-        playerPallete.getPosition().setXY(Layout.OBJECT_GAP, Layout.OBJECT_GAP);
+        this.title = scene.createModeTitle("Set Persons Positions");
+        playerPallete.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(title));
         status = new TextDialog();
         status.setWidth(200);
         status.getPosition().setXY(
                 Layout.getScreenWidth() - Layout.OBJECT_GAP - status.getWidth(),
-                Layout.OBJECT_GAP);        
+                playerPallete.getPosition().getY());
     }
 
     public void update(long elapsedTime) {
@@ -57,12 +59,10 @@ class PersonsPositionMode implements Phase {
 
     private void updateStatusDialog() {
         StringBuilder b = new StringBuilder();
-        b.append("Player: " + (playerPallete.getCursor().getCurrent() + 1));
-        b.append('\n');
 
-        for (Coordinate personPosition :
-                scene.getMap().getPlayerInitialPosition(playerPallete.getCursor().getCurrent())) {
-            b.append(personPosition.toString());
+        for (int player = 0; player < playerPallete.getCursor().getLength(); ++player) {
+            b.append("Player: " + (player + 1));
+            b.append("\n\tPositions: " + scene.getMap().getPlayerInitialPosition(player).size());
             b.append('\n');
         }
 
@@ -70,6 +70,7 @@ class PersonsPositionMode implements Phase {
     }
 
     public void render(Graphics2D g) {
+        title.render(g);
         playerPallete.render(g);
         visualMap.render(g, this.playerPallete.getPlayerColors());
         status.render(g);
@@ -96,15 +97,6 @@ class PersonsPositionMode implements Phase {
                     playerPallete.getCursor().getCurrent(),
                     mapCursor.getCursor().getPosition());
         }
-    }
-
-    public void onAdd() {
-    }
-
-    public void onRemove() {
-    }
-
-    public void onExit() {
     }
 
     public void onEnter() {

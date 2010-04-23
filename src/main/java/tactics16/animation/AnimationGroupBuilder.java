@@ -2,7 +2,7 @@ package tactics16.animation;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
-import tactics16.util.CollectionUtil;
+import tactics16.util.javabasic.CollectionUtil;
 import tactics16.util.DataGroup;
 import tactics16.util.Nameable;
 

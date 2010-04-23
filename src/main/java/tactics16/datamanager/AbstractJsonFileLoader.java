@@ -12,6 +12,6 @@ import org.json.JSONObject;
 public abstract class AbstractJsonFileLoader<T> extends AbstractJsonObjectLoader<T> {
 
     public AbstractJsonFileLoader(File file) throws IOException, JSONException {
-        super(new JSONObject(tactics16.util.FileUtil.fileToString(file)),file);        
+        super(new JSONObject(tactics16.util.javabasic.FileUtil.fileToString(file)),file);
     }
 }
