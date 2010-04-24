@@ -15,6 +15,8 @@ import tactics16.animation.GameImage;
  */
 public class Map implements Nameable {
 
+    public static final int MAX_PLAYERS = 4;
+    public static final int MIN_PLAYERS = 2;
     public static final int TERRAIN_SIZE = 32;
     public static final int MIN_SIZE = 6;
     public static final int MAX_SIZE = 32;

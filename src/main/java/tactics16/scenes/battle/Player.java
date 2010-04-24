@@ -133,35 +133,83 @@ public class Player extends DataObject {
         player1Colors.setMapping(Color.DARK_1, 0x980000);
         player1Colors.setMapping(Color.DARK_2, 0xE00000);
         player1Colors.setMapping(Color.DARK_3, 0xFF0000);
-        player1Colors.setMapping(Color.LIGHT_0, 0x605000);
-        player1Colors.setMapping(Color.LIGHT_1, 0xD0D000);
-        player1Colors.setMapping(Color.LIGHT_2, 0xA08000);
-        player1Colors.setMapping(Color.LIGHT_3, 0xFFFF00);
+        player1Colors.setMapping(Color.LIGHT_0, 0x603030);
+        player1Colors.setMapping(Color.LIGHT_1, 0xA08080);
+        player1Colors.setMapping(Color.LIGHT_2, 0xD0A0A0);
+        player1Colors.setMapping(Color.LIGHT_3, 0xFFDDDD);
 
         PlayerColors player2Colors = new PlayerColors();
         player2Colors.setMapping(Color.DARK_0, 0x000040);
         player2Colors.setMapping(Color.DARK_1, 0x000098);
         player2Colors.setMapping(Color.DARK_2, 0x0000E0);
         player2Colors.setMapping(Color.DARK_3, 0x0000FF);
-        player2Colors.setMapping(Color.LIGHT_0, 0x005060);
-        player2Colors.setMapping(Color.LIGHT_1, 0x00D0D0);
-        player2Colors.setMapping(Color.LIGHT_2, 0x0080A0);
-        player2Colors.setMapping(Color.LIGHT_3, 0x00DDFF);
-        /*
-        player2Colors.setMapping(Color.DARK_0, 0x004000);
-        player2Colors.setMapping(Color.DARK_1, 0x009800);
-        player2Colors.setMapping(Color.DARK_2, 0x00E000);
-        player2Colors.setMapping(Color.DARK_3, 0x00FFFF);
-        player2Colors.setMapping(Color.LIGHT_0, 0x006050);
-        player2Colors.setMapping(Color.LIGHT_1, 0x00D0D0);
-        player2Colors.setMapping(Color.LIGHT_2, 0x00A080);
-        player2Colors.setMapping(Color.LIGHT_3, 0x00FFDD);
-         */
+        player2Colors.setMapping(Color.LIGHT_0, 0x303060);
+        player2Colors.setMapping(Color.LIGHT_1, 0x8080A0);
+        player2Colors.setMapping(Color.LIGHT_2, 0xA0A0D0);
+        player2Colors.setMapping(Color.LIGHT_3, 0xDDDDFF);
+
+        PlayerColors player3Colors = new PlayerColors();
+        player3Colors.setMapping(Color.DARK_0, 0x004000);
+        player3Colors.setMapping(Color.DARK_1, 0x009800);
+        player3Colors.setMapping(Color.DARK_2, 0x00E000);
+        player3Colors.setMapping(Color.DARK_3, 0x00FF00);
+        player3Colors.setMapping(Color.LIGHT_0, 0x306030);
+        player3Colors.setMapping(Color.LIGHT_1, 0x80A080);
+        player3Colors.setMapping(Color.LIGHT_2, 0xA0D0A0);
+        player3Colors.setMapping(Color.LIGHT_3, 0xDDFFDD);
+
+        PlayerColors player4Colors = new PlayerColors();
+        player4Colors.setMapping(Color.DARK_0, 0x404000);
+        player4Colors.setMapping(Color.DARK_1, 0x989800);
+        player4Colors.setMapping(Color.DARK_2, 0xE0E000);
+        player4Colors.setMapping(Color.DARK_3, 0xFFFF00);
+        player4Colors.setMapping(Color.LIGHT_0, 0x606050);
+        player4Colors.setMapping(Color.LIGHT_1, 0xA0A080);
+        player4Colors.setMapping(Color.LIGHT_2, 0xD0D0A0);
+        player4Colors.setMapping(Color.LIGHT_3, 0xFFFFDD);
+
+
         playersColors = new ArrayList<PlayerColors>();
         playersColors.add(player1Colors);
         playersColors.add(player2Colors);
+        playersColors.add(player3Colors);
+        playersColors.add(player4Colors);
     }
     private List<Person> persons = new ArrayList<Person>();
+    private CacheableMapValue<Job, CacheableMapValue<Job.GameAction, SpriteAnimation>> jobAnimations = new CacheableMapValue<Job, CacheableMapValue<GameAction, SpriteAnimation>>() {
+
+        @Override
+        protected CacheableMapValue<GameAction, SpriteAnimation> calculate(final Job job) {
+            return new CacheableMapValue<GameAction, SpriteAnimation>() {
+
+                @Override
+                protected SpriteAnimation calculate(GameAction gameAction) {
+                    SpriteAnimation spriteAction;
+                    switch (gameAction) {
+                        case SELECTED:
+                            spriteAction = getSelectedSpriteAnimation(job);
+                            break;
+
+                        case USED:
+                            spriteAction = getUsedSpriteAnimation(job);
+                            break;
+
+                        default:
+                            spriteAction = job.getSpriteActionGroup().getSpriteAction(gameAction);
+                    }
+
+                    SpriteAnimation playerJobAnimation = new SpriteAnimation();
+                    playerJobAnimation.setChangeFrameInterval(spriteAction.getChangeFrameInterval());
+
+                    for (GameImage image : spriteAction.getImages()) {
+                        playerJobAnimation.addImage(getImage(job.getSpriteActionGroup(), image));
+                    }
+
+                    return playerJobAnimation;
+                }
+            };
+        }
+    };
 
     public Player(String name, int index) {
         super(name);
@@ -176,12 +224,20 @@ public class Player extends DataObject {
         return persons;
     }
 
-    public SpriteAnimation getSelectedSpriteAnimation(Job job) {
+    private SpriteAnimation getSelectedSpriteAnimation(Job job) {
         return selectedAnimations.getValue(job);
     }
 
-    public SpriteAnimation getUsedSpriteAnimation(Job job) {
+    private SpriteAnimation getUsedSpriteAnimation(Job job) {
         return usedAnimations.getValue(job);
+    }
+
+    public SpriteAnimation getSpriteAnimation(Job job, Job.GameAction gameAction) {
+        return jobAnimations.getValue(job).getValue(gameAction);
+    }
+
+    public java.awt.Color getColor(Color color) {
+        return new java.awt.Color(playersColors.get(index).getColor(color));
     }
 
     public static enum Color {

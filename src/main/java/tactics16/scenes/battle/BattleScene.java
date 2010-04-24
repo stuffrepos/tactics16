@@ -51,10 +51,10 @@ public class BattleScene extends AbstractPhase {
         getVisualBattleMap().getVisualMap().getPosition().setXY(MAP_GAP, MAP_GAP);
 
         // Persons Positions
-        for (int player = 0; player < battleGame.getPlayers().size(); ++player) {
-            for (int person = 0; person < battleGame.getPlayers().get(player).getPersons().size(); ++person) {
+        for (int player = 0; player < battleGame.getPlayerCount(); ++player) {
+            for (int person = 0; person < battleGame.getPlayer(player).getPersons().size(); ++person) {
                 putPersonOnPosition(
-                        battleGame.getPlayers().get(player).getPersons().get(person),
+                        battleGame.getPlayer(player).getPersons().get(person),
                         battleGame.getPersonInitialPosition(player, person));
             }
         }
@@ -140,11 +140,11 @@ public class BattleScene extends AbstractPhase {
     }
 
     public Player getCurrentPlayer() {
-        return getVisualBattleMap().getBattleGame().getPlayers().get(currentPlayer);
+        return getVisualBattleMap().getBattleGame().getPlayer(currentPlayer);
     }
 
     public void newTurn() {
-        currentPlayer = (currentPlayer + 1) % getVisualBattleMap().getBattleGame().getPlayers().size();
+        currentPlayer = (currentPlayer + 1) % getVisualBattleMap().getBattleGame().getPlayerCount();
         if (usedPersons != null) {
             for (Person person : usedPersons) {
                 person.getGameActionControl().set(Job.GameAction.STOPPED);

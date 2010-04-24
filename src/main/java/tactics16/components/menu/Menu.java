@@ -1,6 +1,7 @@
 package tactics16.components.menu;
 
 import java.awt.Color;
+import java.awt.Font;
 import tactics16.MyGame;
 import tactics16.game.Coordinate;
 import tactics16.util.cursors.ObjectCursor1D;
@@ -60,6 +61,7 @@ public class Menu implements Object2D {
         });
 
         position.addListener(new Listener<Coordinate>() {
+
             public void onChange(Coordinate source) {
                 listenerManager.fireChange();
             }
@@ -80,7 +82,7 @@ public class Menu implements Object2D {
                     cursor.getCursor().getCurrent() == i,
                     position.getX(),
                     position.getY() + i * (h + Button.BUTTON_GAP),
-                    this.getOptionWidth(), h);
+                    getWidth(), h);
             i++;
         }
     }
@@ -126,7 +128,7 @@ public class Menu implements Object2D {
         int w = 0;
 
         for (MenuOption option : this.cursor.getList()) {
-            int optionW = MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().stringWidth(option.getText());
+            int optionW = MyGame.getInstance().getDefaultGraphics2D().getFontMetrics(getFont()).stringWidth(option.getText());
 
             if (optionW > w) {
                 w = optionW;
@@ -137,7 +139,7 @@ public class Menu implements Object2D {
     }
 
     private int getOptionHeight() {
-        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics().getHeight() + 2 * TEXT_MARGIN;
+        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics(getFont()).getHeight() + 2 * TEXT_MARGIN;
     }
 
     public void clear() {
@@ -163,7 +165,7 @@ public class Menu implements Object2D {
     }
 
     private void renderOption(MenuOption option, Graphics2D g, boolean selected, int x, int y, int w, int h) {
-        int optionW = g.getFontMetrics().stringWidth(option.getText());
+        int optionW = g.getFontMetrics(getFont()).stringWidth(option.getText());
         Color backgroundColor;
         if (option.isEnabled()) {
             backgroundColor = selected
@@ -185,11 +187,15 @@ public class Menu implements Object2D {
         g.drawString(
                 option.getText(),
                 x + (w - optionW) / 2,
-                y + TEXT_MARGIN + g.getFontMetrics().getAscent() + g.getFontMetrics().getLeading());
+                y + TEXT_MARGIN + g.getFontMetrics(getFont()).getAscent() + g.getFontMetrics(getFont()).getLeading());
     }
 
     public void addGeometryListener(Listener<Object2D> listener) {
         listenerManager.addListener(listener);
+    }
+
+    private Font getFont() {
+        return MyGame.getInstance().getFont();
     }
 
     // <editor-fold defaultstate="collapsed" desc="class Colors">

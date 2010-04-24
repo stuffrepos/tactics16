@@ -8,8 +8,8 @@
         "980000": "DARK_1",
         "E00000": "DARK_2",
         "605000": "LIGHT_0",
-        "D0D000": "LIGHT_1",
-        "A08000": "LIGHT_2"
+        "A08000": "LIGHT_1",
+        "D0D000": "LIGHT_2"        
     },
     animationGroup: {
         "animations": {

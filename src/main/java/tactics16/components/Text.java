@@ -13,8 +13,8 @@ import tactics16.util.cache.CacheableValue;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Text implements Object2D,VisualEntity {
-    
+public class Text implements Object2D, VisualEntity {
+
     public static final int MAX_MARGIN = 10;
     private Align align = Align.NEGATIVE;
     public static final Color DEFAULT_COLOR = Color.WHITE;
@@ -58,6 +58,15 @@ public class Text implements Object2D,VisualEntity {
         }
     };
 
+    public Text() {
+        this("");
+    }
+
+    public Text(String text) {
+        setText(text);
+        setColor(DEFAULT_COLOR);
+    }
+
     public void setColor(Color color) {
         this.color = color;
     }
@@ -73,18 +82,19 @@ public class Text implements Object2D,VisualEntity {
 
         int i = 0;
         for (String line : textLines.getValue()) {
-            int x = position.getX() + getMargin();
+            int x;
             switch (align) {
                 case POSITIVE:
-                    x += getWidth() - getLineWidth(line);
+                    x = position.getX() - getLineWidth(line) - getMargin();
                     break;
 
                 case NULL:
-                    x += (getWidth() - getLineWidth(line)) / 2;
+                    x = position.getX() - getLineWidth(line) / 2;
                     break;
 
                 case NEGATIVE:
                 default:
+                    x = position.getX() + getMargin();
                     break;
             }
             g.drawString(

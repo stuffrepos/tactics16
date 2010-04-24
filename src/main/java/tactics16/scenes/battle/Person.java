@@ -57,26 +57,7 @@ public class Person extends DataObject implements VisualEntity {
     }
 
     public GameImage getCurrentImage() {
-
-        SpriteAnimation spriteAction;
-        switch (this.currentGameAction) {
-            case SELECTED:
-                spriteAction = player.getSelectedSpriteAnimation(job);
-                break;
-
-            case USED:
-                spriteAction = player.getUsedSpriteAnimation(job);
-                break;
-
-            default:
-                spriteAction = job.getSpriteActionGroup().getSpriteAction(currentGameAction);
-        }
-
-        if (spriteAction.getImagesCount() > 0) {
-            return player.getImage(job.getSpriteActionGroup(), spriteAction.getImage(elapsedTime));
-        } else {
-            return null;
-        }
+        return player.getSpriteAnimation(job, currentGameAction).getImage(elapsedTime);
     }
 
     public void render(Graphics2D g) {

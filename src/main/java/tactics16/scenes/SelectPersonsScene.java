@@ -11,12 +11,14 @@ import tactics16.scenes.battle.BattleGame;
 import tactics16.game.Job;
 import tactics16.scenes.battle.Person;
 import tactics16.scenes.battle.Player;
-import tactics16.phase.Phase;
 import java.awt.Graphics2D;
+import tactics16.components.JobBoxInfo;
 import tactics16.components.Object2D;
 import tactics16.components.PhaseTitle;
 import tactics16.components.menu.CommonMenuOption;
 import tactics16.phase.AbstractPhase;
+import tactics16.util.cache.CacheableMapValue;
+import tactics16.util.cursors.Cursor1D;
 import tactics16.util.listeners.Listener;
 
 /**
@@ -25,11 +27,9 @@ import tactics16.util.listeners.Listener;
  */
 public class SelectPersonsScene extends AbstractPhase {
 
-    public void onExit() {
-    }
-
+    @Override
     public void onEnter() {
-        geoGame.clearPlayers();
+        battleGame.resetPlayers();
         currentPlayer = 0;
     }
 
@@ -37,6 +37,13 @@ public class SelectPersonsScene extends AbstractPhase {
     private class JobOption implements MenuOption {
 
         private final Job job;
+        private CacheableMapValue<Player, JobBoxInfo> infoBoxes = new CacheableMapValue<Player, JobBoxInfo>() {
+
+            @Override
+            protected JobBoxInfo calculate(Player key) {
+                return new JobBoxInfo(job, key);
+            }
+        };
 
         public JobOption(Job job) {
             this.job = job;
@@ -53,15 +60,16 @@ public class SelectPersonsScene extends AbstractPhase {
                     getCurrentPlayer().getPersons().size() + 1), getJob()));
 
             if (getCurrentPlayer().getPersons().size() >=
-                    geoGame.getMap().getPlayerInitialPosition(currentPlayer).size()) {
+                    battleGame.getMap().getPlayerInitialPosition(currentPlayer).size()) {
                 currentPlayer++;
             }
 
-            if (currentPlayer >= geoGame.getMap().getPlayerCount()) {
-                MyGame.getInstance().getPhaseManager().advance(new BattleScene(SelectPersonsScene.this.geoGame));
+            if (currentPlayer >= battleGame.getMap().getPlayerCount()) {
+                MyGame.getInstance().getPhaseManager().advance(new BattleScene(SelectPersonsScene.this.battleGame));
             }
 
             updateStatusDialog();
+            updateJobInfoBox();
         }
 
         public Job getJob() {
@@ -79,49 +87,35 @@ public class SelectPersonsScene extends AbstractPhase {
         public boolean isEnabled() {
             return true;
         }
-    }// </editor-fold>
-    private BattleGame geoGame;
-    private int currentPlayer = 0;
-    private TextDialog statusDialog;
-    private TextDialog personStatus;
-    private PhaseTitle title;
-    private Menu jobSelector = new Menu() {
 
-        @Override
-        protected void onChangeSelectedOption() {
-            updatePersonStatus();
+        public JobBoxInfo getJobBoxInfo(Player player) {
+            return infoBoxes.getValue(player);
         }
-    };
-    private final SelectMapScene selectMapScene;
+    }// </editor-fold>
+    private BattleGame battleGame;
+    private int currentPlayer = 0;
+    private TextDialog statusDialog = new TextDialog();
+    private PhaseTitle title;
+    private JobBoxInfo jobBoxInfo = null;
+    private Menu jobSelector = new Menu();
 
     public BattleGame getGeoGame() {
-        return geoGame;
+        return battleGame;
     }
 
     public SelectPersonsScene(SelectMapScene selectMapScene) {
-        this.selectMapScene = selectMapScene;
-        this.geoGame = new BattleGame();
-        this.geoGame.setMap(selectMapScene.getSelectedMap());
+        this.battleGame = new BattleGame(selectMapScene.getSelectedMap());
     }
 
-    private Player getCurrentPlayer() {
-        while (this.currentPlayer >= geoGame.getPlayers().size()) {
-            geoGame.getPlayers().add(new Player(
-                    "Player " + (geoGame.getPlayers().size() + 1),
-                    geoGame.getPlayers().size()));
-        }
-
-        return this.geoGame.getPlayers().get(currentPlayer);
-    }
-
-    private Job getCurrentJob() {
-        if (jobSelector.getCursor().getSelected() instanceof JobOption) {
-            return ((JobOption) jobSelector.getCursor().getSelected()).getJob();
+    private Player getCurrentPlayer() {        
+        if (currentPlayer < battleGame.getMap().getPlayerCount()) {
+            return this.battleGame.getPlayer(currentPlayer);
         } else {
             return null;
         }
     }
 
+    @Override
     public void onAdd() {
 
         title = new PhaseTitle("Select Persons");
@@ -130,6 +124,7 @@ public class SelectPersonsScene extends AbstractPhase {
 
         for (Job job : MyGame.getInstance().getLoader().getJobs()) {
             jobSelector.addOption(new JobOption(job));
+            updateJobInfoBox();
         }
 
         jobSelector.addOption(new CommonMenuOption("Back", GameKey.CANCEL) {
@@ -142,27 +137,28 @@ public class SelectPersonsScene extends AbstractPhase {
 
         jobSelector.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(title));
 
-        statusDialog = new TextDialog();
         statusDialog.setMinWidth(50);
 
-        jobSelector.addGeometryListener(new Listener<Object2D>() {
-            public void onChange(Object2D source) {
-                statusDialog.getPosition().setXY(
-                        Layout.getRightGap(jobSelector),
-                        jobSelector.getPosition().getY());
+        jobSelector.getCursor().getCursor().addListener(new Listener<Cursor1D>() {
+
+            public void onChange(Cursor1D source) {
+                updateJobInfoBox();
             }
         });
 
+        jobSelector.addGeometryListener(new Listener<Object2D>() {
 
-        personStatus = new TextDialog();
-        personStatus.setMinWidth(50);
+            public void onChange(Object2D source) {
+                statusDialog.getPosition().setXY(
+                        Layout.getRightGap(source),
+                        source.getTop());
+            }
+        });
 
         statusDialog.addGeometryListener(new Listener<Object2D>() {
 
             public void onChange(Object2D source) {
-                personStatus.getPosition().setXY(
-                        Layout.getRightGap(source),
-                        source.getTop());
+                updateJobInfoBoxPosition();
             }
         });
     }
@@ -170,7 +166,7 @@ public class SelectPersonsScene extends AbstractPhase {
     private void updateStatusDialog() {
         StringBuffer buffer = new StringBuffer();
 
-        for (Player player : geoGame.getPlayers()) {
+        for (Player player : battleGame.getPlayers()) {
             buffer.append(player.getName());
             buffer.append('\n');
             for (Person person : player.getPersons()) {
@@ -184,34 +180,42 @@ public class SelectPersonsScene extends AbstractPhase {
         statusDialog.setText(buffer.toString());
     }
 
-    private void updatePersonStatus() {
-
-        Job job = this.getCurrentJob();
-
-        if (job == null) {
-            personStatus.setText("-- NO JOB --");
-        } else {
-            StringBuffer buffer = new StringBuffer();
-
-            buffer.append("Job: " + job.getName() + "\n");
-            buffer.append("\tDefense: " + job.getDefense());
-            buffer.append('\n');
-            buffer.append("\tAgility: " + job.getEvasiveness());
-
-            personStatus.setText(buffer.toString());
-        }
-    }
-
+    @Override
     public void update(long elapsedTime) {
         jobSelector.update(elapsedTime);
-        updatePersonStatus();
+        if (jobBoxInfo != null) {
+            jobBoxInfo.update(elapsedTime);
+        }
         updateStatusDialog();
     }
 
+    @Override
     public void render(Graphics2D g) {
         title.render(g);
         statusDialog.render(g);
-        personStatus.render(g);
         jobSelector.render(g);
+        if (jobBoxInfo != null) {
+            jobBoxInfo.render(g);
+        }
+    }
+
+    private void updateJobInfoBoxPosition() {
+        if (jobBoxInfo != null) {
+            jobBoxInfo.getPosition().setXY(
+                    Layout.getRightGap(statusDialog),
+                    statusDialog.getTop());
+        }
+    }
+
+    private void updateJobInfoBox() {
+        if (jobSelector.getCursor().getSelected() instanceof JobOption &&
+                getCurrentPlayer() != null) {
+            jobBoxInfo = ((JobOption) jobSelector.getCursor().getSelected()).getJobBoxInfo(
+                    getCurrentPlayer());
+            updateJobInfoBoxPosition();
+        } else {
+            jobBoxInfo = null;
+        }
+        updateJobInfoBoxPosition();
     }
 }

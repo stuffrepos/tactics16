@@ -19,20 +19,34 @@ public class BattleGame {
     private Map map;
     private List<Player> players = new ArrayList<Player>();
 
+    public BattleGame(Map map) {
+        assert map != null : "map is null";
+        setMap(map);
+        resetPlayers();
+        
+    }
+
     public Map getMap() {
         return map;
     }
 
-    public void setMap(Map map) {
+    private void setMap(Map map) {
         this.map = map;
     }
 
-    public List<Player> getPlayers() {
+    public Iterable<Player> getPlayers() {
         return players;
     }
 
-    public void clearPlayers() {
+    public Player getPlayer(int index) {
+        return players.get(index);
+    }
+
+    public void resetPlayers() {
         players.clear();
+        for (int i = 0; i < map.getPlayerCount(); ++i) {
+            players.add(new Player("Player " + (i + 1), i));
+        }
     }
 
     public Coordinate getPersonInitialPosition(int player, int person) {
@@ -132,5 +146,9 @@ public class BattleGame {
         }
 
         return neighboors;
+    }
+
+    public int getPlayerCount() {
+        return players.size();
     }
 }

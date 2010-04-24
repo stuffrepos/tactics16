@@ -31,7 +31,6 @@ public class MainMenuScene extends AbstractPhase {
     private boolean positioned = false;
     private Text title;
     private TextDialog keysHelp;
-    
     private final Menu mainMenu = new Menu(
             new CommonMenuOption("Play") {
 
@@ -54,6 +53,14 @@ public class MainMenuScene extends AbstractPhase {
                 @Override
                 public void executeAction() {
                     MyGame.getInstance().getPhaseManager().advance(FontTesterScene.getInstance());
+
+                }
+            },
+            new CommonMenuOption("Job Sprite Tester") {
+
+                @Override
+                public void executeAction() {
+                    MyGame.getInstance().getPhaseManager().advance(JobSpriteTester.getInstance());
 
                 }
             },
@@ -118,7 +125,7 @@ public class MainMenuScene extends AbstractPhase {
     @Override
     public void render(Graphics2D g) {
         mainMenu.render(g);
-        
+
         title.render(g);
         keysHelp.render(g);
 
