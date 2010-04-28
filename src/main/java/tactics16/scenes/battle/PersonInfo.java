@@ -6,6 +6,7 @@ import tactics16.animation.TextMovimentAnimation;
 import tactics16.animation.VisualEntity;
 import tactics16.game.Coordinate;
 import tactics16.game.Map;
+import tactics16.util.Align;
 
 /**
  *
@@ -24,6 +25,8 @@ public class PersonInfo implements VisualEntity {
                 500,
                 SPEED);
         textMovimentAnimation.getDialog().setText(text);
+        textMovimentAnimation.getDialog().setHorizontalAlign(Align.NULL);
+        textMovimentAnimation.getDialog().setVerticalAlign(Align.NULL);
         textMovimentAnimation.getDialog().setForegroundColor(type.getColor());
         textMovimentAnimation.getDialog().setBackgroundColor(BACKGROUND_COLOR);
         textMovimentAnimation.getDialog().setFlat(true);

@@ -2,7 +2,7 @@ package tactics16.scenes.mapbuilder;
 
 import tactics16.Layout;
 import tactics16.MyGame;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import java.awt.Graphics2D;
 import tactics16.GameKey;
 import tactics16.components.MapCursor;
@@ -23,7 +23,7 @@ class TerrainEditMode extends AbstractPhase {
     private TerrainPallete terrainPallete;
     private VisualMap visualMap;
     private final MapBuilderScene scene;
-    private TextDialog status;
+    private TextBox status;
 
     public TerrainEditMode(MapBuilderScene scene) {
         this.scene = scene;
@@ -35,7 +35,7 @@ class TerrainEditMode extends AbstractPhase {
                 Layout.getBottomGap(title));
 
 
-        this.status = new TextDialog();
+        this.status = new TextBox();
         this.status.setWidth(200);
         this.status.getPosition().setXY(
                 Layout.getScreenWidth() - Layout.OBJECT_GAP - this.status.getWidth(),

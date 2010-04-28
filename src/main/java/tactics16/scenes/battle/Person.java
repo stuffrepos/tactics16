@@ -123,6 +123,14 @@ public class Person extends DataObject implements VisualEntity {
         return gameActionControl;
     }
 
+    public void decreaseAgilityPoints(int ap) {
+        agilityPoints -= ap;        
+    }
+
+    public void decreaseHealthPoints(int hp) {
+        healthPoints -= hp;
+    }
+
     public class GameActionControl {
 
         private LifoQueue<Job.GameAction> stack = new LifoQueue<Job.GameAction>();

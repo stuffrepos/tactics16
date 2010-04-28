@@ -6,7 +6,7 @@ import tactics16.scenes.battle.BattleScene;
 import tactics16.MyGame;
 import tactics16.components.menu.Menu;
 import tactics16.components.menu.MenuOption;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.scenes.battle.BattleGame;
 import tactics16.game.Job;
 import tactics16.scenes.battle.Person;
@@ -94,7 +94,7 @@ public class SelectPersonsScene extends AbstractPhase {
     }// </editor-fold>
     private BattleGame battleGame;
     private int currentPlayer = 0;
-    private TextDialog statusDialog = new TextDialog();
+    private TextBox statusDialog = new TextBox();
     private PhaseTitle title;
     private JobBoxInfo jobBoxInfo = null;
     private Menu jobSelector = new Menu();

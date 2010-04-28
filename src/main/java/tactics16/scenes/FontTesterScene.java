@@ -10,9 +10,11 @@ import tactics16.Layout;
 import tactics16.MyGame;
 import tactics16.animation.EntitiesBoard;
 import tactics16.animation.VisualEntity;
+import tactics16.components.MessageBox;
+import tactics16.components.MessageBox;
 import tactics16.components.PhaseTitle;
 import tactics16.components.Text;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.phase.AbstractPhase;
 import tactics16.util.cursors.Cursor1D;
 import tactics16.util.cursors.ObjectCursor1D;
@@ -27,7 +29,7 @@ public class FontTesterScene extends AbstractPhase {
     private static final FontTesterScene instance = new FontTesterScene();
     private final EntitiesBoard entitiesBoard = new EntitiesBoard();
     private ObjectCursor1D<Font> fontsCursor;
-    private TextDialog fontName;
+    private TextBox fontName;
 
     private FontTesterScene() {
     }
@@ -42,7 +44,7 @@ public class FontTesterScene extends AbstractPhase {
         PhaseTitle title = new PhaseTitle("Text Font Tester");
         entitiesBoard.getChildren().add(title);
 
-        fontName = new TextDialog();
+        fontName = new TextBox();
         fontName.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(title));
         entitiesBoard.getChildren().add(fontName);
 
@@ -60,10 +62,19 @@ public class FontTesterScene extends AbstractPhase {
         phaseTitle.setText("Phase Title");
         entitiesBoard.getChildren().add(phaseTitle);
 
-        TextDialog commonTextDialog = new TextDialog();
+        TextBox commonTextDialog = new TextBox();
         commonTextDialog.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(phaseTitle));
         commonTextDialog.setText("Common Text Dialog\nwith new line\nabcdefgasdkaskd ajsdkajsdka");
         entitiesBoard.getChildren().add(commonTextDialog);
+
+        TextBox messageBox = new TextBox();
+        messageBox.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(commonTextDialog));
+        messageBox.setText("Message Box");
+        messageBox.setFont(MessageBox.DEFAULT_FONT);
+        messageBox.setForegroundColor(MessageBox.DEFAULT_FOREGROUND_COLOR);
+        messageBox.setBackgroundColor(MessageBox.DEFAULT_BACKGROUND_COLOR);
+        messageBox.setFlat(true);
+        entitiesBoard.getChildren().add(messageBox);
 
         initializeFontCursor();
     }
@@ -125,8 +136,8 @@ public class FontTesterScene extends AbstractPhase {
             if (e instanceof Text) {
                 Text text = (Text) e;
                 text.setFont(createNewFont(text.getFont(), fontName));
-            } else if (e instanceof TextDialog) {
-                TextDialog text = (TextDialog) e;
+            } else if (e instanceof TextBox) {
+                TextBox text = (TextBox) e;
                 text.setFont(createNewFont(text.getFont(), fontName));
             }
         }

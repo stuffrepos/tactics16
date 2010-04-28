@@ -13,8 +13,10 @@ import tactics16.util.listeners.Listener;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class TextDialog implements Object2D, VisualEntity {
+public class TextBox implements Object2D, VisualEntity {
 
+    private Align horizontalAlign = Align.NEGATIVE;
+    private Align verticalAlign = Align.NEGATIVE;
     public static final Color DEFAULT_FOREGROUND_COLOR = Color.WHITE;
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.DARK_GRAY;
     private final Coordinate position = new Coordinate();
@@ -36,7 +38,7 @@ public class TextDialog implements Object2D, VisualEntity {
     private Text text;
     private boolean flat = false;
 
-    public TextDialog() {
+    public TextBox() {
         text = new Text();
         text.setColor(DEFAULT_FOREGROUND_COLOR);
         backgroundColor = DEFAULT_BACKGROUND_COLOR;
@@ -49,17 +51,46 @@ public class TextDialog implements Object2D, VisualEntity {
     }
 
     public void render(Graphics2D g) {
+        int x;
+        switch (horizontalAlign) {
+            case POSITIVE:
+                x = position.getX() - getWidth();
+                break;
 
+            case NULL:
+                x = position.getX() - getWidth() / 2;
+                break;
+
+            case NEGATIVE:
+            default:
+                x = position.getX();
+                break;
+        }
+        int y;
+        switch (horizontalAlign) {
+            case POSITIVE:
+                y = position.getY() - getHeight();
+                break;
+
+            case NULL:
+                y = position.getY() - getHeight() / 2;
+                break;
+
+            case NEGATIVE:
+            default:
+                y = position.getY();
+                break;
+        }
         g.setColor(this.getBackgroundColor());
         if (flat) {
             g.fillRect(
-                    position.getX(),
+                    x,
                     position.getY(),
                     getWidth() - 1,
                     getHeight() - 1);
         } else {
             g.fill3DRect(
-                    position.getX(),
+                    x,
                     position.getY(),
                     getWidth() - 1,
                     getHeight() - 1,
@@ -156,19 +187,19 @@ public class TextDialog implements Object2D, VisualEntity {
         this.width.addListener(new Listener<SizeConfig>() {
 
             public void onChange(SizeConfig source) {
-                listener.onChange(TextDialog.this);
+                listener.onChange(TextBox.this);
             }
         });
         this.height.addListener(new Listener<SizeConfig>() {
 
             public void onChange(SizeConfig source) {
-                listener.onChange(TextDialog.this);
+                listener.onChange(TextBox.this);
             }
         });
         this.position.addListener(new Listener<Coordinate>() {
 
             public void onChange(Coordinate source) {
-                listener.onChange(TextDialog.this);
+                listener.onChange(TextBox.this);
             }
         });
     }
@@ -199,5 +230,21 @@ public class TextDialog implements Object2D, VisualEntity {
 
     public boolean isFinalized() {
         return false;
+    }
+
+    public Align getHorizontalAlign() {
+        return horizontalAlign;
+    }
+
+    public void setHorizontalAlign(Align horizontalAlign) {
+        this.horizontalAlign = horizontalAlign;
+    }
+
+    public Align getVerticalAlign() {
+        return verticalAlign;
+    }
+
+    public void setVerticalAlign(Align verticalAlign) {
+        this.verticalAlign = verticalAlign;
     }
 }

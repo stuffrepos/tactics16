@@ -8,7 +8,7 @@ import tactics16.GameKey;
 import tactics16.Layout;
 import tactics16.components.PhaseTitle;
 import tactics16.components.Text;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.components.VisualThumbnailMap;
 import tactics16.components.menu.Menu;
 import tactics16.components.menu.CommonMenuOption;

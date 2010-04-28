@@ -291,6 +291,9 @@ public class Map implements Nameable {
         public void removePosition(Coordinate position) {
             if (positions.get(position) != null) {
                 players.get(positions.get(position)).remove(position);
+                if (players.get(positions.get(position)).isEmpty()) {
+                    players.remove(positions.get(position));    
+                }
             }
             positions.remove(position);
         }

@@ -3,7 +3,7 @@ package tactics16.scenes.mapbuilder;
 import tactics16.Layout;
 import tactics16.MyGame;
 import tactics16.components.GlowingRectangle;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.game.Coordinate;
 import java.awt.Graphics2D;
 import java.util.List;
@@ -25,7 +25,7 @@ class PersonsPositionMode extends AbstractPhase {
     private PhaseTitle title;
     private final MapBuilderScene scene;
     private VisualMap visualMap;
-    private TextDialog status;
+    private TextBox status;
     private MapCursor mapCursor;
     private Map<Integer, List<GlowingRectangle>> playerPanels = new TreeMap<Integer, List<GlowingRectangle>>();
 
@@ -33,7 +33,7 @@ class PersonsPositionMode extends AbstractPhase {
         this.scene = scene;
         this.title = scene.createModeTitle("Set Persons Positions");
         playerPallete.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(title));
-        status = new TextDialog();
+        status = new TextBox();
         status.setWidth(200);
         status.getPosition().setXY(
                 Layout.getScreenWidth() - Layout.OBJECT_GAP - status.getWidth(),

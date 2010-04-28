@@ -2,7 +2,7 @@ package tactics16.scenes.mapbuilder;
 
 import tactics16.components.BorderRectangle;
 import tactics16.components.Object2D;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.game.Coordinate;
 import tactics16.util.cursors.Cursor1D;
 import tactics16.util.listeners.Listener;
@@ -12,6 +12,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 import tactics16.GameKey;
+import tactics16.game.Map;
 import tactics16.scenes.battle.Player;
 
 /**
@@ -26,15 +27,15 @@ public class PlayerPallete implements Object2D {
     private BorderRectangle visualCursor;
     private Cursor1D cursor;
     private Coordinate position = new Coordinate();
-    private int playerCount = 2;
+    private int playerCount = Map.MAX_PLAYERS;
     private List<PlayerBox> boxes = new ArrayList<PlayerBox>();
     private static final int[] playerColors;
 
     static {
-       playerColors = new int[Player.playersColors.size()];
+       playerColors = new int[Player.PLAYER_COLORS.size()];
 
        for(int i=0; i<playerColors.length; ++i) {
-           playerColors[i] = Player.playersColors.get(i).getColor(Player.Color.DARK_0);
+           playerColors[i] = Player.PLAYER_COLORS.get(i).getColor(Player.Color.DARK_0);
        }
     }
 
@@ -124,12 +125,12 @@ public class PlayerPallete implements Object2D {
     private class PlayerBox {
 
         private int player;
-        private TextDialog nameDialog;
+        private TextBox nameDialog;
         private Coordinate position = new Coordinate();
 
         public PlayerBox(int player, int color) {
             this.player = player;
-            nameDialog = new TextDialog();
+            nameDialog = new TextBox();
             nameDialog.setText("Player " + (player + 1));
             nameDialog.setMaxWidth(BOX_WIDTH);
             nameDialog.setMinWidth(BOX_WIDTH);

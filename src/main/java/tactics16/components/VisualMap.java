@@ -10,29 +10,24 @@ import tactics16.game.Terrain;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class VisualMap {
+public class VisualMap extends AbstractObject2D {
 
-    private Coordinate position = new Coordinate();
     private final Map map;
 
     public VisualMap(Map map) {
         this.map = map;
     }
 
-    public Coordinate getPosition() {
-        return position;
-    }
-
     public Coordinate getPersonPosition(Coordinate terrainPosition) {
         return new Coordinate(
-                position.getX() + terrainPosition.getX() * Map.TERRAIN_SIZE + (Map.TERRAIN_SIZE / 2),
-                position.getY() + terrainPosition.getY() * Map.TERRAIN_SIZE + (Map.TERRAIN_SIZE / 2));
+                getLeft() + terrainPosition.getX() * Map.TERRAIN_SIZE + (Map.TERRAIN_SIZE / 2),
+                getTop() + terrainPosition.getY() * Map.TERRAIN_SIZE + (Map.TERRAIN_SIZE / 2));
     }
 
     public Coordinate getTerrainPosition(Coordinate terrainPosition) {
         return new Coordinate(
-                position.getX() + terrainPosition.getX() * Map.TERRAIN_SIZE,
-                position.getY() + terrainPosition.getY() * Map.TERRAIN_SIZE);
+                getLeft() + terrainPosition.getX() * Map.TERRAIN_SIZE,
+                getTop() + terrainPosition.getY() * Map.TERRAIN_SIZE);
     }
 
     public void render(final Graphics2D g) {
@@ -42,13 +37,13 @@ public class VisualMap {
                 if (terrain != null) {
                     map.getTerrainImage(terrain).render(
                             g,
-                            position.getX() + x * Map.TERRAIN_SIZE,
-                            position.getY() + y * Map.TERRAIN_SIZE);                    
+                            getLeft() + x * Map.TERRAIN_SIZE,
+                            getTop() + y * Map.TERRAIN_SIZE);
                 } else {
                     g.setColor(Color.BLACK);
                     g.drawRect(
-                            position.getX() + x * Map.TERRAIN_SIZE,
-                            position.getY() + y * Map.TERRAIN_SIZE,
+                            getLeft() + x * Map.TERRAIN_SIZE,
+                            getTop() + y * Map.TERRAIN_SIZE,
                             Map.TERRAIN_SIZE - 1,
                             Map.TERRAIN_SIZE - 1);
                 }
@@ -67,13 +62,13 @@ public class VisualMap {
                 if (terrain != null) {
                     map.getTerrainImage(terrain).render(
                             g,
-                            position.getX() + x * Map.TERRAIN_SIZE,
-                            position.getY() + y * Map.TERRAIN_SIZE);
+                            getLeft() + x * Map.TERRAIN_SIZE,
+                            getTop() + y * Map.TERRAIN_SIZE);
                 } else {
                     g.setColor(Color.BLACK);
                     g.drawRect(
-                            position.getX() + x * Map.TERRAIN_SIZE,
-                            position.getY() + y * Map.TERRAIN_SIZE,
+                            getLeft() + x * Map.TERRAIN_SIZE,
+                            getTop() + y * Map.TERRAIN_SIZE,
                             Map.TERRAIN_SIZE - 1,
                             Map.TERRAIN_SIZE - 1);
                 }
@@ -83,8 +78,8 @@ public class VisualMap {
             for (Coordinate personPosition : map.getPersonInitialPositions().getAllPositions()) {
                 g.setColor(new Color(playerColors[map.getPersonInitialPositions().getPlayerFromPosition(personPosition)]));
                 g.fillRect(
-                        this.position.getX() + personPosition.getX() * Map.TERRAIN_SIZE,
-                        this.position.getY() + personPosition.getY() * Map.TERRAIN_SIZE,
+                        getLeft() + personPosition.getX() * Map.TERRAIN_SIZE,
+                        getTop() + personPosition.getY() * Map.TERRAIN_SIZE,
                         Map.TERRAIN_SIZE,
                         Map.TERRAIN_SIZE);
 
@@ -94,5 +89,15 @@ public class VisualMap {
     }
 
     public void update(long elapsedTime) {
+    }
+
+    @Override
+    protected int calculateWidth() {
+        return map.getWidth() * Map.TERRAIN_SIZE;
+    }
+
+    @Override
+    protected int calculateHeight() {
+        return map.getHeight() * Map.TERRAIN_SIZE;
     }
 }

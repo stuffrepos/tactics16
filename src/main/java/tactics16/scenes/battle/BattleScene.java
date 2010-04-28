@@ -3,7 +3,7 @@ package tactics16.scenes.battle;
 import tactics16.scenes.battle.personaction.PersonActionSubPhase;
 import tactics16.Layout;
 import tactics16.MyGame;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.game.Coordinate;
 import tactics16.game.Job;
 import tactics16.phase.PhaseManager;
@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import tactics16.GameKey;
+import tactics16.components.MessageBox;
 import tactics16.phase.AbstractPhase;
 import tactics16.scenes.battle.effects.EffectsSubPhase;
 
@@ -24,7 +25,7 @@ public class BattleScene extends AbstractPhase {
 
     // Layout
     public static final int MAP_GAP = Layout.OBJECT_GAP * 5;
-    private TextDialog statusDialog = new TextDialog();
+    private TextBox statusDialog = new TextBox();
     // Phases
     private final PersonActionSubPhase personActionSubPhase = new PersonActionSubPhase(this);
     private final OptionsSubPhase optionsSubPhase = new OptionsSubPhase(this);
@@ -128,11 +129,18 @@ public class BattleScene extends AbstractPhase {
     }
 
     public void toPersonActionSubPhase() {
-        if (usedPersons.size() == getCurrentPlayer().getPersons().size()) {
-            newTurn();
+        toPersonActionSubPhase(null);
+    }
+
+    public void toPersonActionSubPhase(BattleActionResult battleActionResult) {
+        if (battleActionResult != null) {
+            battleActionResult.applyResults();
         }
         getPhaseManager().clear();
         getPhaseManager().change(personActionSubPhase);
+        if (usedPersons.size() == getCurrentPlayer().getPersons().size()) {
+            newTurn();
+        }
     }
 
     public boolean isUsed(Person person) {
@@ -151,5 +159,9 @@ public class BattleScene extends AbstractPhase {
             }
         }
         usedPersons = new HashSet<Person>();
+        new MessageBox(
+                getCurrentPlayer().getName() + "'s Turn",
+                getVisualBattleMap().getVisualMap(),
+                1000).createPhase(phaseManager);
     }
 }

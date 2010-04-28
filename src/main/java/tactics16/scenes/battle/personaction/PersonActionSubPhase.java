@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import tactics16.GameKey;
 import tactics16.Layout;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.components.menu.CommonMenuOption;
 import tactics16.components.menu.Menu;
 import tactics16.components.menu.ObjectMenuOption;
@@ -213,7 +213,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                 private class SelectActionStep extends AbstractPhase {
 
                     private Menu actionMenu;
-                    private TextDialog actionStatus;
+                    private TextBox actionStatus;
 
                     // <editor-fold defaultstate="collapsed" desc="implementation">
                     @Override
@@ -230,7 +230,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                     @Override
                     public void onEnter() {
                         actionMenu = new Menu();
-                        actionStatus = new TextDialog();
+                        actionStatus = new TextBox();
 
                         for (Action action : selectedPerson.getJob().getActions()) {
                             actionMenu.addOption(new ObjectMenuOption<Action>(action) {

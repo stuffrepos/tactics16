@@ -52,6 +52,7 @@ public class MapManager implements Iterable<Map> {
         } finally {
             fos.close();
         }
+        map.setOriginalName(map.getName());
     }
 
     public Map get(String name) {

@@ -7,6 +7,7 @@ import tactics16.animation.TemporaryAnimation;
 import tactics16.game.Coordinate;
 import tactics16.game.Job.GameAction;
 import tactics16.scenes.battle.BattleAction;
+import tactics16.scenes.battle.BattleActionResult;
 import tactics16.scenes.battle.Person;
 import tactics16.scenes.battle.PersonInfo;
 import tactics16.scenes.battle.VisualBattleMap;
@@ -19,22 +20,19 @@ public class EffectAnimation {
 
     private EntitiesLayer effects;
     private EntitiesLayer info;
-    private final BattleAction battleAction;
-    private final Map<Person, Boolean> personsEvaded;
+    private final BattleActionResult battleActionResult;
 
     public EffectAnimation(
             VisualBattleMap visualBattleMap,
-            BattleAction battleAction,
-            Map<Person, Boolean> personsEvaded) {
-        this.battleAction = battleAction;
-        this.battleAction.getAgent().getGameActionControl().back();
-        this.personsEvaded = personsEvaded;
+            BattleActionResult battleActionResult) {
+        this.battleActionResult = battleActionResult;
+        this.battleActionResult.getAction().getAgent().getGameActionControl().back();        
         effects = new EntitiesLayer();
         boolean first = true;
 
-        for (Coordinate rayTarget : this.battleAction.getRayTargets()) {
+        for (Coordinate rayTarget : this.battleActionResult.getAction().getRayTargets()) {
             TemporaryAnimation effect = new TemporaryAnimation(
-                    this.battleAction.getAgent().getJob().getSpriteActionGroup().getSpriteAction(
+                    this.battleActionResult.getAction().getAgent().getJob().getSpriteActionGroup().getSpriteAction(
                     GameAction.EFFECT),
                     1);
             effect.getPosition().set(visualBattleMap.getVisualMap().getPersonPosition(rayTarget));
@@ -45,7 +43,7 @@ public class EffectAnimation {
             }
             effects.addEntity(effect);
             Person person = visualBattleMap.getBattleGame().getPersonOnMapPosition(rayTarget);
-            if (person != null && !personsEvaded.get(person)) {
+            if (person != null && !battleActionResult.isPersonEvaded(person)) {
                 person.getGameActionControl().advance(GameAction.DAMAGED);
             }
         }
@@ -60,19 +58,19 @@ public class EffectAnimation {
 
         if (effects.isFinalized() && info == null) {
             info = new EntitiesLayer();
-            for (Person person : battleAction.getPersonsTargets()) {
+            for (Person person : battleActionResult.getAction().getPersonsTargets()) {
                 person.getGameActionControl().back();
 
                 PersonInfo.Type type;
                 String value;
 
-                if (personsEvaded.get(person)) {
+                if (battleActionResult.isPersonEvaded(person)) {
                     type = PersonInfo.Type.AGILITY;
-                    value = String.format("-%d AP", battleAction.agilityPointsNeededToEvade(person));
+                    value = String.format("-%d AP", battleActionResult.getAction().agilityPointsNeededToEvade(person));
                 } else {
                     type = PersonInfo.Type.DAMAGE;
-                    value = String.format("-%d HP", battleAction.calculateDamage(person));
-                }                
+                    value = String.format("-%d HP", battleActionResult.getAction().calculateDamage(person));
+                }
 
                 info.addEntity(new PersonInfo(
                         person,

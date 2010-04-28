@@ -7,7 +7,7 @@ import tactics16.Layout;
 import tactics16.MyGame;
 import tactics16.animation.VisualEntity;
 import tactics16.components.Object2D;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.game.Coordinate;
 import tactics16.util.listeners.Listener;
 
@@ -28,12 +28,12 @@ public class AgilityPointsSelector implements VisualEntity, Object2D {
     private int count;
     private Coordinate position = new Coordinate();
     private final Spheres spheres;
-    private final TextDialog text;
+    private final TextBox text;
 
     public AgilityPointsSelector(int max) {
         this.max = max;
         this.spheres = new Spheres();
-        this.text = new TextDialog();
+        this.text = new TextBox();
         setCount(max / 2);
 
         position.addListener(new Listener<Coordinate>() {

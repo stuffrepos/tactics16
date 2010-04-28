@@ -43,6 +43,16 @@ public class ColorUtil {
                 limitColor(color.getBlue() * factor));
     }
 
+    public static int getRgbBitmask(int rgba) {
+        Color color = new Color(rgba, true);
+
+        if (color.getAlpha() < 0x100 / 2) {
+            return 0x00FFFFFF & rgba;
+        } else {
+            return 0xFF000000 | rgba;
+        }
+    }
+
     private static int limitColor(float color) {
         return limitColor((int) color);
     }

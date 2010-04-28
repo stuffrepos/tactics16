@@ -58,4 +58,8 @@ public class DataGroup<T extends Nameable> implements Iterable<T> {
     public Iterable<Entry<String, T>> entrySet() {
         return map.entrySet();
     }
+
+    public int size() {
+        return map.size();
+    }
 }

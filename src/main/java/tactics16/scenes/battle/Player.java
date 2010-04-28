@@ -2,7 +2,6 @@ package tactics16.scenes.battle;
 
 import tactics16.animation.GameImage;
 import tactics16.animation.SpriteAnimation;
-import tactics16.game.*;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -11,7 +10,10 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeMap;
+import tactics16.game.DataObject;
+import tactics16.game.Job;
 import tactics16.game.Job.GameAction;
+import tactics16.game.JobSpriteActionGroup;
 import tactics16.util.cache.CacheableMapValue;
 import tactics16.util.cache.CacheableValue;
 import tactics16.util.image.ColorUtil;
@@ -24,6 +26,26 @@ import tactics16.util.image.PixelImageIterator;
 public class Player extends DataObject {
 
     private static final int SELECTED_ACTION_CHANGE_FRAME_INTERVAL = 100;
+    private CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<GameImage, GameImage>> images =
+            new CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<GameImage, GameImage>>() {
+
+                @Override
+                protected CacheableMapValue<GameImage, GameImage> calculate(final JobSpriteActionGroup jobSpriteActionGroup) {
+                    return new CacheableMapValue<GameImage, GameImage>() {
+
+                        @Override
+                        protected GameImage calculate(GameImage gameImage) {
+                            GameImage valueImage = PLAYER_COLORS.get(index).getMaskedImage(jobSpriteActionGroup, gameImage);
+                            if (valueImage.getScale() == 1.0) {
+                                return valueImage;
+                            }
+                            else {
+                                return valueImage.getScaledImage();
+                            }
+                        }
+                    };
+                }
+            };
     private CacheableMapValue<Job, SpriteAnimation> selectedAnimations =
             new CacheableMapValue<Job, SpriteAnimation>() {
 
@@ -125,7 +147,7 @@ public class Player extends DataObject {
                 }
             };
     private final int index;
-    public static final ArrayList<PlayerColors> playersColors;
+    public static final ArrayList<PlayerColors> PLAYER_COLORS;
 
     static {
         PlayerColors player1Colors = new PlayerColors();
@@ -169,11 +191,11 @@ public class Player extends DataObject {
         player4Colors.setMapping(Color.LIGHT_3, 0xFFFFDD);
 
 
-        playersColors = new ArrayList<PlayerColors>();
-        playersColors.add(player1Colors);
-        playersColors.add(player2Colors);
-        playersColors.add(player3Colors);
-        playersColors.add(player4Colors);
+        PLAYER_COLORS = new ArrayList<PlayerColors>();
+        PLAYER_COLORS.add(player1Colors);
+        PLAYER_COLORS.add(player2Colors);
+        PLAYER_COLORS.add(player3Colors);
+        PLAYER_COLORS.add(player4Colors);
     }
     private List<Person> persons = new ArrayList<Person>();
     private CacheableMapValue<Job, CacheableMapValue<Job.GameAction, SpriteAnimation>> jobAnimations = new CacheableMapValue<Job, CacheableMapValue<GameAction, SpriteAnimation>>() {
@@ -216,8 +238,8 @@ public class Player extends DataObject {
         this.index = index;
     }
 
-    public GameImage getImage(JobSpriteActionGroup jobSpriteActionGroup, GameImage spriteImage) {
-        return playersColors.get(index).getMaskedImage(jobSpriteActionGroup, spriteImage);
+    private GameImage getImage(JobSpriteActionGroup jobSpriteActionGroup, GameImage spriteImage) {
+        return images.getValue(jobSpriteActionGroup).getValue(spriteImage);
     }
 
     public List<Person> getPersons() {
@@ -237,7 +259,7 @@ public class Player extends DataObject {
     }
 
     public java.awt.Color getColor(Color color) {
-        return new java.awt.Color(playersColors.get(index).getColor(color));
+        return new java.awt.Color(PLAYER_COLORS.get(index).getColor(color));
     }
 
     public static enum Color {
@@ -270,7 +292,7 @@ public class Player extends DataObject {
 
                     @Override
                     protected GameImage calculate() {
-                        final GameImage maskedImage = image.sameSize();
+                        final GameImage maskedImage = image.clone();
 
                         new PixelImageIterator(image.getImage()) {
 

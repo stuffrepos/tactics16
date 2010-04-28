@@ -4,7 +4,7 @@ import tactics16.Layout;
 import tactics16.MyGame;
 import tactics16.components.menu.Menu;
 import tactics16.components.menu.CommonMenuOption;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.game.Map;
 import tactics16.game.Terrain;
 import tactics16.scenes.SelectMapScene;
@@ -170,7 +170,7 @@ public class MenuMode extends AbstractPhase {
             });
     private final MapBuilderScene scene;
     private VisualMap visualMap;
-    private TextDialog status = new TextDialog();
+    private TextBox status = new TextBox();
     private PhaseTitle title;
 
     public MenuMode(MapBuilderScene scene) {

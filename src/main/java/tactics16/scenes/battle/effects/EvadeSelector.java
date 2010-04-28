@@ -2,7 +2,7 @@ package tactics16.scenes.battle.effects;
 
 import java.awt.Graphics2D;
 import tactics16.Layout;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import tactics16.components.menu.CommonMenuOption;
 import tactics16.components.menu.Menu;
 import tactics16.game.Coordinate;
@@ -19,7 +19,7 @@ public class EvadeSelector {
 
     private Boolean response = null;
     private final Coordinate position = new Coordinate();
-    private final TextDialog title = new TextDialog();
+    private final TextBox title = new TextBox();
     private final Menu confirmMenu = new Menu(new CommonMenuOption("Yes") {
 
         @Override

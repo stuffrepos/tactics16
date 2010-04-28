@@ -68,6 +68,7 @@ public class AnimationGroupJsonLoader extends AbstractJsonObjectLoader<Animation
     private void loadImage(final AnimationGroupBuilder builder, JSONObject jsonObject) throws JSONException {
         final String centerX = StringUtil.parseString(jsonObject.optString("centerX"));
         final String centerY = StringUtil.parseString(jsonObject.optString("centerY"));
+        final Double scale = StringUtil.parseDouble(jsonObject.optString("scale"));
 
         new JsonArrayIterator(jsonObject.getJSONArray("targets")) {
 
@@ -78,6 +79,9 @@ public class AnimationGroupJsonLoader extends AbstractJsonObjectLoader<Animation
                 }
                 if (centerY != null) {
                     builder.setImageCenterY(jsonArray.getString(index), centerY);
+                }
+                if (scale != null) {
+                    builder.setImageScale(jsonArray.getString(index),scale);
                 }
             }
         };

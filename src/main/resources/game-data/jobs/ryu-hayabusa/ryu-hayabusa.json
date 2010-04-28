@@ -38,6 +38,11 @@
         },{
             "targets": ["effect-0.png","effect-1.png","effect-2.png","effect-3.png"],
             "centerX": "center"
+        },{
+            "targets": ["stopped-0.png","stopped-1.png","damaged-0.png",
+                "walking-0.png","walking-1.png","walking-2.png","attacking-0.png",
+                "attacking-1.png","attacking-1-alternative.png","attacking-2.png"],
+            "scale" : 1.2
         }]
     },
     actions: [{

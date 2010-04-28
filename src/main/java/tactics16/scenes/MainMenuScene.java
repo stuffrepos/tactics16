@@ -4,21 +4,16 @@ import java.awt.Font;
 import tactics16.Layout;
 import tactics16.scenes.mapbuilder.MapBuilderScene;
 import tactics16.MyGame;
-import tactics16.components.TextDialog;
+import tactics16.components.TextBox;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.List;
 import tactics16.GameKey;
+import tactics16.components.MessageBox;
 import tactics16.components.PhaseTitle;
 import tactics16.components.Text;
 import tactics16.components.menu.CommonMenuOption;
 import tactics16.components.menu.Menu;
 import tactics16.phase.AbstractPhase;
-import tactics16.util.cursors.Cursor1D;
-import tactics16.util.cursors.ObjectCursor1D;
-import tactics16.util.listeners.Listener;
 
 /**
  *
@@ -30,7 +25,7 @@ public class MainMenuScene extends AbstractPhase {
     private static final MainMenuScene instance = new MainMenuScene();
     private boolean positioned = false;
     private Text title;
-    private TextDialog keysHelp;
+    private TextBox keysHelp;
     private final Menu mainMenu = new Menu(
             new CommonMenuOption("Play") {
 
@@ -61,6 +56,15 @@ public class MainMenuScene extends AbstractPhase {
                 @Override
                 public void executeAction() {
                     MyGame.getInstance().getPhaseManager().advance(JobSpriteTester.getInstance());
+
+                }
+            },
+            new CommonMenuOption("Message Box Test") {
+
+                @Override
+                public void executeAction() {
+                    new MessageBox("Message Box Test", MyGame.getInstance().getScreenObject2D()).createPhase(
+                            MyGame.getInstance().getPhaseManager());
 
                 }
             },
@@ -97,7 +101,7 @@ public class MainMenuScene extends AbstractPhase {
         title.setColor(PhaseTitle.DEFAULT_COLOR);
         title.setText("Tactics16");
 
-        keysHelp = new TextDialog();
+        keysHelp = new TextBox();
         StringBuilder b = new StringBuilder();
         b.append("Keys Help\n");
         for (GameKey gameKey : GameKey.values()) {

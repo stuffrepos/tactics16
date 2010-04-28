@@ -1,5 +1,7 @@
 package tactics16.components;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import tactics16.GameKey;
 import tactics16.Layout;
@@ -8,6 +10,7 @@ import tactics16.animation.VisualEntity;
 import tactics16.game.Coordinate;
 import tactics16.phase.AbstractPhase;
 import tactics16.phase.Phase;
+import tactics16.phase.PhaseManager;
 
 /**
  *
@@ -15,18 +18,33 @@ import tactics16.phase.Phase;
  */
 public class MessageBox implements VisualEntity, Object2D {
 
+    public static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
+    public static final Color DEFAULT_FOREGROUND_COLOR = Color.BLACK;
+    public static final Font DEFAULT_FONT = new Font(MyGame.getInstance().getFont().getName(), Font.BOLD, 16);
     private boolean finalized;
-    private TextDialog textDialog;
+    private TextBox textBox;
+    private long elapsedTime = 0;
+    private Integer timeout;
 
     public MessageBox(String text, Object2D centralizeOn) {
-        textDialog = new TextDialog();
-        textDialog.setText(text);
+        this(text, centralizeOn, null);
+    }
+
+    public MessageBox(String text, Object2D centralizeOn, Integer timeout) {
+        textBox = new TextBox();
+        textBox.setText(text);
+        textBox.setFlat(true);
+        textBox.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
+        textBox.setForegroundColor(DEFAULT_FOREGROUND_COLOR);
+        textBox.setFont(DEFAULT_FONT);
         if (centralizeOn != null) {
             getPosition().set(Layout.getCentralizedOnObject2D(centralizeOn, this));
         }
+        this.timeout = timeout;
     }
 
     public void update(long elapsedTime) {
+        this.elapsedTime += elapsedTime;
         if (!isFinalized()) {
             for (GameKey gameKey : GameKey.values()) {
                 if (MyGame.getInstance().isKeyPressed(gameKey)) {
@@ -34,11 +52,14 @@ public class MessageBox implements VisualEntity, Object2D {
                     break;
                 }
             }
-        }
+            if (timeout != null && this.elapsedTime >= timeout) {
+                finalized = true;
+            }
+        } 
     }
 
     public void render(Graphics2D g) {
-        textDialog.render(g);
+        textBox.render(g);
     }
 
     public boolean isFinalized() {
@@ -54,35 +75,49 @@ public class MessageBox implements VisualEntity, Object2D {
     }
 
     public int getWidth() {
-        return textDialog.getWidth();
+        return textBox.getWidth();
     }
 
     public int getHeight() {
-        return textDialog.getHeight();
+        return textBox.getHeight();
     }
 
     private Coordinate getPosition() {
-        return textDialog.getPosition();
+        return textBox.getPosition();
     }
 
-    public Phase createPhase() {
-        return new EmbeddedPhase();
+    public void createPhase(PhaseManager phaseManager) {
+        new EmbeddedPhase(phaseManager);
+    }
+
+    public void createPhase() {
+        createPhase(MyGame.getInstance().getPhaseManager());
     }
 
     private class EmbeddedPhase extends AbstractPhase {
+
+        private final PhaseManager phaseManager;
+        private Phase previousPhase;
+
+        private EmbeddedPhase(PhaseManager phaseManager) {
+            this.phaseManager = phaseManager;
+            previousPhase = phaseManager.getCurrentPhase();
+            phaseManager.advance(this);
+        }
 
         @Override
         public void update(long elapsedTime) {
             MessageBox.this.update(elapsedTime);
 
             if (MessageBox.this.isFinalized()) {
-                MyGame.getInstance().getPhaseManager().back();
+                phaseManager.back();
             }
         }
 
         @Override
         public void render(Graphics2D g) {
+            previousPhase.render(g);
             MessageBox.this.render(g);
-        }        
+        }
     }
 }

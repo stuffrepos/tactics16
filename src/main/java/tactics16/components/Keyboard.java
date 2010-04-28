@@ -26,7 +26,7 @@ public abstract class Keyboard implements Object2D, VisualEntity {
     };
     private static final int BUTTON_SIZE = 36;
     private static final int MAX_BUTTON_X = 10;
-    private TextDialog output = new TextDialog();
+    private TextBox output = new TextBox();
     private List<PositionableButton> buttons;
     private Coordinate position = new Coordinate();
     private ObjectCursor2D<PositionableButton> cursor = new ObjectCursor2D<PositionableButton>();
@@ -34,12 +34,12 @@ public abstract class Keyboard implements Object2D, VisualEntity {
     private boolean shift = false;
     private boolean capsLock = false;
     private boolean finalized = false;
-    private TextDialog inputLabel;
+    private TextBox inputLabel;
     private final int inputMaxLength;
 
     public Keyboard(String initialText,int inputMaxLength) {
         this.inputMaxLength = inputMaxLength;
-        inputLabel = new TextDialog();
+        inputLabel = new TextBox();
         inputLabel.setText("Input: ");
         buttons = new LinkedList<PositionableButton>();
         for (char c : CHARS) {

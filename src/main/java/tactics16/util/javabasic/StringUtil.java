@@ -46,4 +46,12 @@ public class StringUtil {
     public static String yesNo(boolean b) {
         return b ? "Yes" : "No";
     }
+
+    public static Double parseDouble(String s) {
+        try {
+            return Double.parseDouble(s);
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
 }

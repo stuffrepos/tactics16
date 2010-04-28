@@ -2,8 +2,6 @@ package tactics16.scenes.battle.effects;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import tactics16.GameKey;
 import tactics16.MyGame;
@@ -11,6 +9,7 @@ import tactics16.game.Job.GameAction;
 import tactics16.phase.AbstractPhase;
 import tactics16.phase.PhaseManager;
 import tactics16.scenes.battle.BattleAction;
+import tactics16.scenes.battle.BattleActionResult;
 import tactics16.scenes.battle.BattleScene;
 import tactics16.scenes.battle.Person;
 
@@ -21,11 +20,11 @@ import tactics16.scenes.battle.Person;
 public class EffectsSubPhase extends AbstractPhase {
 
     private final BattleScene parentScene;
-    private final BattleAction battleAction;
+    private final BattleActionResult battleActionResult;
 
     public EffectsSubPhase(BattleScene parentScene, BattleAction battleAction) {
         this.parentScene = parentScene;
-        this.battleAction = battleAction;
+        this.battleActionResult = new BattleActionResult(battleAction);
     }
 
     @Override
@@ -39,12 +38,12 @@ public class EffectsSubPhase extends AbstractPhase {
 
         // <editor-fold defaultstate="collapsed" desc="implementation">
         public SelectEvade() {
-            this.personsTargets = new PersonsTargets(battleAction.getPersonsTargets());
+            this.personsTargets = new PersonsTargets(battleActionResult.getAction().getPersonsTargets());
         }
 
         @Override
         public void onEnter() {
-            battleAction.getAgent().getGameActionControl().advance(GameAction.ON_ATTACKING);
+            battleActionResult.getAction().getAgent().getGameActionControl().advance(GameAction.ON_ATTACKING);
         }
 
         @Override
@@ -70,8 +69,6 @@ public class EffectsSubPhase extends AbstractPhase {
 
             private int current;
             private final ArrayList<Person> personsTargets;
-            private Map<Person, Boolean> personsEvaded =
-                    new HashMap<Person, Boolean>();
             private PhaseManager phaseManager = new PhaseManager();
             private boolean checkFinalized = false;
 
@@ -114,10 +111,6 @@ public class EffectsSubPhase extends AbstractPhase {
                 return current >= this.personsTargets.size();
             }
 
-            public Map<Person, Boolean> getPersonsEvaded() {
-                return this.personsEvaded;
-            }
-
             private class EvadeSelectPhase extends AbstractPhase {
 
                 private final Person person;
@@ -137,7 +130,7 @@ public class EffectsSubPhase extends AbstractPhase {
                     evadeSelector.update(elapsedTime);
 
                     if (evadeSelector.isFinalized()) {
-                        personsEvaded.put(
+                        battleActionResult.setPersonEvaded(
                                 personsTargets.get(current),
                                 evadeSelector.getResponse());
                         next();
@@ -146,7 +139,7 @@ public class EffectsSubPhase extends AbstractPhase {
 
                 @Override
                 public void onAdd() {
-                    this.evadeSelector = new EvadeSelector(battleAction, person);
+                    this.evadeSelector = new EvadeSelector(battleActionResult.getAction(), person);
                 }
 
                 @Override
@@ -169,8 +162,11 @@ public class EffectsSubPhase extends AbstractPhase {
             public void onEnter() {
                 this.effectAnimation = new EffectAnimation(
                         parentScene.getVisualBattleMap(),
-                        battleAction,
-                        personsTargets.getPersonsEvaded());
+                        battleActionResult);
+            }
+
+            @Override
+            public void onExit() {
             }
 
             @Override
@@ -178,7 +174,7 @@ public class EffectsSubPhase extends AbstractPhase {
                 effectAnimation.update(elapsedTime);
 
                 if (effectAnimation.isFinalized()) {
-                    parentScene.toPersonActionSubPhase();
+                    parentScene.toPersonActionSubPhase(battleActionResult);
                 }
             }
 

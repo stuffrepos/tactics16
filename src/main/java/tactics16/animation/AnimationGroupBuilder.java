@@ -51,6 +51,10 @@ public abstract class AnimationGroupBuilder {
         return group;
     }
 
+    public void setImageScale(String string, double scale) {
+        getImage(string).setScale(scale);
+    }
+
     private class Animation extends SpriteAnimation implements Nameable {
 
         private String name;

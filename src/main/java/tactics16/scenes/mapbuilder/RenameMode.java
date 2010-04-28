@@ -2,7 +2,6 @@ package tactics16.scenes.mapbuilder;
 
 import java.awt.Graphics2D;
 import tactics16.Layout;
-import tactics16.MyGame;
 import tactics16.components.Keyboard;
 import tactics16.components.MessageBox;
 import tactics16.components.PhaseTitle;
@@ -26,25 +25,22 @@ public class RenameMode extends AbstractPhase {
     @Override
     public void onAdd() {
 
-        title = parentScene.createModeTitle("Rename Map");        
+        title = parentScene.createModeTitle("Rename Map");
 
-        keyboard = new Keyboard(parentScene.getMap().getName(),32) {
+        keyboard = new Keyboard(parentScene.getMap().getName(), 32) {
 
             @Override
             public boolean confirmExit(boolean confirm, String text) {
                 if (confirm == false) {
                     return true;
                 } else {
-                    if (StringUtil.isEmpty(text)) {                        
-                        MyGame.getInstance().getPhaseManager().advance(
-                                new MessageBox("Name is empty", keyboard).createPhase()
-                                );
+                    if (StringUtil.isEmpty(text)) {
+                        new MessageBox("Name is empty", keyboard).createPhase();
                         return false;
-                    }
-                    else {
+                    } else {
                         parentScene.getMap().setName(StringUtil.parseString(text));
                         return true;
-                    }                    
+                    }
                 }
             }
         };
