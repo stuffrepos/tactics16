@@ -94,6 +94,16 @@ public class MessageBox implements VisualEntity, Object2D {
         createPhase(MyGame.getInstance().getPhaseManager());
     }
 
+    public MessageBox setBackgroundColor(Color color) {
+        textBox.setBackgroundColor(color);
+        return this;
+    }
+
+    public MessageBox setForegroundColor(Color color) {
+        textBox.setForegroundColor(color);
+        return this;
+    }
+
     private class EmbeddedPhase extends AbstractPhase {
 
         private final PhaseManager phaseManager;

@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import tactics16.game.Coordinate;
 import tactics16.game.Map;
+import tactics16.util.math.Interval;
 
 /**
  *
@@ -73,11 +74,11 @@ public class BattleGame {
         return null;
     }
 
-    public Set<Coordinate> calculateTargetActionRayArea(Coordinate target, int ray) {
+    public Set<Coordinate> calculateTargetActionRayArea(Coordinate target, Interval ray) {
         Set<Coordinate> area = new TreeSet<Coordinate>();
 
         for (java.util.Map.Entry<Coordinate, Integer> e : map.calculateActionDistances(target).entrySet()) {
-            if (e.getValue() <= ray) {
+            if (ray.valueIn(e.getValue())) {
                 area.add(e.getKey());
             }
         }
@@ -150,5 +151,16 @@ public class BattleGame {
 
     public int getPlayerCount() {
         return players.size();
+    }
+
+    /**
+     * x = 20
+     * @param source
+     * @param target
+     * @return
+     */
+    public static List<Coordinate> calculateTrajetory(Coordinate source,Coordinate target) {
+        
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

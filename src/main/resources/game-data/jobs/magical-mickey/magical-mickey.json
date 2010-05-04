@@ -51,9 +51,10 @@
         "power": 3,
         "agility": 2,
         "reach": {
-            "min": 1,
-            "max": 4,
-            "ray": 1,
+            "distanceMin": 0,
+            "distanceMax": 4,
+            "rayMin": 0,
+            "rayMax": 1,
             "clearTrajectory": true
         }
     }]

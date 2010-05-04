@@ -8,10 +8,20 @@ import java.awt.Color;
  */
 public class ColorUtil {
 
+    /**
+     * Atalho para applyFactor(color, 0.5f).
+     * @param color
+     * @return
+     */
     public static Color dark(Color color) {
         return applyFactor(color, 0.5f);
     }
 
+    /**
+     * Atalho para applyFactor(color, 1.5f).
+     * @param color
+     * @return
+     */
     public static Color light(Color color) {
         return applyFactor(color, 1.5f);
     }
@@ -66,5 +76,9 @@ public class ColorUtil {
         } else {
             return color;
         }
+    }
+
+    public static Color transparent(Color color, float alpha) {
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (0xFF * alpha));
     }
 }

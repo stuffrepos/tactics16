@@ -11,6 +11,7 @@ import tactics16.scenes.SelectMapScene;
 import java.awt.Graphics2D;
 import java.io.IOException;
 import tactics16.GameKey;
+import tactics16.components.MessageBox;
 import tactics16.components.PhaseTitle;
 import tactics16.components.VisualMap;
 import tactics16.phase.AbstractPhase;
@@ -96,6 +97,7 @@ public class MenuMode extends AbstractPhase {
 
                 try {
                     MyGame.getInstance().getLoader().getMaps().save(scene.getMap());
+                    new MessageBox("Map Saved", MyGame.getInstance().getScreenObject2D()).createPhase();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }

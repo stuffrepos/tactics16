@@ -15,7 +15,7 @@ import tactics16.util.LifoQueue;
  */
 public class Person extends DataObject implements VisualEntity {
 
-    private static final int DEFAULT_MOVIMENT = 4;
+    private static final int DEFAULT_MOVIMENT = 40;
     public static final int MAX_HEALTH_POINTS = 10;
     public static final int MAX_AGILITY_POINTS = 10;
     public static final int MAX_ACTION_USE_AGILITY_POINTS = MAX_AGILITY_POINTS / 2;

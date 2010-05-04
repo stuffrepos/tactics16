@@ -136,7 +136,7 @@ public class PersonActionSubPhase extends AbstractPhase {
 
                 for (java.util.Map.Entry<Coordinate, Integer> e :
                         parentScene.getVisualBattleMap().getBattleGame().calculateMovimentDistances(
-                        selectedPerson.getMapPosition(),selectedPerson.getPlayer()).entrySet()) {
+                        selectedPerson.getMapPosition(), selectedPerson.getPlayer()).entrySet()) {
                     Person personOnPosition = parentScene.getVisualBattleMap().getBattleGame().getPersonOnMapPosition(e.getKey());
                     if (e.getValue() <= selectedPerson.getMoviment() &&
                             (personOnPosition == null || personOnPosition == selectedPerson)) {
@@ -247,9 +247,8 @@ public class PersonActionSubPhase extends AbstractPhase {
                                     b.append("Power: " + getSource().getPower() + "\n");
                                     b.append("Agility: " + getSource().getAgility() + "\n");
                                     b.append(String.format(
-                                            "Reach: %d/%d -> %d\n",
-                                            getSource().getReach().getMin(),
-                                            getSource().getReach().getMax(),
+                                            "Reach: %s -> %s\n",
+                                            getSource().getReach().getDistance(),
                                             getSource().getReach().getRay()));
                                     return b.toString();
                                 }
@@ -261,11 +260,10 @@ public class PersonActionSubPhase extends AbstractPhase {
                             @Override
                             public void executeAction() {
                                 cursorLastPosition = movimentCursor.getCursor().getPosition().clone();
-                                 parentScene.toEffectSubPhase(
-                                         new BattleAction(
-                                         parentScene.getVisualBattleMap().getBattleGame(),
-                                         selectedPerson, null, null, null)
-                                         );
+                                parentScene.toEffectSubPhase(
+                                        new BattleAction(
+                                        parentScene.getVisualBattleMap().getBattleGame(),
+                                        selectedPerson, null, null, null));
                             }
                         });
 
@@ -336,9 +334,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                             for (java.util.Map.Entry<Coordinate, Integer> e :
                                     parentScene.getVisualBattleMap().getVisualMap().getMap().calculateActionDistances(
                                     selectedPerson.getMapPosition()).entrySet()) {
-                                if (e.getValue() != 0 &&
-                                        e.getValue() >= selectedAction.getReach().getMin() &&
-                                        e.getValue() <= selectedAction.getReach().getMax()) {
+                                if (selectedAction.getReach().getDistance().valueIn(e.getValue())) {
                                     area.add(e.getKey());
                                 }
                             }
@@ -427,7 +423,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                                 for (java.util.Map.Entry<Coordinate, Integer> e :
                                         parentScene.getVisualBattleMap().getVisualMap().getMap().calculateActionDistances(
                                         targetPosition).entrySet()) {
-                                    if (e.getValue() <= selectedAction.getReach().getRay()) {
+                                    if (selectedAction.getReach().getRay().valueIn(e.getValue())) {
                                         area.add(e.getKey());
                                     }
                                 }

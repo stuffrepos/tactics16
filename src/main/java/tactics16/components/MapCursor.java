@@ -11,15 +11,15 @@ import tactics16.animation.VisualEntity;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MapCursor implements VisualEntity{
+public class MapCursor implements VisualEntity {
 
-    private final VisualMap visualMap;    
+    private final VisualMap visualMap;
     private Cursor2D cursor;
     private GlowingRectangle visualCursor;
     private boolean finalized = false;
 
     public MapCursor(VisualMap visualMap) {
-        this.visualMap = visualMap;        
+        this.visualMap = visualMap;
         this.visualCursor = new GlowingRectangle(Map.TERRAIN_SIZE);
         this.cursor = new Cursor2D();
         this.cursor.setDimension(this.visualMap.getMap().getWidth(), this.visualMap.getMap().getHeight());
@@ -29,9 +29,8 @@ public class MapCursor implements VisualEntity{
         this.cursor.addListener(new Listener<Cursor2D>() {
 
             public void onChange(Cursor2D source) {
-                MapCursor.this.visualCursor.getPosition().setXY(
-                        MapCursor.this.visualMap.getPosition().getX() + Map.TERRAIN_SIZE * source.getX(),
-                        MapCursor.this.visualMap.getPosition().getY() + Map.TERRAIN_SIZE * source.getY());
+                MapCursor.this.visualCursor.getPosition().set(
+                        MapCursor.this.visualMap.getTerrainPosition(source.getPosition()));
             }
         });
     }

@@ -8,6 +8,7 @@ import tactics16.components.TextBox;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import tactics16.GameKey;
+import tactics16.animation.transitioneffect.FadeIn;
 import tactics16.components.MessageBox;
 import tactics16.components.PhaseTitle;
 import tactics16.components.Text;
@@ -23,7 +24,6 @@ public class MainMenuScene extends AbstractPhase {
 
     public static final Font MAIN_TITLE_FONT = new Font("purisa", Font.BOLD, 48);
     private static final MainMenuScene instance = new MainMenuScene();
-    private boolean positioned = false;
     private Text title;
     private TextBox keysHelp;
     private final Menu mainMenu = new Menu(
@@ -119,6 +119,28 @@ public class MainMenuScene extends AbstractPhase {
             b.append('\n');
         }
         keysHelp.setText(b.toString());
+
+        title.getPosition().setX(
+                Layout.getCentralizedLeft(title));
+
+        mainMenu.getPosition().setX(
+                Layout.getCentralizedLeft(mainMenu));
+
+        keysHelp.getPosition().setX(
+                Layout.getCentralizedLeft(keysHelp));
+
+        title.getPosition().setY(
+                (Layout.getScreenHeight() -
+                (title.getHeight() + mainMenu.getHeight() +
+                keysHelp.getHeight() + Layout.OBJECT_GAP * 2)) / 2);
+
+        mainMenu.getPosition().setY(
+                Layout.getBottom(title) + Layout.OBJECT_GAP);
+
+        keysHelp.getPosition().setY(
+                Layout.getBottom(mainMenu) + Layout.OBJECT_GAP);
+
+        new FadeIn(MyGame.getInstance().getPhaseManager());
     }
 
     @Override
@@ -129,32 +151,7 @@ public class MainMenuScene extends AbstractPhase {
     @Override
     public void render(Graphics2D g) {
         mainMenu.render(g);
-
         title.render(g);
         keysHelp.render(g);
-
-        if (!positioned) {
-            title.getPosition().setX(
-                    Layout.getCentralizedLeft(title));
-
-            mainMenu.getPosition().setX(
-                    Layout.getCentralizedLeft(mainMenu));
-
-            keysHelp.getPosition().setX(
-                    Layout.getCentralizedLeft(keysHelp));
-
-            title.getPosition().setY(
-                    (Layout.getScreenHeight() -
-                    (title.getHeight() + mainMenu.getHeight() +
-                    keysHelp.getHeight() + Layout.OBJECT_GAP * 2)) / 2);
-
-            mainMenu.getPosition().setY(
-                    Layout.getBottom(title) + Layout.OBJECT_GAP);
-
-            keysHelp.getPosition().setY(
-                    Layout.getBottom(mainMenu) + Layout.OBJECT_GAP);
-
-            positioned = true;
-        }
     }
 }

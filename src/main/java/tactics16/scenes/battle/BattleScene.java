@@ -1,5 +1,6 @@
 package tactics16.scenes.battle;
 
+import java.awt.Color;
 import tactics16.scenes.battle.personaction.PersonActionSubPhase;
 import tactics16.Layout;
 import tactics16.MyGame;
@@ -16,6 +17,7 @@ import tactics16.GameKey;
 import tactics16.components.MessageBox;
 import tactics16.phase.AbstractPhase;
 import tactics16.scenes.battle.effects.EffectsSubPhase;
+import tactics16.util.image.ColorUtil;
 
 /**
  *
@@ -49,7 +51,9 @@ public class BattleScene extends AbstractPhase {
         statusDialog.getPosition().setXY(
                 Layout.getScreenWidth() - Layout.OBJECT_GAP - statusDialog.getWidth(),
                 Layout.OBJECT_GAP);
-        getVisualBattleMap().getVisualMap().getPosition().setXY(MAP_GAP, MAP_GAP);
+        getVisualBattleMap().getVisualMap().getPosition().set(
+                Layout.getCentralizedOnObject2D(
+                Layout.getScreenObject2D(), getVisualBattleMap().getVisualMap()));
 
         // Persons Positions
         for (int player = 0; player < battleGame.getPlayerCount(); ++player) {
@@ -162,6 +166,8 @@ public class BattleScene extends AbstractPhase {
         new MessageBox(
                 getCurrentPlayer().getName() + "'s Turn",
                 getVisualBattleMap().getVisualMap(),
-                1000).createPhase(phaseManager);
+                1000).setBackgroundColor(
+                ColorUtil.transparent(getCurrentPlayer().getColor(Player.Color.DARK_1),0.8f)).setForegroundColor(
+                Color.WHITE).createPhase(phaseManager);
     }
 }

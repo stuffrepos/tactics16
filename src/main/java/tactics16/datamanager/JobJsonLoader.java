@@ -61,11 +61,28 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
 
     private Reach loadReach(JSONObject jsonObject) throws JSONException {
         Reach reach = new Reach();
-        reach.setMin(jsonObject.getInt("min"));
-        reach.setMax(jsonObject.getInt("max"));
-        reach.setRay(jsonObject.getInt("ray"));
-        reach.setClearTrajetory(jsonObject.getBoolean("clearTrajectory"));
+        if (jsonObject.has("distance")) {
+            reach.getDistance().setMinMax(jsonObject.getInt("distance"));
+        }
+        if (jsonObject.has("distanceMin")) {
+            reach.getDistance().setMin(jsonObject.getInt("distanceMin"));
+        }
+        if (jsonObject.has("distanceMax")) {
+            reach.getDistance().setMax(jsonObject.getInt("distanceMax"));
+        }
+        if (jsonObject.has("ray")) {
+            reach.getRay().setMinMax(jsonObject.getInt("ray"));
+        }
+        if (jsonObject.has("rayMin")) {
+            reach.getRay().setMin(jsonObject.getInt("rayMin"));
+        }
+        if (jsonObject.has("rayMax")) {
+            reach.getRay().setMax(jsonObject.getInt("rayMax"));
+        }
+        if (jsonObject.has("clearTrajectory")) {
+            reach.setClearTrajetory(jsonObject.getBoolean("clearTrajectory"));
+        }
+
         return reach;
     }
-
 }

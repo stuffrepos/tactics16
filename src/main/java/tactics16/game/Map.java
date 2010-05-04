@@ -21,7 +21,6 @@ public class Map implements Nameable {
     public static final int MIN_SIZE = 6;
     public static final int MAX_SIZE = 32;
     private String name;
-    private long elapsedTime;
     private PersonInitialPositions personInitialPositions = new PersonInitialPositions();
     private Terrains terrains = new Terrains(0, 0);
     private ListenerManager<Map> listenerManager = new ListenerManager<Map>(this);
@@ -111,11 +110,7 @@ public class Map implements Nameable {
         return this.personInitialPositions.getPlayerInitialPositions(player);
     }
 
-    public void update(long elapsedTime) {
-        this.elapsedTime += elapsedTime;
-    }
-
-    public GameImage getTerrainImage(Terrain terrain) {
+    public GameImage getTerrainImage(Terrain terrain,long elapsedTime) {
         return terrain.getImages().get((int) ((elapsedTime / 300L) % terrain.getImages().size()));
     }
 
@@ -140,9 +135,9 @@ public class Map implements Nameable {
             Set<Coordinate> forTest = new TreeSet<Coordinate>();
 
             for (Coordinate c : current) {
-                if (getTerrain(c).getAllowAction()) {
+                //if (getTerrain(c).getAllowAction()) {
                     distances.put(c, n);
-                }
+                //}
 
                 for (Coordinate next : getActionNeighboors(c)) {
                     if (!visited.contains(next)) {

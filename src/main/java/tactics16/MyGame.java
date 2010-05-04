@@ -17,6 +17,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import tactics16.animation.GameImage;
 import tactics16.components.Object2D;
+import tactics16.phase.AbstractPhase;
+import tactics16.phase.Phase;
 
 /**
  *
@@ -50,7 +52,6 @@ public class MyGame {
         }
     };
     private DataManager loader;
-    private Graphics2D defaultGraphics2D;
     private PhaseManager phaseManager = new PhaseManager();
     private KeyMapping keyMapping = new KeyMapping();
     private Font font = new Font("Liberation Mono", Font.PLAIN, 12);
@@ -83,6 +84,7 @@ public class MyGame {
             instance = new MyGame(dataPath);
         }
     }
+    private Phase initialPhase;
 
     private MyGame(String dataPath) {
         loader = new DataManager(new File(dataPath));
@@ -108,11 +110,9 @@ public class MyGame {
             ex.printStackTrace();
             this.quit();
         }
-
     }
 
     public void render(Graphics2D g) {
-        defaultGraphics2D = g;
         if (font != null) {
             g.setFont(font);
         }
@@ -125,7 +125,6 @@ public class MyGame {
             ex.printStackTrace();
             this.quit();
         }
-
     }
 
     public void quit() {
@@ -137,7 +136,7 @@ public class MyGame {
     }
 
     public Graphics2D getDefaultGraphics2D() {
-        return defaultGraphics2D;
+        return game.bsGraphics.getBackBuffer();
     }
 
     public PhaseManager getPhaseManager() {
@@ -172,7 +171,9 @@ public class MyGame {
         return game.getWidth();
     }
 
-    public void start() {
+    public void start(Phase initalPhase) {
+        this.initialPhase = initalPhase;
+        phaseManager.change(new BootstrapPhase());
         GameLoader gameLoader = new GameLoader();
         gameLoader.setup(game, new Dimension(640, 480), false);
         gameLoader.start();
@@ -206,6 +207,15 @@ public class MyGame {
 
         public Collection<Integer> getKeys(GameKey gameKey) {
             return mapping.get(gameKey);
+        }
+    }
+
+    private class BootstrapPhase extends AbstractPhase {
+
+        @Override
+        public void render(Graphics2D g) {
+            phaseManager.clear();
+            phaseManager.change(initialPhase);
         }
     }
 }

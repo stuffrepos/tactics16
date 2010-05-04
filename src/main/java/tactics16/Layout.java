@@ -59,4 +59,8 @@ public class Layout {
                 onCentralize.getLeft() + (onCentralize.getWidth() - toCentralize.getWidth()) / 2,
                 onCentralize.getTop() + (onCentralize.getHeight() - toCentralize.getHeight()) / 2);
     }
+
+    public static Object2D getScreenObject2D() {
+        return MyGame.getInstance().getScreenObject2D();
+    }
 }

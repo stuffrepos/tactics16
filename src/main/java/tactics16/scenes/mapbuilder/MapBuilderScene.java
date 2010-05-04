@@ -3,7 +3,6 @@ package tactics16.scenes.mapbuilder;
 import tactics16.game.Map;
 import tactics16.MyGame;
 import tactics16.components.PhaseTitle;
-import tactics16.components.TextBox;
 import tactics16.phase.AbstractPhase;
 
 /**
