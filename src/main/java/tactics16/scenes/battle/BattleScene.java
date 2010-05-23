@@ -167,7 +167,7 @@ public class BattleScene extends AbstractPhase {
                 getCurrentPlayer().getName() + "'s Turn",
                 getVisualBattleMap().getVisualMap(),
                 1000).setBackgroundColor(
-                ColorUtil.transparent(getCurrentPlayer().getColor(Player.Color.DARK_1),0.8f)).setForegroundColor(
+                ColorUtil.transparent(getCurrentPlayer().getDefaultColor(),0.8f)).setForegroundColor(
                 Color.WHITE).createPhase(phaseManager);
     }
 }

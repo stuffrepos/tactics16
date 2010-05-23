@@ -10,6 +10,7 @@ import tactics16.animation.ImageGroup;
 import tactics16.animation.SpriteAnimation;
 import tactics16.game.Action;
 import tactics16.game.Job;
+import tactics16.game.JobSpriteActionGroup;
 import tactics16.game.Reach;
 import tactics16.scenes.battle.Player;
 
@@ -38,15 +39,8 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             job.getActions().add(loadAction(actions.getJSONObject(i)));
         }
 
-        new JsonKeyIterator(getRootJson().getJSONObject("playerColorsMapping")) {
+        loadPlayersColorsMapping(getRootJson().getJSONObject("playerColorsMapping"), job.getSpriteActionGroup());
 
-            @Override
-            public void iterate(JSONObject jsonObject, String key) throws JSONException {
-                job.getSpriteActionGroup().setMapping(
-                        Integer.parseInt(key, 16),
-                        Player.Color.valueOf(jsonObject.getString(key)));
-            }
-        };
 
         return job;
     }
@@ -84,5 +78,41 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         }
 
         return reach;
+    }
+
+    private static void loadPlayersColorsMapping(JSONObject jsonObject, final JobSpriteActionGroup jobSpriteActionGroup) throws JSONException {
+
+
+        new JsonKeyIterator(jsonObject.getJSONObject("colors")) {
+
+            @Override
+            public void iterate(JSONObject jsonObject, String key) throws JSONException {
+                jobSpriteActionGroup.setMapping(
+                        Integer.parseInt(key, 16),
+                        Player.Color.valueOf(jsonObject.getString(key)));
+            }
+        };
+
+        new JsonKeyIterator(jsonObject.optJSONObject("limits")) {
+
+            @Override
+            public void iterate(JSONObject jsonObject, String key) throws JSONException {
+                Player.Color playerColor = Player.Color.valueOf(key.toUpperCase());
+
+                new JsonKeyIterator(jsonObject.getJSONObject(key)) {
+
+                    @Override
+                    public void iterate(JSONObject jsonObject, String key) throws JSONException {
+                        if ("min".equals(key)) {
+                            jobSpriteActionGroup.setColorMappingMin(Float.parseFloat(jsonObject.getString(key)));
+                        } else if ("max".equals(key)) {
+                            jobSpriteActionGroup.setColorMappingMax(Float.parseFloat(jsonObject.getString(key)));
+                        } else {
+                            throw new RuntimeException("Illegal option: \"" + key + "\"");
+                        }
+                    }
+                };
+            }
+        };
     }
 }

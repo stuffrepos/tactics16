@@ -4,11 +4,16 @@
     defense: 3,
     evasiveness: 4,
     playerColorsMapping: {
-        "283080": "DARK_1",
-        "8888F8": "DARK_2",
-        "9880F8": "DARK_3"
+        "colors": {
+            "283080": "MAIN",
+            "8888F8": "MAIN",
+            "9880F8": "MAIN"
+        },
+        "limits": {
+            "main": {"min": 0.25}
+        }
     },
-    animationGroup: {        
+    animationGroup: {
         "animations": {
             "stopped": {
                 "changeFrameInterval": 500,

@@ -11,11 +11,12 @@ import org.json.JSONObject;
 public abstract class JsonKeyIterator {
 
     public JsonKeyIterator(JSONObject jsonObject) throws JSONException {
+        if (jsonObject != null) {
+            Iterator<String> iterator = jsonObject.keys();
 
-        Iterator<String> iterator = jsonObject.keys();
-
-        while (iterator.hasNext()) {
-            iterate(jsonObject, iterator.next());
+            while (iterator.hasNext()) {
+                iterate(jsonObject, iterator.next());
+            }
         }
     }
 

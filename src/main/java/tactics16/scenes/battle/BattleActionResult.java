@@ -25,7 +25,7 @@ public class BattleActionResult {
     }
 
     public boolean isPersonEvaded(Person person) {
-        return personsEvaded.containsKey(person);
+        return personsEvaded.get(person);
     }
 
     public void applyResults() {

@@ -35,7 +35,7 @@ public class PlayerPallete implements Object2D {
        playerColors = new int[Player.PLAYER_COLORS.size()];
 
        for(int i=0; i<playerColors.length; ++i) {
-           playerColors[i] = Player.PLAYER_COLORS.get(i).getColor(Player.Color.DARK_0);
+           playerColors[i] = Player.PLAYER_COLORS.get(i).getDefault().getRGB();
        }
     }
 

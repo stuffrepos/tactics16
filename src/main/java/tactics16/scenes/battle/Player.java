@@ -38,8 +38,7 @@ public class Player extends DataObject {
                             GameImage valueImage = PLAYER_COLORS.get(index).getMaskedImage(jobSpriteActionGroup, gameImage);
                             if (valueImage.getScale() == 1.0) {
                                 return valueImage;
-                            }
-                            else {
+                            } else {
                                 return valueImage.getScaledImage();
                             }
                         }
@@ -151,45 +150,20 @@ public class Player extends DataObject {
 
     static {
         PlayerColors player1Colors = new PlayerColors();
-        player1Colors.setMapping(Color.DARK_0, 0x400000);
-        player1Colors.setMapping(Color.DARK_1, 0x980000);
-        player1Colors.setMapping(Color.DARK_2, 0xE00000);
-        player1Colors.setMapping(Color.DARK_3, 0xFF0000);
-        player1Colors.setMapping(Color.LIGHT_0, 0x603030);
-        player1Colors.setMapping(Color.LIGHT_1, 0xA08080);
-        player1Colors.setMapping(Color.LIGHT_2, 0xD0A0A0);
-        player1Colors.setMapping(Color.LIGHT_3, 0xFFDDDD);
+        player1Colors.setMapping(Color.MAIN, 0x400000, 0xFF0000);
+        player1Colors.setMapping(Color.SECUNDARY, 0x603030, 0xFFDDDD);
 
         PlayerColors player2Colors = new PlayerColors();
-        player2Colors.setMapping(Color.DARK_0, 0x000040);
-        player2Colors.setMapping(Color.DARK_1, 0x000098);
-        player2Colors.setMapping(Color.DARK_2, 0x0000E0);
-        player2Colors.setMapping(Color.DARK_3, 0x0000FF);
-        player2Colors.setMapping(Color.LIGHT_0, 0x303060);
-        player2Colors.setMapping(Color.LIGHT_1, 0x8080A0);
-        player2Colors.setMapping(Color.LIGHT_2, 0xA0A0D0);
-        player2Colors.setMapping(Color.LIGHT_3, 0xDDDDFF);
+        player2Colors.setMapping(Color.MAIN, 0x000040, 0x0000FF);
+        player2Colors.setMapping(Color.SECUNDARY, 0x303060, 0xDDDDFF);
 
         PlayerColors player3Colors = new PlayerColors();
-        player3Colors.setMapping(Color.DARK_0, 0x004000);
-        player3Colors.setMapping(Color.DARK_1, 0x009800);
-        player3Colors.setMapping(Color.DARK_2, 0x00E000);
-        player3Colors.setMapping(Color.DARK_3, 0x00FF00);
-        player3Colors.setMapping(Color.LIGHT_0, 0x306030);
-        player3Colors.setMapping(Color.LIGHT_1, 0x80A080);
-        player3Colors.setMapping(Color.LIGHT_2, 0xA0D0A0);
-        player3Colors.setMapping(Color.LIGHT_3, 0xDDFFDD);
+        player3Colors.setMapping(Color.MAIN, 0x004000, 0x00FF00);
+        player3Colors.setMapping(Color.SECUNDARY, 0x306030, 0xDDFFDD);
 
         PlayerColors player4Colors = new PlayerColors();
-        player4Colors.setMapping(Color.DARK_0, 0x404000);
-        player4Colors.setMapping(Color.DARK_1, 0x989800);
-        player4Colors.setMapping(Color.DARK_2, 0xE0E000);
-        player4Colors.setMapping(Color.DARK_3, 0xFFFF00);
-        player4Colors.setMapping(Color.LIGHT_0, 0x606050);
-        player4Colors.setMapping(Color.LIGHT_1, 0xA0A080);
-        player4Colors.setMapping(Color.LIGHT_2, 0xD0D0A0);
-        player4Colors.setMapping(Color.LIGHT_3, 0xFFFFDD);
-
+        player4Colors.setMapping(Color.MAIN, 0x404000, 0xFFFF00);
+        player4Colors.setMapping(Color.SECUNDARY, 0x606050, 0xFFFFDD);
 
         PLAYER_COLORS = new ArrayList<PlayerColors>();
         PLAYER_COLORS.add(player1Colors);
@@ -258,30 +232,80 @@ public class Player extends DataObject {
         return jobAnimations.getValue(job).getValue(gameAction);
     }
 
-    public java.awt.Color getColor(Color color) {
-        return new java.awt.Color(PLAYER_COLORS.get(index).getColor(color));
+    public java.awt.Color getDefaultColor() {
+        return getColors().getDefault();
+    }
+
+    private PlayerColors getColors() {
+        return PLAYER_COLORS.get(index);
     }
 
     public static enum Color {
 
-        DARK_0,
-        DARK_1,
-        DARK_2,
-        DARK_3,
-        LIGHT_0,
-        LIGHT_1,
-        LIGHT_2,
-        LIGHT_3
+        MAIN,
+        SECUNDARY,
     }
 
     public static class PlayerColors {
 
-        private java.util.Map<Color, Integer> mapping = new TreeMap<Color, Integer>();
+        private static class MaskedColor {
+
+            private int min;
+            private int max;
+
+            public MaskedColor(int min, int max) {
+                this.min = min;
+                this.max = max;
+            }
+
+            public int getMin() {
+                return min;
+            }
+
+            public int getMax() {
+                return max;
+            }
+
+            public int getColor(float factor,float minLimit,float maxLimit) {
+                return ColorUtil.getBetweenColor(min, max,calculateRealFactor(factor, minLimit, maxLimit)).getRGB();
+            }
+
+            private static float calculateRealFactor(float factor,float minLimit,float maxLimit) {
+                return factor*(maxLimit - minLimit) + minLimit;
+            }
+        }
+        private java.util.Map<Color, MaskedColor> mapping = new TreeMap<Color, MaskedColor>();
         private java.util.Map<GameImage, CacheableValue<GameImage>> maskedImages =
                 new HashMap<GameImage, CacheableValue<GameImage>>();
+        private CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<Integer, Integer>> jobsColors =
+                new CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<Integer, Integer>>() {
 
-        public void setMapping(Color playerColor, int rgb) {
-            mapping.put(playerColor, rgb);
+                    @Override
+                    protected CacheableMapValue<Integer, Integer> calculate(final JobSpriteActionGroup jobSpriteActionGroup) {
+                        return new CacheableMapValue<Integer, Integer>() {
+
+                            @Override
+                            protected Integer calculate(Integer originalRgb) {
+                                Player.Color playerColor = jobSpriteActionGroup.getMapping(originalRgb);
+                                if (playerColor != null) {
+                                    return mapping.get(playerColor).getColor(
+                                            ColorUtil.getBetweenFactor(
+                                            jobSpriteActionGroup.getPlayerColorMin(playerColor),
+                                            jobSpriteActionGroup.getPlayerColorMax(playerColor),
+                                            originalRgb),
+                                            jobSpriteActionGroup.getColorMappingMin(),
+                                            jobSpriteActionGroup.getColorMappingMax());
+                                }
+                                else {
+                                    return originalRgb;
+                                }
+                            }
+                        };
+                    }
+                };
+
+        public void setMapping(Color playerColor, int minRgb, int maxRgb) {
+            mapping.put(playerColor, new MaskedColor(minRgb, maxRgb));
         }
 
         public GameImage getMaskedImage(final JobSpriteActionGroup jobSpriteActionGroup, final GameImage image) {
@@ -298,12 +322,7 @@ public class Player extends DataObject {
 
                             @Override
                             public void iterate(int x, int y, int rgb) {
-                                int color = image.getImage().getRGB(x, y);
-                                Player.Color playerColor = jobSpriteActionGroup.getMapping(color);
-                                if (playerColor != null) {
-                                    color = ((color & 0xFF000000) | mapping.get(playerColor));
-                                }
-                                maskedImage.getImage().setRGB(x, y, color);
+                                maskedImage.getImage().setRGB(x, y, jobsColors.getValue(jobSpriteActionGroup).getValue(rgb));
                             }
                         };
 
@@ -316,8 +335,8 @@ public class Player extends DataObject {
             return cachedMaskedImage.getValue();
         }
 
-        public Integer getColor(Color playerColor) {
-            return mapping.get(playerColor);
+        public java.awt.Color getDefault() {
+            return new java.awt.Color(mapping.get(Color.MAIN).getColor(0.5f,0.0f,1.0f));
         }
     }
 }

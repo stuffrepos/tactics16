@@ -104,6 +104,6 @@ public class JobBoxInfo implements VisualEntity, Object2D {
     }
 
     private Color getBoxColor() {
-        return player.getColor(Player.Color.DARK_1);
+        return player.getDefaultColor();
     }
 }

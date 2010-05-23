@@ -1,6 +1,7 @@
 package tactics16.util.image;
 
 import java.awt.Color;
+import tactics16.scenes.battle.Player;
 
 /**
  *
@@ -80,5 +81,41 @@ public class ColorUtil {
 
     public static Color transparent(Color color, float alpha) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (0xFF * alpha));
+    }
+
+    public static Color getBetweenColor(int min, int max, float factor) {
+        return getBetweenColor(new Color(min), new Color(max), factor);
+    }
+
+    public static float getBetweenFactor(int playerColorMin, int playerColorMax, int originalRgb) {
+        return getBetweenFactor(
+                new Color(playerColorMin),
+                new Color(playerColorMax),
+                new Color(originalRgb));
+    }
+
+    public static float getBetweenFactor(Color min, Color max, Color color) {
+        System.out.printf("Min: %s, Max: %s, Color: %s\n", min, max, color);
+        return getColorComponentBetweenFactor(
+                sumColorComponents(min),
+                sumColorComponents(max),
+                sumColorComponents(color));
+    }
+
+    private static int sumColorComponents(Color color) {
+        return color.getRed() + color.getGreen() + color.getBlue();
+    }
+
+    private static float getColorComponentBetweenFactor(int min, int max, int component) {
+        System.out.printf("Min: %d, Max: %d, Component: %s\n", min, max, component);
+        return (float) (component - min) / (float) (max - min);
+    }
+
+    public static int compareColor(int rgb1, int rgb2) {
+        return compareColor(new Color(rgb1), new Color(rgb2));
+    }
+
+    public static int compareColor(Color color1, Color color2) {
+        return new Integer(sumColorComponents(color1)).compareTo(sumColorComponents(color2));
     }
 }

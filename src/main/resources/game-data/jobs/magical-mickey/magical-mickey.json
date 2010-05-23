@@ -4,12 +4,18 @@
     defense: 1,
     evasiveness: 3,
     playerColorsMapping: {
-        "400000": "DARK_0",
-        "980000": "DARK_1",
-        "E00000": "DARK_2",
-        "605000": "LIGHT_0",
-        "A08000": "LIGHT_1",
-        "D0D000": "LIGHT_2"        
+        "colors": {
+            "400000": "MAIN",
+            "980000": "MAIN",
+            "E00000": "MAIN",
+            "605000": "SECUNDARY",
+            "A08000": "SECUNDARY",
+            "D0D000": "SECUNDARY"
+        },
+        "limits": {
+            "main": {"min": 0, "max": 0.84},
+            "secundary": {"min": -0.03, "max": 0.44}
+        }
     },
     animationGroup: {
         "animations": {

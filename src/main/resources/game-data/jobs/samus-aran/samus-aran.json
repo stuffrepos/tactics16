@@ -4,15 +4,16 @@
     defense: 7,
     evasiveness: 3,
     playerColorsMapping: {
-        "680000": "DARK_0",
-        "A01800": "DARK_1",
-        "D82800": "DARK_2",
-        "F88080": "LIGHT_3",
-        "280028": "LIGHT_0",
-        "502860": "LIGHT_1",
-        "A040B0": "LIGHT_2",
-        "FF00FF": "LIGHT_3",
- 
+        "colors": {
+            "680000": "MAIN",
+            "A01800": "MAIN",
+            "D82800": "MAIN",            
+            "280028": "SECUNDARY",
+            "502860": "SECUNDARY",
+            "A040B0": "SECUNDARY",
+            "F88080": "SECUNDARY",
+            "FF00FF": "SECUNDARY"
+        }        
     },
     animationGroup: {        
         "animations": {
@@ -41,7 +42,12 @@
                 "effect-0.png","effect-1.png","effect-2.png","effect-3.png","effect-4.png"]
             }
         },
-        "images": []
+        "images": [{
+            "targets": ["effect-0.png","effect-1.png","effect-2.png","effect-3.png","effect-4.png",
+                "effect-0.png","effect-1.png","effect-2.png","effect-3.png","effect-4.png"],
+            "centerX": "center",
+            "centerY": "middle"
+        }]
     },
     actions: [{
         "name": "Missile",
