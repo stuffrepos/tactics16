@@ -1,0 +1,68 @@
+{
+    objectType: "job",
+    name: "Ritcher Belmont",
+    defense: 3,
+    evasiveness: 3,
+    playerColorsMapping: {
+        "colors": {
+            "000060": "MAIN",
+            "283878": "MAIN",
+            "0000F8": "MAIN",
+            "0000FF": "MAIN",
+            "0060F8": "MAIN"
+        },
+        "limits": {
+        }
+    },
+    animationGroup: {
+        "animations": {
+            "stopped": {
+                "changeFrameInterval": 500,
+                "images": ["stopped-0.png","stopped-1.png","stopped-2.png"]
+            },
+            "damaged": {
+                "changeFrameInterval": 1000,
+                "images": ["damaged-0.png"]
+            },
+            "walking": {
+                "changeFrameInterval": 200,
+                "images": ["walking-0.png","walking-1.png","walking-2.png","walking-3.png",
+                "walking-4.png","walking-5.png","walking-6.png","walking-7.png"]
+            },
+            "attacking": {
+                "changeFrameInterval": 200,
+                "images": ["attacking-0.png","attacking-1.png","attacking-2.png","attacking-3.png",
+                "attacking-4.png","attacking-5.png","attacking-6.png","attacking-7.png"]
+            },
+            "effect": {
+                "changeFrameInterval": 100,
+                "images": ["effect-0.png","effect-1.png","effect-2.png","effect-3.png"]
+            }
+        },
+        "images": [{
+            "targets": ["attacking-5.png","attacking-6.png","attacking-7.png"],
+            "centerX": "11"
+        },{
+            "targets": ["attacking-1.png"],
+            "centerX": "21"
+        },{
+            "targets": ["attacking-2.png"],
+            "centerX": "31",
+            "centerY": "42"
+        },{
+            "targets": ["attacking-3.png"],
+            "centerX": "30"
+        },{
+            "targets": ["attacking-4.png"],
+            "centerX": "29"
+        }]
+    },
+    actions: [{
+        "name": "Whip Attack",
+        "power": 12,
+        "agility": 3,
+        "reach": {
+            "distance": 1
+        }
+    }]
+}
