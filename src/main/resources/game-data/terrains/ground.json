@@ -1,7 +1,0 @@
-{
-    objectType: "terrain",
-    name: "Ground",
-    allowMoviment: true,
-    allowAction: true,
-    image: "ground.png"
-}

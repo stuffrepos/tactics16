@@ -1,0 +1,7 @@
+{
+    objectType: "terrain",
+    name: "Tree",
+    allowMoviment: false,
+    allowAction: false,
+    image: "tree.png"
+}

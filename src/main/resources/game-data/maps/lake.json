@@ -1,0 +1,146 @@
+{
+    "height": 10,
+    "name": "Lake",
+    "objectType": "map",
+    "personInitialPositions": [
+        [{
+            "x": 9,
+            "y": 0
+        }],
+        [{
+            "x": 9,
+            "y": 9
+        }],
+        [{
+            "x": 0,
+            "y": 9
+        }],
+        [{
+            "x": 0,
+            "y": 0
+        }]
+    ],
+    "terrains": [
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Water",
+            "Grass",
+            "Tree",
+            "Tree",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Tree",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Water",
+            "Tree",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Tree",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Water",
+            "Tree",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ]
+    ],
+    "width": 10
+}

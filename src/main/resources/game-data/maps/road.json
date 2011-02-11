@@ -1,0 +1,176 @@
+{
+    "height": 6,
+    "name": "Road",
+    "objectType": "map",
+    "personInitialPositions": [
+        [
+            {
+                "x": 0,
+                "y": 2
+            },
+            {
+                "x": 1,
+                "y": 2
+            },
+            {
+                "x": 0,
+                "y": 3
+            },
+            {
+                "x": 1,
+                "y": 3
+            }
+        ],
+        [
+            {
+                "x": 12,
+                "y": 4
+            },
+            {
+                "x": 13,
+                "y": 4
+            },
+            {
+                "x": 12,
+                "y": 5
+            },
+            {
+                "x": 13,
+                "y": 5
+            }
+        ],
+        [],
+        []
+    ],
+    "terrains": [
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Tree",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Tree",
+            "Tree",
+            "Stone",
+            "Stone",
+            "Tree",
+            "Tree"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Tree",
+            "Tree",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Grass",
+            "Tree",
+            "Stone",
+            "Stone",
+            "Stone",
+            "Stone"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Stone",
+            "Stone",
+            "Stone",
+            "Stone"
+        ],
+        [
+            "Grass",
+            "Grass",
+            "Grass",
+            "Tree",
+            "Grass",
+            "Grass"
+        ],
+        [
+            "Tree",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass",
+            "Grass"
+        ]
+    ],
+    "width": 16
+}
