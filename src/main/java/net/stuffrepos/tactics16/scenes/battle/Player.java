@@ -119,7 +119,7 @@ public class Player extends DataObject {
 
                         @Override
                         public void iterate(int x, int y, int rgb) {
-                            if (rgb == 0) {
+                            if ((rgb & 0xFF000000) == 0) {
                                 newImage.setRGB(x, y, 0);
                             } else {
                                 newImage.setRGB(x, y, ColorUtil.grayScale(new java.awt.Color(rgb)).getRGB());
