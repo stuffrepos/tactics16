@@ -7,7 +7,7 @@
     <groupId>net.stuffrepos</groupId>
     <artifactId>tactics16</artifactId>
     <name>tactics16</name>
-    <url>http://maven.apache.org</url>
+    <url>http://www.stuffrepos.net/software/tactics16</url>
     <build>
         <plugins>
             <plugin>
@@ -19,17 +19,24 @@
                 </configuration>
             </plugin>
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <descriptors>
-                        <descriptor>src/main/assembly/main.xml</descriptor>
-                    </descriptors>
-                    <descriptorRefs>
-                        <!--
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                        -->
-                    </descriptorRefs>
-                </configuration>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>net.stuffrepos.tactics16.App</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <resources>
