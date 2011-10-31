@@ -49,6 +49,18 @@
         },{
             "targets" : ["attacking-0.png"],
             "centerX": "16"
+        },{
+            "targets" : ["walking-0.png","walking-1.png","walking-2.png"],
+            "centerY": "bottom"
+        },{
+            "targets" : ["walking-0.png"],
+            "centerX": "6"
+        },{
+            "targets" : ["walking-1.png"],
+            "centerX": "18"
+        },{
+            "targets" : ["walking-2.png"],
+            "centerX": "12"
         }]
     },
     actions: [{
