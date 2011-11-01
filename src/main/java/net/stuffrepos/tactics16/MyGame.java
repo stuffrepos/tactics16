@@ -21,6 +21,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
 
@@ -93,15 +94,15 @@ public class MyGame {
 
     private MyGame(String dataPath) throws SlickException {
         loader = new DataManager(new File(dataPath));
-        keyMapping.setMapping(GameKey.UP, KeyEvent.VK_UP);
-        keyMapping.setMapping(GameKey.DOWN, KeyEvent.VK_DOWN);
-        keyMapping.setMapping(GameKey.LEFT, KeyEvent.VK_LEFT);
-        keyMapping.setMapping(GameKey.RIGHT, KeyEvent.VK_RIGHT);
-        keyMapping.setMapping(GameKey.CONFIRM, KeyEvent.VK_ENTER, KeyEvent.VK_SPACE);
-        keyMapping.setMapping(GameKey.CANCEL, KeyEvent.VK_ESCAPE, KeyEvent.VK_BACK_SPACE);
-        keyMapping.setMapping(GameKey.OPTIONS, KeyEvent.VK_F1);
-        keyMapping.setMapping(GameKey.PREVIOUS, KeyEvent.VK_PAGE_UP);
-        keyMapping.setMapping(GameKey.NEXT, KeyEvent.VK_PAGE_DOWN);
+        keyMapping.setMapping(GameKey.UP, Input.KEY_UP);
+        keyMapping.setMapping(GameKey.DOWN, Input.KEY_DOWN);
+        keyMapping.setMapping(GameKey.LEFT, Input.KEY_LEFT);
+        keyMapping.setMapping(GameKey.RIGHT, Input.KEY_RIGHT);
+        keyMapping.setMapping(GameKey.CONFIRM, Input.KEY_ENTER, Input.KEY_SPACE);
+        keyMapping.setMapping(GameKey.CANCEL, Input.KEY_ESCAPE, Input.KEY_BACKSLASH);
+        keyMapping.setMapping(GameKey.OPTIONS, Input.KEY_F1);
+        keyMapping.setMapping(GameKey.PREVIOUS, Input.KEY_PRIOR);
+        keyMapping.setMapping(GameKey.NEXT, Input.KEY_NEXT);
     }
 
     public void initResources(GameContainer gameContainer) {
@@ -206,7 +207,7 @@ public class MyGame {
 
         private boolean isKeyPressed(GameKey gameKey) {
             for (Integer key : mapping.get(gameKey)) {
-                if (gameContainer.getInput().isKeyDown(key)) {
+                if (gameContainer.getInput().isKeyPressed(key)) {
                     return true;
                 }
             }

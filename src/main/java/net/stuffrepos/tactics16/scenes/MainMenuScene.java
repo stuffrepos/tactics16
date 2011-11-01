@@ -16,6 +16,7 @@ import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.menu.Menu;
 import net.stuffrepos.tactics16.phase.AbstractPhase;
 import org.newdawn.slick.Color;
+import org.newdawn.slick.Input;
 
 /**
  *
@@ -115,7 +116,7 @@ public class MainMenuScene extends AbstractPhase {
                 } else {
                     b.append(", ");
                 }
-                b.append(KeyEvent.getKeyText(key));
+                b.append(Input.getKeyName(key));
             }
             b.append('\n');
         }
