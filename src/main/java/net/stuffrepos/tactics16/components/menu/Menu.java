@@ -188,7 +188,7 @@ public class Menu implements Object2D {
         g.drawString(
                 option.getText(),
                 x + (w - optionW) / 2,
-                y + TEXT_MARGIN + getFont().getLineHeight());
+                y + TEXT_MARGIN);
     }
 
     public void addGeometryListener(Listener<Object2D> listener) {

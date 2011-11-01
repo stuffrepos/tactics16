@@ -22,7 +22,7 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.TrueTypeFont;
 
 /**
  *
@@ -55,7 +55,7 @@ public class MyGame {
     private DataManager loader;
     private PhaseManager phaseManager = new PhaseManager();
     private KeyMapping keyMapping = new KeyMapping();
-    private UnicodeFont font = new UnicodeFont(new Font(DEFAULT_TRUE_TYPE_FAMILY_NAME, Font.PLAIN, 12));
+    private TrueTypeFont font;
     //private Font font = new Font("Purisa", Font.PLAIN, 12);
     private Object2D screenObject2D = new Object2D() {
 
@@ -82,12 +82,16 @@ public class MyGame {
 
     public static void createInstance(String dataPath) {
         if (instance == null) {
-            instance = new MyGame(dataPath);
+            try {
+                instance = new MyGame(dataPath);
+            } catch (SlickException ex) {
+                throw new RuntimeException(ex);
+            }
         }
     }
     private Phase initialPhase;
 
-    private MyGame(String dataPath) {
+    private MyGame(String dataPath) throws SlickException {
         loader = new DataManager(new File(dataPath));
         keyMapping.setMapping(GameKey.UP, KeyEvent.VK_UP);
         keyMapping.setMapping(GameKey.DOWN, KeyEvent.VK_DOWN);
@@ -101,6 +105,7 @@ public class MyGame {
     }
 
     public void initResources(GameContainer gameContainer) {
+        this.font = new TrueTypeFont(new Font(DEFAULT_TRUE_TYPE_FAMILY_NAME, Font.PLAIN, 12), true);
         this.gameContainer = gameContainer;
         loader.loadDirectory(loader.getDataDirectory());
     }
@@ -149,10 +154,6 @@ public class MyGame {
 
     public KeyMapping getKeyMapping() {
         return keyMapping;
-    }
-
-    public void setFont(Font font) {
-        this.font = new UnicodeFont(font);
     }
 
     public org.newdawn.slick.Font getFont() {

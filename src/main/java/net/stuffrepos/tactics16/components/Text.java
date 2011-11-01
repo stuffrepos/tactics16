@@ -8,6 +8,7 @@ import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.UnicodeFont;
 
 /**
@@ -99,10 +100,9 @@ public class Text implements Object2D, VisualEntity {
             g.drawString(
                     line,
                     x,
-                    position.getY() +
-                    getMargin() +
-                    font.getLineHeight() * (i + 1)
-                    );
+                    position.getY()
+                    + getMargin()
+                    + font.getLineHeight() * i);
             i++;
         }
     }
@@ -159,7 +159,7 @@ public class Text implements Object2D, VisualEntity {
     }
 
     public void setFont(Font font) {
-        this.font = new UnicodeFont(font);
+        this.font = new TrueTypeFont(font, true, new char[]{'t'});        
         this.width.clear();
         this.height.clear();
     }

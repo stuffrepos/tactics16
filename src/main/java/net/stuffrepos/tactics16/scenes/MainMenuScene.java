@@ -15,6 +15,7 @@ import net.stuffrepos.tactics16.components.Text;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.menu.Menu;
 import net.stuffrepos.tactics16.phase.AbstractPhase;
+import org.newdawn.slick.Color;
 
 /**
  *
