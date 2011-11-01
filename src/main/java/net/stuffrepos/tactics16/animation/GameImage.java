@@ -1,13 +1,12 @@
 package net.stuffrepos.tactics16.animation;
 
-import java.awt.Graphics2D;
 import java.awt.Transparency;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.image.ImageUtil;
-import net.stuffrepos.tactics16.util.image.TransformUtil;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
 /**
  *
@@ -15,48 +14,55 @@ import net.stuffrepos.tactics16.util.image.TransformUtil;
  */
 public class GameImage implements Cloneable {
 
-    private BufferedImage image;
+    private Image image;
     private Coordinate center;
     private double scale = 1.0;
     private CacheableValue<GameImage> scaledImage = new CacheableValue<GameImage>() {
 
         @Override
         protected GameImage calculate() {
-            GameImage scaledImage = new GameImage(ImageUtil.scaleImage(image, scale));
+            GameImage scaledImage = new GameImage(ImageUtil.scaleImage(ImageUtil.slickToAwt(image), scale));
             scaledImage.getCenter().setXY(
                     (int) (center.getX() * scale),
                     (int) (center.getY() * scale));
             return scaledImage;
         }
     };
+    private CacheableValue<GameImage> flippedX = new CacheableValue<GameImage>() {
 
-    public GameImage(BufferedImage image) {
+        @Override
+        protected GameImage calculate() {
+            GameImage flipped = new GameImage(image.getFlippedCopy(true, false));
+            flipped.getCenter().setXY(
+                    flipped.image.getWidth() - center.getX(),
+                    center.getY());
+            return flipped;
+        }
+    };
+    
+    public GameImage(Image image) {        
         this.image = image;
         this.center = new Coordinate();
     }
 
-    public void render(Graphics2D g, Coordinate position) {
+    public GameImage(BufferedImage image) {
+        this(ImageUtil.awtToSlick(image));
+    }
+
+    public void render(Graphics g, Coordinate position) {
         render(g, position, false, false);
     }
 
-    public void render(Graphics2D g, int x, int y) {
+    public void render(Graphics g, int x, int y) {
         render(g, x, y, false, false);
     }
 
-    public void render(Graphics2D g, int x, int y, boolean invertX, boolean invertY) {
+    public void render(Graphics g, int x, int y, boolean invertX, boolean invertY) {
 
-        assert invertY == false : "Not yet implemented Y invert";
+        assert invertY == false : "Not yet implemented Y invert";                
 
-        if (invertX) {
-            AffineTransform flipTransform = TransformUtil.getFlipHorizontalTransform(
-                    image);
-
-            flipTransform.preConcatenate(AffineTransform.getTranslateInstance(
-                    x - (image.getWidth() - center.getX()),
-                    y - center.getY()));
-
-            g.drawImage(image, flipTransform, null);
-
+        if (invertX) {            
+            flippedX.getValue().render(g,x,y,false,false);
         } else {
             g.drawImage(
                     image,
@@ -67,7 +73,7 @@ public class GameImage implements Cloneable {
     }
 
     public BufferedImage getImage() {
-        return image;
+        return ImageUtil.slickToAwt(image);
     }
 
     public Coordinate getCenter() {
@@ -88,7 +94,7 @@ public class GameImage implements Cloneable {
         return gameImage;
     }
 
-    public void render(Graphics2D g, Coordinate position, boolean invertX, boolean invertY) {
+    public void render(Graphics g, Coordinate position, boolean invertX, boolean invertY) {
         render(g, position.getX(), position.getY(), invertX, invertY);
     }
 

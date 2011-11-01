@@ -1,8 +1,7 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Color;
+import org.newdawn.slick.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
@@ -11,6 +10,7 @@ import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.phase.AbstractPhase;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.phase.PhaseManager;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -18,9 +18,9 @@ import net.stuffrepos.tactics16.phase.PhaseManager;
  */
 public class MessageBox implements VisualEntity, Object2D {
 
-    public static final Color DEFAULT_BACKGROUND_COLOR = Color.WHITE;
-    public static final Color DEFAULT_FOREGROUND_COLOR = Color.BLACK;
-    public static final Font DEFAULT_FONT = new Font(MyGame.getInstance().getFont().getName(), Font.BOLD, 16);
+    public static final Color DEFAULT_BACKGROUND_COLOR = Color.white;
+    public static final Color DEFAULT_FOREGROUND_COLOR = Color.black;
+    public static final Font DEFAULT_FONT = new Font(MyGame.DEFAULT_TRUE_TYPE_FAMILY_NAME, Font.BOLD, 16);
     private boolean finalized;
     private TextBox textBox;
     private long elapsedTime = 0;
@@ -58,7 +58,7 @@ public class MessageBox implements VisualEntity, Object2D {
         } 
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         textBox.render(g);
     }
 
@@ -125,7 +125,7 @@ public class MessageBox implements VisualEntity, Object2D {
         }
 
         @Override
-        public void render(Graphics2D g) {
+        public void render(Graphics g) {
             previousPhase.render(g);
             MessageBox.this.render(g);
         }

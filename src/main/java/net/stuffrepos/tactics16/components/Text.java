@@ -1,24 +1,25 @@
 package net.stuffrepos.tactics16.components;
 
 import net.stuffrepos.tactics16.util.Align;
-import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.UnicodeFont;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class Text implements Object2D, VisualEntity {
-
+    
     public static final int MAX_MARGIN = 10;
     private Align align = Align.NEGATIVE;
-    public static final Color DEFAULT_COLOR = Color.WHITE;
-    private Font font = MyGame.getInstance().getFont();
+    public static final Color DEFAULT_COLOR = Color.white;
+    private org.newdawn.slick.Font font = MyGame.getInstance().getFont();
     private String text;
     private Coordinate position = new Coordinate();
     private Color color;
@@ -42,7 +43,7 @@ public class Text implements Object2D, VisualEntity {
 
         @Override
         protected Integer calculate() {
-            return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics(getFont()).getHeight() *
+            return font.getLineHeight() *
                     textLines.getValue().length + 2 * getMargin();
         }
     };
@@ -72,14 +73,12 @@ public class Text implements Object2D, VisualEntity {
     }
 
     private int getLineWidth(String line) {
-        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics(getFont()).stringWidth(line);
+        return font.getWidth(line);
     }
 
-    public void render(Graphics2D g) {
-
+    public void render(Graphics g) {        
         g.setColor(color);
-        g.setFont(getFont());
-
+        g.setFont(font);        
         int i = 0;
         for (String line : textLines.getValue()) {
             int x;
@@ -102,15 +101,14 @@ public class Text implements Object2D, VisualEntity {
                     x,
                     position.getY() +
                     getMargin() +
-                    g.getFontMetrics(getFont()).getHeight() * i +
-                    g.getFontMetrics(getFont()).getAscent() +
-                    g.getFontMetrics(getFont()).getLeading());
+                    font.getLineHeight() * (i + 1)
+                    );
             i++;
         }
     }
 
     private int getMargin() {
-        return Math.min(MAX_MARGIN, MyGame.getInstance().getDefaultGraphics2D().getFontMetrics(font).getHeight() / 2);
+        return Math.min(MAX_MARGIN, font.getLineHeight() / 2);
     }
 
     public String getText() {
@@ -156,12 +154,12 @@ public class Text implements Object2D, VisualEntity {
         this.align = align;
     }
 
-    public Font getFont() {
+    public org.newdawn.slick.Font getFont() {
         return font;
     }
 
     public void setFont(Font font) {
-        this.font = font;
+        this.font = new UnicodeFont(font);
         this.width.clear();
         this.height.clear();
     }

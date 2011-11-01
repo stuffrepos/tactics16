@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import net.stuffrepos.tactics16.GameKey;
@@ -71,7 +71,7 @@ public class JobSpriteTester extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         board.render(g);
     }
 
@@ -118,7 +118,7 @@ public class JobSpriteTester extends AbstractPhase {
             }
         }
 
-        public void render(Graphics2D g) {
+        public void render(Graphics g) {
             for (AnimationBox animationBox : animations.values()) {
                 animationBox.render(g);
             }

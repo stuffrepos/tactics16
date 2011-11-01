@@ -3,7 +3,7 @@ package net.stuffrepos.tactics16.scenes.mapbuilder;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.TextBox;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.components.MapCursor;
 import net.stuffrepos.tactics16.components.PhaseTitle;
@@ -59,7 +59,7 @@ class TerrainEditMode extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         terrainPallete.render(g);
         visualMap.render(g);
         status.render(g);

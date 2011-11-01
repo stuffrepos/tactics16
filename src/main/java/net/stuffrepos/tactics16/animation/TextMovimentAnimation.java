@@ -1,10 +1,10 @@
 package net.stuffrepos.tactics16.animation;
 
-import java.awt.Graphics2D;
 import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.Align;
 import net.stuffrepos.tactics16.util.LinearMoviment;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -34,7 +34,7 @@ public class TextMovimentAnimation implements VisualEntity {
         }
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         textDialog.render(g);
     }
 

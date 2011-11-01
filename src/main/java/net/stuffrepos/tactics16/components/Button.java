@@ -1,7 +1,5 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.animation.VisualEntity;
@@ -9,7 +7,10 @@ import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
 import net.stuffrepos.tactics16.util.javabasic.MathUtil;
 import net.stuffrepos.tactics16.util.SizeConfig;
+import net.stuffrepos.tactics16.util.image.DrawerUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -17,9 +18,9 @@ import net.stuffrepos.tactics16.util.listeners.Listener;
  */
 public abstract class Button implements VisualEntity, Object2D {
 
-    private static final Color DISABLED_FOREGROUND_COLOR = Color.GRAY;
-    private static final Color DISABLED_BACKGROUND_COLOR = Color.DARK_GRAY;
-    private static final Color DEFAULT_ENABLED_FOREGROUND_COLOR = Color.WHITE;
+    private static final Color DISABLED_FOREGROUND_COLOR = Color.gray;
+    private static final Color DISABLED_BACKGROUND_COLOR = Color.darkGray;
+    private static final Color DEFAULT_ENABLED_FOREGROUND_COLOR = Color.white;
     private static final Color DEFAULT_ENABLED_BACKGROUND_COLOR = new Color(0x000077);
     public static final int BUTTON_GAP = 1;
     private Colors colors = new Colors();
@@ -70,9 +71,10 @@ public abstract class Button implements VisualEntity, Object2D {
         colors.setBackgroundColor(backgroundColor);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         g.setColor(colors.getCurrentBackgroundColor());
-        g.fill3DRect(
+        DrawerUtil.fill3dRect(
+                g,
                 position.getX(),
                 position.getY(),
                 getWidth(),

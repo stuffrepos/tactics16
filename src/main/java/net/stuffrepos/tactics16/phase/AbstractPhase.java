@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.phase;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -17,7 +17,7 @@ public abstract class AbstractPhase implements Phase {
     public void update(long elapsedTime) {        
     }
 
-    public void render(Graphics2D g) {        
+    public void render(Graphics g) {        
     }
 
     public void onExit() {        

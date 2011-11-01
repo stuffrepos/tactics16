@@ -1,8 +1,8 @@
 package net.stuffrepos.tactics16.animation;
 
-import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -24,7 +24,7 @@ public class EntitiesBoard implements VisualEntity {
         children.removeAll(toRemove);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         for (VisualEntity child : children) {
             child.render(g);
         }

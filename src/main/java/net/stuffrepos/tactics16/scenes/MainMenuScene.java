@@ -5,7 +5,7 @@ import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.scenes.mapbuilder.MapBuilderScene;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.TextBox;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.awt.event.KeyEvent;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.animation.transitioneffect.FadeIn;
@@ -149,7 +149,7 @@ public class MainMenuScene extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         mainMenu.render(g);
         title.render(g);
         keysHelp.render(g);

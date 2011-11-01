@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.animation.TextMovimentAnimation;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
@@ -14,7 +14,7 @@ import net.stuffrepos.tactics16.util.Align;
  */
 public class PersonInfo implements VisualEntity {
 
-    private static final Color BACKGROUND_COLOR = new Color(0x77000000, true);
+    private static final Color BACKGROUND_COLOR = new Color(0x77000000);
     private static final double SPEED = 0.05;
     private TextMovimentAnimation textMovimentAnimation;
 
@@ -36,7 +36,7 @@ public class PersonInfo implements VisualEntity {
         textMovimentAnimation.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         textMovimentAnimation.render(g);
     }
 
@@ -46,9 +46,9 @@ public class PersonInfo implements VisualEntity {
 
     public static enum Type {
 
-        DAMAGE(Color.RED),
-        NEUTRAL(Color.WHITE),
-        AGILITY(Color.GREEN);
+        DAMAGE(Color.red),
+        NEUTRAL(Color.white),
+        AGILITY(Color.green);
         private final Color color;
 
         Type(Color color) {

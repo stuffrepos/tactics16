@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle.effects;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.ArrayList;
 import java.util.Set;
 import net.stuffrepos.tactics16.GameKey;
@@ -60,7 +60,7 @@ public class EffectsSubPhase extends AbstractPhase {
         }
 
         @Override
-        public void render(Graphics2D g) {
+        public void render(Graphics g) {
             personsTargets.render(g);
         }// </editor-fold>
 
@@ -101,7 +101,7 @@ public class EffectsSubPhase extends AbstractPhase {
                 }
             }
 
-            public void render(Graphics2D g) {
+            public void render(Graphics g) {
                 if (phaseManager.getCurrentPhase() != null) {
                     phaseManager.getCurrentPhase().render(g);
                 }
@@ -121,7 +121,7 @@ public class EffectsSubPhase extends AbstractPhase {
                 }
 
                 @Override
-                public void render(Graphics2D g) {
+                public void render(Graphics g) {
                     evadeSelector.render(g);
                 }
 
@@ -179,7 +179,7 @@ public class EffectsSubPhase extends AbstractPhase {
             }
 
             @Override
-            public void render(Graphics2D g) {
+            public void render(Graphics g) {
                 effectAnimation.render(g);
             }
         }

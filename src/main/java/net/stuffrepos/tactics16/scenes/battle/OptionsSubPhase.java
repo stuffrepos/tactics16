@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
@@ -40,7 +40,7 @@ public class OptionsSubPhase extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         menu.render(g);
     }
 }

@@ -71,7 +71,7 @@ public class Player extends DataObject {
                             if ((rgb & 0x00FFFFFF) == 0x00FF00FF) {
                                 newImage.setRGB(x, y, 0);
                             } else {
-                                newImage.setRGB(x, y, ColorUtil.applyFactor(new java.awt.Color(rgb), factor).getRGB());
+                                newImage.setRGB(x, y, ColorUtil.rgba(ColorUtil.applyFactor(new org.newdawn.slick.Color(rgb), factor)));
                             }
 
 
@@ -122,7 +122,7 @@ public class Player extends DataObject {
                             if ((rgb & 0xFF000000) == 0) {
                                 newImage.setRGB(x, y, 0);
                             } else {
-                                newImage.setRGB(x, y, ColorUtil.grayScale(new java.awt.Color(rgb)).getRGB());
+                                newImage.setRGB(x, y, ColorUtil.rgba(ColorUtil.grayScale(new org.newdawn.slick.Color(rgb))));
                             }
                         }
                     };
@@ -236,7 +236,7 @@ public class Player extends DataObject {
         return jobAnimations.getValue(job).getValue(gameAction);
     }
 
-    public java.awt.Color getDefaultColor() {
+    public org.newdawn.slick.Color getDefaultColor() {
         return getColors().getDefault();
     }
 
@@ -278,7 +278,7 @@ public class Player extends DataObject {
             }
 
             public int getColor(float factor, float minLimit, float maxLimit) {
-                return ColorUtil.getBetweenColor(min, max, calculateRealFactor(factor, minLimit, maxLimit)).getRGB();
+                return ColorUtil.rgba(ColorUtil.getBetweenColor(min, max, calculateRealFactor(factor, minLimit, maxLimit)));
             }
 
             private static float calculateRealFactor(float factor, float minLimit, float maxLimit) {
@@ -345,8 +345,8 @@ public class Player extends DataObject {
             return cachedMaskedImage.getValue();
         }
 
-        public java.awt.Color getDefault() {
-            return new java.awt.Color(mapping.get(Color.MAIN).getColor(0.5f, 0.0f, 1.0f));
+        public org.newdawn.slick.Color getDefault() {
+            return new org.newdawn.slick.Color(mapping.get(Color.MAIN).getColor(0.5f, 0.0f, 1.0f));
         }
     }
 }

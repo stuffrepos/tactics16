@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
-import java.awt.Color;
+import org.newdawn.slick.Color;
 import net.stuffrepos.tactics16.scenes.battle.personaction.PersonActionSubPhase;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
@@ -8,7 +8,7 @@ import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.phase.PhaseManager;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -93,7 +93,7 @@ public class BattleScene extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         getVisualBattleMap().render(g);
         statusDialog.render(g);
         phaseManager.getCurrentPhase().render(g);
@@ -168,6 +168,6 @@ public class BattleScene extends AbstractPhase {
                 getVisualBattleMap().getVisualMap(),
                 1000).setBackgroundColor(
                 ColorUtil.transparent(getCurrentPlayer().getDefaultColor(),0.8f)).setForegroundColor(
-                Color.WHITE).createPhase(phaseManager);
+                Color.white).createPhase(phaseManager);
     }
 }

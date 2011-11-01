@@ -6,14 +6,15 @@ import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
-import java.awt.Color;
+import org.newdawn.slick.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.ArrayList;
 import java.util.List;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.scenes.battle.Player;
+import net.stuffrepos.tactics16.util.image.ColorUtil;
 
 /**
  *
@@ -34,8 +35,8 @@ public class PlayerPallete implements Object2D {
     static {
        playerColors = new int[Player.PLAYER_COLORS.size()];
 
-       for(int i=0; i<playerColors.length; ++i) {
-           playerColors[i] = Player.PLAYER_COLORS.get(i).getDefault().getRGB();
+       for(int i=0; i<playerColors.length; ++i) {           
+           playerColors[i] = ColorUtil.rgba(Player.PLAYER_COLORS.get(i).getDefault());
        }
     }
 
@@ -90,7 +91,7 @@ public class PlayerPallete implements Object2D {
         visualCursor.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         for (PlayerBox box : boxes) {
             box.render(g);
         }
@@ -135,7 +136,7 @@ public class PlayerPallete implements Object2D {
             nameDialog.setMaxWidth(BOX_WIDTH);
             nameDialog.setMinWidth(BOX_WIDTH);
             nameDialog.setBackgroundColor(new Color(getColor()));
-            nameDialog.setForegroundColor(Color.WHITE);
+            nameDialog.setForegroundColor(Color.white);
             this.position.addListener(new Listener<Coordinate>() {
 
                 public void onChange(Coordinate source) {
@@ -151,7 +152,7 @@ public class PlayerPallete implements Object2D {
         public void update(long elapsedTime) {
         }
 
-        public void render(Graphics2D g) {
+        public void render(Graphics g) {
             nameDialog.render(g);
         }
 

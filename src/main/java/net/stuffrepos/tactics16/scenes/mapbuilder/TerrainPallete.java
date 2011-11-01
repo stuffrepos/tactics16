@@ -9,7 +9,7 @@ import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.cursors.ObjectCursor1D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.GameKey;
 
 /**
@@ -53,7 +53,7 @@ public class TerrainPallete implements Object2D {
         spriteCursor.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         for (int i = 0; i < cursor.getList().size(); ++i) {
             cursor.getList().get(i).render(
                     g,

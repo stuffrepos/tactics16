@@ -1,8 +1,8 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Color;
+import org.newdawn.slick.Color;
 import java.awt.Font;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 
@@ -27,7 +27,7 @@ public class PhaseTitle implements VisualEntity, Object2D {
     public void update(long elapsedTime) {
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         text.render(g);
     }
 

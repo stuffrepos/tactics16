@@ -1,7 +1,5 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.GameKey;
@@ -11,6 +9,8 @@ import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.cursors.ObjectCursor2D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -112,7 +112,7 @@ public abstract class Keyboard implements Object2D, VisualEntity {
             }
         });
 
-        output.setForegroundColor(Color.WHITE);
+        output.setForegroundColor(Color.white);
         output.setBackgroundColor(new Color(0x440000));
         output.setFlat(true);
         output.setWidth(this.getWidth() - (inputLabel.getWidth() + Layout.OBJECT_GAP));
@@ -173,7 +173,7 @@ public abstract class Keyboard implements Object2D, VisualEntity {
         cursor.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         inputLabel.render(g);
         for (PositionableButton button : buttons) {
             button.render(g);

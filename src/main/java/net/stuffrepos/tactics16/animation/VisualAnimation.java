@@ -1,8 +1,7 @@
 package net.stuffrepos.tactics16.animation;
 
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import net.stuffrepos.tactics16.game.Coordinate;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -29,7 +28,7 @@ public class VisualAnimation {
         }
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         GameImage image = getCurrentImage();
         if (image != null) {
             image.render(g, position);

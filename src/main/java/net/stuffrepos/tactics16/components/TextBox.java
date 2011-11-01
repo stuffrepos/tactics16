@@ -2,12 +2,13 @@ package net.stuffrepos.tactics16.components;
 
 import java.awt.Font;
 import net.stuffrepos.tactics16.game.Coordinate;
-import java.awt.Color;
-import java.awt.Graphics2D;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.util.Align;
 import net.stuffrepos.tactics16.util.SizeConfig;
+import net.stuffrepos.tactics16.util.image.DrawerUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -17,8 +18,8 @@ public class TextBox implements Object2D, VisualEntity {
 
     private Align horizontalAlign = Align.NEGATIVE;
     private Align verticalAlign = Align.NEGATIVE;
-    public static final Color DEFAULT_FOREGROUND_COLOR = Color.WHITE;
-    public static final Color DEFAULT_BACKGROUND_COLOR = Color.DARK_GRAY;
+    public static final Color DEFAULT_FOREGROUND_COLOR = Color.white;
+    public static final Color DEFAULT_BACKGROUND_COLOR = Color.darkGray;
     private final Coordinate position = new Coordinate();
     private final SizeConfig width = new SizeConfig() {
 
@@ -50,7 +51,7 @@ public class TextBox implements Object2D, VisualEntity {
         });
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         int x;
         switch (horizontalAlign) {
             case POSITIVE:
@@ -89,7 +90,8 @@ public class TextBox implements Object2D, VisualEntity {
                     getWidth() - 1,
                     getHeight() - 1);
         } else {
-            g.fill3DRect(
+            DrawerUtil.fill3dRect(
+                    g,
                     x,
                     position.getY(),
                     getWidth() - 1,
@@ -221,7 +223,7 @@ public class TextBox implements Object2D, VisualEntity {
         text.setFont(font);
     }
 
-    public Font getFont() {
+    public org.newdawn.slick.Font getFont() {
         return text.getFont();
     }
 

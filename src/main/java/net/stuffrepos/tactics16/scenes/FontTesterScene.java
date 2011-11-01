@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.scenes;
 
 import java.awt.Font;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +10,6 @@ import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.animation.EntitiesBoard;
 import net.stuffrepos.tactics16.animation.VisualEntity;
-import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.Text;
@@ -80,7 +79,7 @@ public class FontTesterScene extends AbstractPhase {
     }
 
     private void initializeFontCursor() {
-        final String initialFontName = MyGame.getInstance().getFont().getName();
+        final String initialFontName = MyGame.DEFAULT_TRUE_TYPE_FAMILY_NAME;
 
         List<Font> fonts = new ArrayList<Font>();
 
@@ -122,7 +121,7 @@ public class FontTesterScene extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         entitiesBoard.render(g);
     }
 
@@ -135,10 +134,10 @@ public class FontTesterScene extends AbstractPhase {
         for (VisualEntity e : entitiesBoard.getChildren()) {
             if (e instanceof Text) {
                 Text text = (Text) e;
-                text.setFont(createNewFont(text.getFont(), fontName));
+                text.setFont(new Font(fontName,Font.PLAIN,12));
             } else if (e instanceof TextBox) {
                 TextBox text = (TextBox) e;
-                text.setFont(createNewFont(text.getFont(), fontName));
+                text.setFont(new Font(fontName,Font.PLAIN,12));                
             }
         }
     }

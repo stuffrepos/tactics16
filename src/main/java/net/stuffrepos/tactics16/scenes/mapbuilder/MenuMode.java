@@ -8,7 +8,7 @@ import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.scenes.SelectMapScene;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.io.IOException;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.components.MessageBox;
@@ -237,7 +237,7 @@ public class MenuMode extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         menu.render(g);
         if (visualMap != null) {
             visualMap.render(g);

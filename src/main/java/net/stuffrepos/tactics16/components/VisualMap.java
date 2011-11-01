@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import java.awt.Polygon;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.game.Coordinate;
@@ -9,6 +9,7 @@ import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
+import net.stuffrepos.tactics16.util.image.DrawerUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 
 /**
@@ -18,7 +19,7 @@ import net.stuffrepos.tactics16.util.listeners.Listener;
 public class VisualMap extends AbstractObject2D {
 
     private static final int SIDE_SIZE = 5;
-    private static final Color LEFT_COLOR = Color.GRAY;
+    private static final Color LEFT_COLOR = Color.gray;
     private static final Color FRONT_COLOR = ColorUtil.dark(LEFT_COLOR);
     private static final Color RIGHT_COLOR = FRONT_COLOR;
     private long elapsedTime = 0l;
@@ -77,13 +78,13 @@ public class VisualMap extends AbstractObject2D {
         return internalMap.getTerrainPosition(terrainPosition);
     }
 
-    public void render(final Graphics2D g) {
+    public void render(final Graphics g) {
         g.setColor(FRONT_COLOR);
         g.fillRect(getLeft(), Layout.getBottom(internalMap), getWidth(), SIDE_SIZE);
         g.setColor(LEFT_COLOR);
-        g.fillPolygon(leftBorder.getValue());
+        DrawerUtil.fillPolygon(g,leftBorder.getValue());        
         g.setColor(RIGHT_COLOR);
-        g.fillPolygon(rightBorder.getValue());
+        DrawerUtil.fillPolygon(g,rightBorder.getValue());        
 
         internalMap.render(g);
     }
@@ -92,7 +93,7 @@ public class VisualMap extends AbstractObject2D {
         return map;
     }
 
-    public void render(final Graphics2D g, int[] playerColors) {
+    public void render(final Graphics g, int[] playerColors) {
         internalMap.render(g, playerColors);
     }
 
@@ -125,11 +126,11 @@ public class VisualMap extends AbstractObject2D {
                     getTop() + terrainPosition.getY() * Map.TERRAIN_SIZE);
         }
 
-        public void render(final Graphics2D g) {
+        public void render(final Graphics g) {
             render(g, null);
         }
 
-        public void render(final Graphics2D g, int[] playerColors) {
+        public void render(final Graphics g, int[] playerColors) {
             map.iterate(new Map.Iterator() {
 
                 public void check(int x, int y, Terrain terrain) {
@@ -139,7 +140,7 @@ public class VisualMap extends AbstractObject2D {
                                 getLeft() + x * Map.TERRAIN_SIZE,
                                 getTop() + y * Map.TERRAIN_SIZE);
                     } else {
-                        g.setColor(Color.BLACK);
+                        g.setColor(Color.black);
                         g.drawRect(
                                 getLeft() + x * Map.TERRAIN_SIZE,
                                 getTop() + y * Map.TERRAIN_SIZE,

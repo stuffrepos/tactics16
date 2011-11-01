@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.mapbuilder;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.components.Keyboard;
 import net.stuffrepos.tactics16.components.MessageBox;
@@ -60,7 +60,7 @@ public class RenameMode extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         title.render(g);
         keyboard.render(g);
     }

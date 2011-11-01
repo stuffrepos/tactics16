@@ -1,16 +1,19 @@
 package net.stuffrepos.tactics16.animation.transitioneffect;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.components.Text;
 import net.stuffrepos.tactics16.phase.AbstractPhase;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.phase.PhaseManager;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
+import net.stuffrepos.tactics16.util.image.ImageUtil;
 import net.stuffrepos.tactics16.util.image.PixelImageIterator;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.opengl.pbuffer.PBufferGraphics;
 
 /**
  *
@@ -57,27 +60,31 @@ public class FadeOut extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
-        final BufferedImage image = new BufferedImage(
-                Layout.getScreenWidth(),
-                Layout.getScreenHeight(),
-                Transparency.BITMASK);
-        Graphics2D imageGraphics = image.createGraphics();
-        phase.render(imageGraphics);
-        imageGraphics.dispose();
+    public void render(Graphics g) {
+        try {
+            final Image image = new Image(
+                    Layout.getScreenWidth(),
+                    Layout.getScreenHeight());
+            PBufferGraphics imageGraphics = new PBufferGraphics(image);
+            phase.render(imageGraphics);
+            imageGraphics.destroy();
 
-        final float colorFactor = calculateColorFactor();
+            final BufferedImage bufferedImage = ImageUtil.slickToAwt(image);
+            final float colorFactor = calculateColorFactor();
 
-        new PixelImageIterator(image) {
+            new PixelImageIterator(bufferedImage) {
 
-            @Override
-            public void iterate(int x, int y, int rgb) {
-                image.setRGB(x, y, ColorUtil.applyFactor(new Color(rgb), colorFactor).getRGB());
-            }
-        };
+                @Override
+                public void iterate(int x, int y, int rgb) {
+                    bufferedImage.setRGB(x, y,ColorUtil.rgba(ColorUtil.applyFactor(new Color(rgb), colorFactor)));
+                }
+            };
 
-        g.drawImage(image, 0, 0, null);
+            g.drawImage(ImageUtil.awtToSlick(bufferedImage), 0, 0, null);
 
-        //status.render(g);
+            //status.render(g);
+        } catch (SlickException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 }

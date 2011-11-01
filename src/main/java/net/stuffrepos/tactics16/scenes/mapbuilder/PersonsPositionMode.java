@@ -5,7 +5,7 @@ import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.GlowingRectangle;
 import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Coordinate;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -69,7 +69,7 @@ class PersonsPositionMode extends AbstractPhase {
         status.setText(b.toString());
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         title.render(g);
         playerPallete.render(g);
         visualMap.render(g, this.playerPallete.getPlayerColors());

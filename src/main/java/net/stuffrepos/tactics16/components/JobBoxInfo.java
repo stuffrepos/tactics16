@@ -1,7 +1,5 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.animation.EntitiesBoard;
 import net.stuffrepos.tactics16.animation.VisualEntity;
@@ -9,21 +7,24 @@ import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.scenes.battle.Player;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
+import net.stuffrepos.tactics16.util.image.DrawerUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class JobBoxInfo implements VisualEntity, Object2D {
-    
+
     private Coordinate position = new Coordinate();
     private final Text name;
     private final PropertyBox defense;
     private final PropertyBox evasiveness;
     private static final int MIN_WIDTH = 120;
     private EntitiesBoard board = new EntitiesBoard();
-    private AnimationBox jobAnimationBox;    
+    private AnimationBox jobAnimationBox;
     private CacheableValue<Integer> width = new CacheableValue<Integer>() {
 
         @Override
@@ -41,7 +42,7 @@ public class JobBoxInfo implements VisualEntity, Object2D {
         assert job != null;
         this.player = player;
         this.job = job;
-        jobAnimationBox = new AnimationBox(player.getSpriteAnimation(job, Job.GameAction.STOPPED));        
+        jobAnimationBox = new AnimationBox(player.getSpriteAnimation(job, Job.GameAction.STOPPED));
         name = new Text(job.getName());
         defense = new PropertyBox("Defense", Integer.toString(job.getDefense()), getWidth());
         evasiveness = new PropertyBox("Evasiveness", Integer.toString(job.getEvasiveness()), getWidth());
@@ -73,9 +74,9 @@ public class JobBoxInfo implements VisualEntity, Object2D {
         board.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         g.setColor(getBoxColor());
-        g.fill3DRect(getLeft(), getTop(), getWidth(), getHeight(), true);        
+        DrawerUtil.fill3dRect(g, getLeft(), getTop(), getWidth(), getHeight(), true);
         board.render(g);
     }
 

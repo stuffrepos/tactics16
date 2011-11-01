@@ -3,7 +3,7 @@ package net.stuffrepos.tactics16.scenes;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.phase.Phase;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.components.PhaseTitle;
@@ -37,7 +37,7 @@ public class SelectMapScene implements Phase {
         mapSelector.update(elapsedTime);        
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         mapSelector.render(g);
         visualMap.render(g);
         title.render(g);

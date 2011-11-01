@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.game;
 
 import net.stuffrepos.tactics16.util.Nameable;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.animation.GameImage;
@@ -45,7 +45,7 @@ public class Terrain implements Nameable {
         return images;
     }
 
-    public void render(Graphics2D g, int x, int y) {
+    public void render(Graphics g, int x, int y) {
         images.get(0).render(g, x, y);
     }
 }

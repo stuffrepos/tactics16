@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle.effects;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
@@ -59,7 +59,7 @@ public class EvadeSelector {
         confirmMenu.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         title.render(g);
         confirmMenu.render(g);
     }

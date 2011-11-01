@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -38,7 +38,7 @@ public class MapCheckedArea implements VisualEntity {
         }
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         for (GlowingRectangle rectangle : rectangles) {
             rectangle.render(g);
         }

@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.scenes.battle.personaction;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
@@ -21,9 +21,9 @@ public class AgilityPointsSelector implements VisualEntity, Object2D {
     private static int SPHERE_GAP = SPHERE_SIZE / 4;
     private static int HEIGHT = SPHERE_SIZE + SPHERE_GAP * 2;
     private static Color SELECTED_COLOR = new Color(0x00FF00);
-    private static Color UNSELECTED_COLOR = new Color(0x3300FF00, true);
-    private static Color BACKGROUND_COLOR = new Color(0xAA000000, true);
-    private static Color BORDER_COLOR = Color.WHITE;
+    private static Color UNSELECTED_COLOR = new Color(0x3300FF00);
+    private static Color BACKGROUND_COLOR = new Color(0xAA000000);
+    private static Color BORDER_COLOR = Color.white;
     private final int max;
     private int count;
     private Coordinate position = new Coordinate();
@@ -64,7 +64,7 @@ public class AgilityPointsSelector implements VisualEntity, Object2D {
         spheres.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         spheres.render(g);
         text.render(g);
     }
@@ -110,7 +110,7 @@ public class AgilityPointsSelector implements VisualEntity, Object2D {
             }
         }
 
-        public void render(Graphics2D g) {
+        public void render(Graphics g) {
 
             g.setColor(BACKGROUND_COLOR);
             g.fillRect(

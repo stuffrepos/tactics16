@@ -25,4 +25,19 @@ public class FileUtil {
         return stringBuffer.toString();
         
     }
+
+    public static String getExtension(File file) {
+        return getExtension(file.getName());
+    }
+    
+        public static String getExtension(String fileName) {
+
+        int mid = fileName.lastIndexOf(".");
+        if (mid >= 1) {
+            return fileName.substring(mid + 1, fileName.length());
+        } else {
+            return null;
+        }
+    }
+
 }

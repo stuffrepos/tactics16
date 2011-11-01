@@ -2,7 +2,7 @@ package net.stuffrepos.tactics16.scenes.battle.personaction;
 
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.MapCursor;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.GameKey;
@@ -89,7 +89,7 @@ public class PersonActionSubPhase extends AbstractPhase {
         }
 
         @Override
-        public void render(Graphics2D g) {
+        public void render(Graphics g) {
         }
 
         @Override
@@ -225,7 +225,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                     }
 
                     @Override
-                    public void render(Graphics2D g) {
+                    public void render(Graphics g) {
                         actionMenu.render(g);
                         actionStatus.render(g);
                     }
@@ -415,7 +415,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                             }
 
                             @Override
-                            public void render(Graphics2D g) {
+                            public void render(Graphics g) {
                                 menu.render(g);
                                 agilityPointsSelector.render(g);
                             }

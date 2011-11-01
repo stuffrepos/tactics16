@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.Align;
@@ -61,7 +61,7 @@ public class PropertyBox implements VisualEntity, Object2D {
         propertyValue.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         propertyName.render(g);
         propertyValue.render(g);
     }

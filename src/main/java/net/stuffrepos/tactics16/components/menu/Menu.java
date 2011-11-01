@@ -1,20 +1,21 @@
 package net.stuffrepos.tactics16.components.menu;
 
-import java.awt.Color;
-import java.awt.Font;
+import org.newdawn.slick.Color;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.cursors.ObjectCursor1D;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.Collections;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.components.Button;
 import net.stuffrepos.tactics16.components.Object2D;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
+import net.stuffrepos.tactics16.util.image.DrawerUtil;
 import net.stuffrepos.tactics16.util.javabasic.MathUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 import net.stuffrepos.tactics16.util.listeners.ListenerManager;
+import org.newdawn.slick.Font;
 
 /**
  *
@@ -72,7 +73,7 @@ public class Menu implements Object2D {
         return cursor;
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         int h = this.getOptionHeight();
         int i = 0;
         for (MenuOption option : this.cursor.getList()) {
@@ -128,7 +129,7 @@ public class Menu implements Object2D {
         int w = 0;
 
         for (MenuOption option : this.cursor.getList()) {
-            int optionW = MyGame.getInstance().getDefaultGraphics2D().getFontMetrics(getFont()).stringWidth(option.getText());
+            int optionW = getFont().getWidth(option.getText());
 
             if (optionW > w) {
                 w = optionW;
@@ -139,7 +140,7 @@ public class Menu implements Object2D {
     }
 
     private int getOptionHeight() {
-        return MyGame.getInstance().getDefaultGraphics2D().getFontMetrics(getFont()).getHeight() + 2 * TEXT_MARGIN;
+        return getFont().getLineHeight() + 2 * TEXT_MARGIN;
     }
 
     public void clear() {
@@ -164,8 +165,8 @@ public class Menu implements Object2D {
         return height.getValue();
     }
 
-    private void renderOption(MenuOption option, Graphics2D g, boolean selected, int x, int y, int w, int h) {
-        int optionW = g.getFontMetrics(getFont()).stringWidth(option.getText());
+    private void renderOption(MenuOption option, Graphics g, boolean selected, int x, int y, int w, int h) {
+        int optionW = getFont().getWidth(option.getText());
         Color backgroundColor;
         if (option.isEnabled()) {
             backgroundColor = selected
@@ -176,7 +177,7 @@ public class Menu implements Object2D {
         }
 
         g.setColor(backgroundColor);
-        g.fill3DRect(x, y, w, h - 1, true);
+        DrawerUtil.fill3dRect(g, x, y, w, h - 1, true);        
 
         if (option.isEnabled()) {
             g.setColor(Colors.getEnabledForegroundColor());
@@ -187,7 +188,7 @@ public class Menu implements Object2D {
         g.drawString(
                 option.getText(),
                 x + (w - optionW) / 2,
-                y + TEXT_MARGIN + g.getFontMetrics(getFont()).getAscent() + g.getFontMetrics(getFont()).getLeading());
+                y + TEXT_MARGIN + getFont().getLineHeight());
     }
 
     public void addGeometryListener(Listener<Object2D> listener) {
@@ -201,10 +202,10 @@ public class Menu implements Object2D {
     // <editor-fold defaultstate="collapsed" desc="class Colors">
     private static class Colors {
 
-        private static final Color ENABLED_FOREGROUND_COLOR = Color.WHITE;
+        private static final Color ENABLED_FOREGROUND_COLOR = Color.white;
         private static final Color ENABLED_BACKGROUND_COLOR = new Color(0x000077);
-        private static final Color DISABLED_FOREGROUND_COLOR = Color.GRAY;
-        private static final Color DISABLED_BACKGROUND_COLOR = Color.DARK_GRAY;
+        private static final Color DISABLED_FOREGROUND_COLOR = Color.gray;
+        private static final Color DISABLED_BACKGROUND_COLOR = Color.darkGray;
         private static final Color SELECTED_BACKGROUND_COLOR_BEGIN = new Color(0x0000AA);
         private static final Color SELECTED_BACKGROUND_COLOR_END = new Color(0x0000FF);
         private static final Color[] SELECTED_BACKGROUND_COLORS;

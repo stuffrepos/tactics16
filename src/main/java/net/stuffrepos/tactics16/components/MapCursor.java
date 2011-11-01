@@ -3,9 +3,9 @@ package net.stuffrepos.tactics16.components;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.util.cursors.Cursor2D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
-import java.awt.Graphics2D;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.animation.VisualEntity;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -40,7 +40,7 @@ public class MapCursor implements VisualEntity {
         visualCursor.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         visualCursor.render(g);
     }
 

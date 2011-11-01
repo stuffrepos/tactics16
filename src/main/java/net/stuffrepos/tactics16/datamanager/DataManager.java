@@ -1,6 +1,5 @@
 package net.stuffrepos.tactics16.datamanager;
 
-import com.golden.gamedev.util.FileUtil;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.DataGroup;
@@ -8,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import net.stuffrepos.tactics16.util.javabasic.FileUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
 

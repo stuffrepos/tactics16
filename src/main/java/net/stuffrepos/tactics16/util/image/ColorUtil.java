@@ -1,7 +1,6 @@
 package net.stuffrepos.tactics16.util.image;
 
-import java.awt.Color;
-import net.stuffrepos.tactics16.scenes.battle.Player;
+import org.newdawn.slick.Color;
 
 /**
  *
@@ -54,7 +53,7 @@ public class ColorUtil {
     }
 
     public static int getRgbBitmask(int rgba) {
-        Color color = new Color(rgba, true);
+        Color color = new Color(rgba);
 
         if (color.getAlpha() < 0x100 / 2) {
             return 0x00FFFFFF & rgba;
@@ -116,5 +115,28 @@ public class ColorUtil {
 
     public static int compareColor(Color color1, Color color2) {
         return new Integer(sumColorComponents(color1)).compareTo(sumColorComponents(color2));
+    }
+
+    public static int rgba(Color color) {
+        return (color.getAlpha() << 24)
+                + (color.getRed() << 16)
+                + (color.getGreen() << 8)
+                + color.getBlue();
+    }
+
+    public static int getAlpha(int rgba) {
+        return (rgba & 0xFF000000) >> 24;
+    }
+
+    public static int getRed(int rgba) {
+        return (rgba & 0x00FF0000) >> 16;
+    }
+
+    public static int getGreen(int rgba) {
+        return (rgba & 0x0000FF00) >> 8;
+    }
+
+    public static int getBlue(int rgba) {
+        return (rgba & 0x000000FF);
     }
 }

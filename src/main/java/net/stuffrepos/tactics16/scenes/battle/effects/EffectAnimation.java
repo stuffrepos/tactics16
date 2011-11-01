@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle.effects;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.Map;
 import net.stuffrepos.tactics16.animation.EntitiesLayer;
 import net.stuffrepos.tactics16.animation.TemporaryAnimation;
@@ -79,7 +79,7 @@ public class EffectAnimation {
         }
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         if (info == null) {
             effects.render(g);
         } else {

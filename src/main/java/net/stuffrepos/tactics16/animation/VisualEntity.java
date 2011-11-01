@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.animation;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -9,6 +9,6 @@ import java.awt.Graphics2D;
 public interface VisualEntity {
 
     public void update(long elapsedTime);
-    public void render(Graphics2D g);
+    public void render(Graphics g);
     public boolean isFinalized();    
 }

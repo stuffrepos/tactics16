@@ -2,9 +2,11 @@ package net.stuffrepos.tactics16.components;
 
 import net.stuffrepos.tactics16.game.Coordinate;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import net.stuffrepos.tactics16.util.image.ImageUtil;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
 public class GlowingRectangle {
 
@@ -12,7 +14,7 @@ public class GlowingRectangle {
     private int IMAGE_CHANGE = 1600/IMAGE_COUNT;
     private float MIN_TRANSPARENCY = 0.30f;
     private float MAX_TRANSPARENCY = 0.46f;
-    private BufferedImage[] cursorImages = new BufferedImage[IMAGE_COUNT];
+    private Image[] cursorImages = new Image[IMAGE_COUNT];
     private Coordinate position = new Coordinate();
     private long elapsedTime = 0;
     private int color;
@@ -33,7 +35,7 @@ public class GlowingRectangle {
         float d = (MAX_TRANSPARENCY - MIN_TRANSPARENCY) / (cursorImages.length - 1);
 
         for (int i = 0; i < cursorImages.length; ++i) {
-            cursorImages[i] = new BufferedImage(
+             BufferedImage bufferedImage = new BufferedImage(
                     this.size.width,
                     this.size.height,
                     Transparency.TRANSLUCENT);
@@ -44,12 +46,14 @@ public class GlowingRectangle {
 
             for (int x = 0; x < cursorImages[i].getWidth(); ++x) {
                 for (int y = 0; y < cursorImages[i].getHeight(); ++y) {
-                    cursorImages[i].setRGB(
+                    bufferedImage.setRGB(
                             x,
                             y,
                             rgb);
                 }
             }
+            
+            cursorImages[i] = ImageUtil.awtToSlick(bufferedImage);
         }
     }
 
@@ -61,11 +65,11 @@ public class GlowingRectangle {
         this.elapsedTime += elapsedTime;
     }
 
-    public void render(Graphics2D g) {
-        g.drawImage(getCurrentImage(), getPosition().getX(), getPosition().getY(), null);
+    public void render(Graphics g) {
+        g.drawImage(getCurrentImage(), getPosition().getX(), getPosition().getY());
     }
 
-    public BufferedImage getCurrentImage() {
+    public Image getCurrentImage() {
         int cicleN = cursorImages.length * 2 - 1;
         int cicle = (int) (elapsedTime / IMAGE_CHANGE) % cicleN;
         int imageIndex = cicle >= cursorImages.length

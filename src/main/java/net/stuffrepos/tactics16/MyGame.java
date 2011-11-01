@@ -1,13 +1,9 @@
 package net.stuffrepos.tactics16;
 
 import net.stuffrepos.tactics16.datamanager.DataManager;
-import com.golden.gamedev.Game;
-import com.golden.gamedev.GameLoader;
 import net.stuffrepos.tactics16.phase.PhaseManager;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +15,14 @@ import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.components.Object2D;
 import net.stuffrepos.tactics16.phase.AbstractPhase;
 import net.stuffrepos.tactics16.phase.Phase;
+import org.newdawn.slick.AppGameContainer;
+import org.newdawn.slick.BasicGame;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
 
 /**
  *
@@ -27,34 +31,31 @@ import tactics16.util.ObjectCursor1D;
  */
 public class MyGame {
 
+    public static final String DEFAULT_TRUE_TYPE_FAMILY_NAME = "Liberation Mono";
+    private static final Dimension DEFAULT_SCREEN_SIZE = new Dimension(800, 600);
     private static MyGame instance;
-    private Game game = new Game() {
+    AppGameContainer app;
+    private GameContainer gameContainer;
+    private BasicGame game = new BasicGame("Tactics16") {
 
         @Override
-        public void initResources() {
-            MyGame.this.initResources();
+        public void init(GameContainer gc) throws SlickException {
+            MyGame.this.initResources(gc);
         }
 
         @Override
-        public void update(long elapsedTime) {
-            MyGame.this.update(elapsedTime);
+        public void update(GameContainer gc, int delta) throws SlickException {
+            MyGame.this.update(delta);
         }
 
-        @Override
-        public void render(Graphics2D g) {
-            MyGame.this.render(g);
-        }
-
-        @Override
-        protected void notifyError(Throwable error) {
-            System.out.println("Notificado!");
-            super.notifyError(error);
+        public void render(GameContainer gc, Graphics graphics) throws SlickException {            
+            MyGame.this.render(gc, graphics);
         }
     };
     private DataManager loader;
     private PhaseManager phaseManager = new PhaseManager();
     private KeyMapping keyMapping = new KeyMapping();
-    private Font font = new Font("Liberation Mono", Font.PLAIN, 12);
+    private UnicodeFont font = new UnicodeFont(new Font(DEFAULT_TRUE_TYPE_FAMILY_NAME, Font.PLAIN, 12));
     //private Font font = new Font("Purisa", Font.PLAIN, 12);
     private Object2D screenObject2D = new Object2D() {
 
@@ -99,7 +100,8 @@ public class MyGame {
         keyMapping.setMapping(GameKey.NEXT, KeyEvent.VK_PAGE_DOWN);
     }
 
-    public void initResources() {
+    public void initResources(GameContainer gameContainer) {
+        this.gameContainer = gameContainer;
         loader.loadDirectory(loader.getDataDirectory());
     }
 
@@ -112,31 +114,29 @@ public class MyGame {
         }
     }
 
-    public void render(Graphics2D g) {
+    public void render(GameContainer gc, Graphics g) {
         if (font != null) {
             g.setFont(font);
         }
 
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, game.getWidth(), game.getHeight());
+        g.setColor(org.newdawn.slick.Color.black);
+        g.fillRect(0, 0, gc.getWidth(), gc.getHeight());
         try {
             this.phaseManager.getCurrentPhase().render(g);
         } catch (Exception ex) {
             ex.printStackTrace();
             this.quit();
-        }
+        }                
     }
 
     public void quit() {
-        this.game.finish();
+        if (app != null) {
+            app.destroy();
+        }
     }
 
     public DataManager getLoader() {
         return this.loader;
-    }
-
-    public Graphics2D getDefaultGraphics2D() {
-        return game.bsGraphics.getBackBuffer();
     }
 
     public PhaseManager getPhaseManager() {
@@ -152,31 +152,39 @@ public class MyGame {
     }
 
     public void setFont(Font font) {
-        this.font = font;
+        this.font = new UnicodeFont(font);
     }
 
-    public Font getFont() {
+    public org.newdawn.slick.Font getFont() {
         return font;
     }
 
     public GameImage getImage(File file) {
-        return new GameImage(game.getImage(file.getAbsolutePath()));
+        try {
+            return new GameImage(new Image(file.getAbsolutePath()));
+        } catch (SlickException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public int getHeight() {
-        return game.getHeight();
+        return gameContainer.getHeight();
     }
 
     public int getWidth() {
-        return game.getWidth();
+        return gameContainer.getWidth();
     }
 
-    public void start(Phase initalPhase) {
+    public void start(Phase initalPhase) throws SlickException {
         this.initialPhase = initalPhase;
         phaseManager.change(new BootstrapPhase());
-        GameLoader gameLoader = new GameLoader();
-        gameLoader.setup(game, new Dimension(800, 600), false);
-        gameLoader.start();
+        AppGameContainer app = new AppGameContainer(game);
+
+        app.setDisplayMode(
+                DEFAULT_SCREEN_SIZE.width,
+                DEFAULT_SCREEN_SIZE.height,
+                false);
+        app.start();
     }
 
     public Object2D getScreenObject2D() {
@@ -197,7 +205,7 @@ public class MyGame {
 
         private boolean isKeyPressed(GameKey gameKey) {
             for (Integer key : mapping.get(gameKey)) {
-                if (game.keyPressed(key)) {
+                if (gameContainer.getInput().isKeyDown(key)) {
                     return true;
                 }
             }
@@ -213,7 +221,7 @@ public class MyGame {
     private class BootstrapPhase extends AbstractPhase {
 
         @Override
-        public void render(Graphics2D g) {
+        public void render(Graphics g) {
             phaseManager.clear();
             phaseManager.change(initialPhase);
         }

@@ -1,7 +1,5 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.animation.SpriteAnimation;
@@ -9,7 +7,10 @@ import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.SizeConfig;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
+import net.stuffrepos.tactics16.util.image.DrawerUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
 
 /**
  *
@@ -17,7 +18,7 @@ import net.stuffrepos.tactics16.util.listeners.Listener;
  */
 public class AnimationBox implements VisualEntity, Object2D {
 
-    private Color backgroundColor = Color.WHITE;
+    private Color backgroundColor = Color.white;
     private final SpriteAnimation animation;
     private long elapsedTime = 0l;
     private Coordinate position = new Coordinate();
@@ -86,10 +87,10 @@ public class AnimationBox implements VisualEntity, Object2D {
         this.elapsedTime += elapsedTime;
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         if (backgroundColor != null) {
             g.setColor(backgroundColor);
-            g.fill3DRect(getLeft(), getTop(), getWidth(), getHeight(), false);
+            DrawerUtil.fill3dRect(g, getLeft(), getTop(), getWidth(), getHeight(), false);
         }
         animation.getImage(elapsedTime).render(g, spritePosition.getValue());
     }

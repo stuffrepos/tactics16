@@ -11,7 +11,7 @@ import net.stuffrepos.tactics16.scenes.battle.BattleGame;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.scenes.battle.Person;
 import net.stuffrepos.tactics16.scenes.battle.Player;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.components.JobBoxInfo;
 import net.stuffrepos.tactics16.components.Object2D;
 import net.stuffrepos.tactics16.components.PhaseTitle;
@@ -190,7 +190,7 @@ public class SelectPersonsScene extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         title.render(g);
         statusDialog.render(g);
         jobSelector.render(g);

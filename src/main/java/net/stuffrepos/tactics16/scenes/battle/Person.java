@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
 import net.stuffrepos.tactics16.animation.SpriteAnimation;
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
@@ -60,7 +60,7 @@ public class Person extends DataObject implements VisualEntity {
         return player.getSpriteAnimation(job, currentGameAction).getImage(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         GameImage image = getCurrentImage();
         if (image != null) {
             image.render(

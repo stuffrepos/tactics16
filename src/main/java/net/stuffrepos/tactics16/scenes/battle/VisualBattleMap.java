@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
-import java.awt.Graphics2D;
+import org.newdawn.slick.Graphics;
 import java.util.List;
 import net.stuffrepos.tactics16.animation.EntitiesLayer;
 import net.stuffrepos.tactics16.animation.VisualEntity;
@@ -36,7 +36,7 @@ public class VisualBattleMap implements VisualEntity {
         cursorsLayer.update(elapsedTime);
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         visualMap.render(g);
         checkedAreasLayer.render(g);
         cursorsLayer.render(g);

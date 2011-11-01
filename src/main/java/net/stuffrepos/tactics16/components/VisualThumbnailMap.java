@@ -1,13 +1,15 @@
 package net.stuffrepos.tactics16.components;
 
 import java.awt.Graphics2D;
-import java.awt.Image;
+import org.newdawn.slick.Graphics;
 import java.awt.image.BufferedImage;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
+import net.stuffrepos.tactics16.util.image.ImageUtil;
 import net.stuffrepos.tactics16.util.image.Thumbnail;
+import org.newdawn.slick.Image;
 
 /**
  *
@@ -35,7 +37,7 @@ public class VisualThumbnailMap {
                 }
             });
             g.dispose();
-            return thumb;
+            return ImageUtil.awtToSlick(thumb);
         }
     };
 
@@ -44,7 +46,7 @@ public class VisualThumbnailMap {
         this.thumbnail.clear();
     }
 
-    public void render(Graphics2D g) {
+    public void render(Graphics g) {
         if (getMap() != null) {
             g.drawImage(thumbnail.getValue(), getPosition().getX(), getPosition().getY(), null);
         }
