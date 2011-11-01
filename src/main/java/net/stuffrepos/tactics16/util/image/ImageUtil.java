@@ -75,10 +75,10 @@ public class ImageUtil {
                 slick.setRGBA(
                         x, 
                         y, 
-                        ColorUtil.getAlpha(rgb), 
                         ColorUtil.getRed(rgb), 
                         ColorUtil.getGreen(rgb), 
-                        ColorUtil.getBlue(rgb)
+                        ColorUtil.getBlue(rgb),
+                        ColorUtil.getAlpha(rgb)
                         );                
             }
         };
