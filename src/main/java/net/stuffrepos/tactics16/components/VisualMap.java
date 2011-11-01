@@ -2,15 +2,15 @@ package net.stuffrepos.tactics16.components;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import java.awt.Polygon;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
-import net.stuffrepos.tactics16.util.image.DrawerUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.geom.Polygon;
+import org.newdawn.slick.geom.Transform;
 
 /**
  *
@@ -32,8 +32,7 @@ public class VisualMap extends AbstractObject2D {
             p.addPoint(0, SIDE_SIZE);
             p.addPoint(0, getHeight());
             p.addPoint(SIDE_SIZE, getHeight() - SIDE_SIZE);
-            p.translate(getLeft(), getTop());
-            return p;
+            return (Polygon) p.transform(Transform.createTranslateTransform(getLeft(), getTop()));
         }
     };
     private final CacheableValue<Polygon> rightBorder = new CacheableValue<Polygon>() {
@@ -45,8 +44,9 @@ public class VisualMap extends AbstractObject2D {
             p.addPoint(SIDE_SIZE, SIDE_SIZE);
             p.addPoint(SIDE_SIZE, getHeight());
             p.addPoint(0, getHeight() - SIDE_SIZE);
-            p.translate(getLeft() + SIDE_SIZE + internalMap.getWidth(), getTop());
-            return p;
+            return (Polygon) p.transform(Transform.createTranslateTransform(
+                    getLeft() + SIDE_SIZE + internalMap.getWidth(), 
+                    getTop()));
         }
     };
     private final Map map;
@@ -82,9 +82,9 @@ public class VisualMap extends AbstractObject2D {
         g.setColor(FRONT_COLOR);
         g.fillRect(getLeft(), Layout.getBottom(internalMap), getWidth(), SIDE_SIZE);
         g.setColor(LEFT_COLOR);
-        DrawerUtil.fillPolygon(g,leftBorder.getValue());        
+        g.fill(leftBorder.getValue());
         g.setColor(RIGHT_COLOR);
-        DrawerUtil.fillPolygon(g,rightBorder.getValue());        
+        g.fill(rightBorder.getValue());        
 
         internalMap.render(g);
     }
