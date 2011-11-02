@@ -76,6 +76,7 @@ public class Menu implements Object2D {
     public void render(Graphics g) {
         int h = this.getOptionHeight();
         int i = 0;
+        g.setFont(getFont());
         for (MenuOption option : this.cursor.getList()) {
             renderOption(
                     option,
