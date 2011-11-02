@@ -136,8 +136,8 @@ public class MyGame {
     }
 
     public void quit() {
-        if (app != null) {
-            app.destroy();
+        if (gameContainer != null) {
+            gameContainer.exit();
         }
     }
 
