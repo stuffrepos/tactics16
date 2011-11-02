@@ -24,7 +24,7 @@ public class PhaseTitle implements VisualEntity, Object2D {
         this.text.getPosition().setXY(Layout.getCentralizedLeft(this.text), Layout.OBJECT_GAP);
     }
 
-    public void update(long elapsedTime) {
+    public void update(int delta) {
     }
 
     public void render(Graphics g) {

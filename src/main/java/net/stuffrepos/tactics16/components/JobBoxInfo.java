@@ -70,8 +70,8 @@ public class JobBoxInfo implements VisualEntity, Object2D {
 
     }
 
-    public void update(long elapsedTime) {
-        board.update(elapsedTime);
+    public void update(int delta) {
+        board.update(delta);
     }
 
     public void render(Graphics g) {

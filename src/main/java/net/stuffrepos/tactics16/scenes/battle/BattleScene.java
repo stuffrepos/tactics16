@@ -15,15 +15,18 @@ import java.util.List;
 import java.util.Set;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.components.MessageBox;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.battle.effects.EffectsSubPhase;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class BattleScene extends AbstractPhase {
+public class BattleScene extends Phase {
 
     // Layout
     public static final int MAP_GAP = Layout.OBJECT_GAP * 5;
@@ -68,15 +71,15 @@ public class BattleScene extends AbstractPhase {
     }
 
     @Override
-    public void onAdd() {
+    public void initResources(GameContainer container, StateBasedGame game) {
         currentPlayer = -1;
         newTurn();
     }
 
     @Override
-    public void update(long elapsedTime) {
+    public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         updateStatusDialog();
-        jobAnimationTest.update(elapsedTime);
+        jobAnimationTest.update(delta);
 
         if (MyGame.getInstance().isKeyPressed(GameKey.OPTIONS)) {
             phaseManager.advance(optionsSubPhase);
@@ -84,19 +87,19 @@ public class BattleScene extends AbstractPhase {
 
         for (Player player : getVisualBattleMap().getBattleGame().getPlayers()) {
             for (Person person : player.getPersons()) {
-                person.update(elapsedTime);
+                person.update(delta);
             }
         }
 
-        getVisualBattleMap().update(elapsedTime);
-        phaseManager.getCurrentPhase().update(elapsedTime);
+        getVisualBattleMap().update(delta);
+        phaseManager.getCurrentPhase().update(container, game, delta);
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         getVisualBattleMap().render(g);
         statusDialog.render(g);
-        phaseManager.getCurrentPhase().render(g);
+        phaseManager.getCurrentPhase().render(container, game, g);
     }
 
     private void updateStatusDialog() {

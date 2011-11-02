@@ -18,8 +18,8 @@ public class TemporaryAnimation implements VisualEntity {
         this.loopLimit = loopLimit;
     }
 
-    public void update(long elapsedTime) {
-        animation.update(elapsedTime);
+    public void update(int delta) {
+        animation.update(delta);
     }
 
     public void render(Graphics g) {

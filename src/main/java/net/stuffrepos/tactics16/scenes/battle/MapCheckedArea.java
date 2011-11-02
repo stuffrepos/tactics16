@@ -32,9 +32,9 @@ public class MapCheckedArea implements VisualEntity {
         }
     }
 
-    public void update(long elapsedTime) {
+    public void update(int delta) {
         for (GlowingRectangle rectangle : rectangles) {
-            rectangle.update(elapsedTime);
+            rectangle.update(delta);
         }
     }
 

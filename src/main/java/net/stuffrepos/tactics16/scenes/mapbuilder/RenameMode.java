@@ -5,14 +5,16 @@ import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.components.Keyboard;
 import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.components.PhaseTitle;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.util.javabasic.StringUtil;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class RenameMode extends AbstractPhase {
+public class RenameMode extends Phase {
 
     private PhaseTitle title;
     private Keyboard keyboard;
@@ -23,7 +25,7 @@ public class RenameMode extends AbstractPhase {
     }
 
     @Override
-    public void onAdd() {
+    public void initResources(GameContainer container, StateBasedGame game) {
 
         title = parentScene.createModeTitle("Rename Map");
 
@@ -51,8 +53,8 @@ public class RenameMode extends AbstractPhase {
     }
 
     @Override
-    public void update(long elapsedTime) {
-        keyboard.update(elapsedTime);
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        keyboard.update(delta);
 
         if (keyboard.isFinalized()) {
             parentScene.toMenuMode();
@@ -60,7 +62,7 @@ public class RenameMode extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) {
         title.render(g);
         keyboard.render(g);
     }

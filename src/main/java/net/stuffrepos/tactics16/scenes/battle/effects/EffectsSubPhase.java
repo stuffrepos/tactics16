@@ -6,18 +6,21 @@ import java.util.Set;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.game.Job.GameAction;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.phase.PhaseManager;
 import net.stuffrepos.tactics16.scenes.battle.BattleAction;
 import net.stuffrepos.tactics16.scenes.battle.BattleActionResult;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.Person;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class EffectsSubPhase extends AbstractPhase {
+public class EffectsSubPhase extends Phase {
 
     private final BattleScene parentScene;
     private final BattleActionResult battleActionResult;
@@ -28,11 +31,11 @@ public class EffectsSubPhase extends AbstractPhase {
     }
 
     @Override
-    public void onEnter() {
+    public void enter(GameContainer container, StateBasedGame game) {
         this.parentScene.getPhaseManager().advance(new SelectEvade());
     }
 
-    private class SelectEvade extends AbstractPhase {
+    private class SelectEvade extends Phase {
 
         private final PersonsTargets personsTargets;
 
@@ -42,12 +45,12 @@ public class EffectsSubPhase extends AbstractPhase {
         }
 
         @Override
-        public void onEnter() {
+        public void enter(GameContainer container, StateBasedGame game) {
             battleActionResult.getAction().getAgent().getGameActionControl().advance(GameAction.ON_ATTACKING);
         }
 
         @Override
-        public void update(long elapsedTime) {
+        public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
             if (personsTargets.isFinalized()) {
                 parentScene.getPhaseManager().advance(new EffectPhase());
             } else {
@@ -55,13 +58,13 @@ public class EffectsSubPhase extends AbstractPhase {
                     personsTargets.previous();
                 }
 
-                personsTargets.update(elapsedTime);
+                personsTargets.update(container, game, delta);
             }
         }
 
         @Override
-        public void render(Graphics g) {
-            personsTargets.render(g);
+        public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+            personsTargets.render(container, game, g);
         }// </editor-fold>
 
         // <editor-fold defaultstate="collapsed" desc="class PersonTargets">
@@ -92,8 +95,8 @@ public class EffectsSubPhase extends AbstractPhase {
                 }
             }
 
-            public void update(long elapsedTime) {
-                phaseManager.getCurrentPhase().update(elapsedTime);
+            private void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+                phaseManager.getCurrentPhase().update(container, game, delta);
 
                 if (isFinalized() && !checkFinalized) {
                     checkFinalized = true;
@@ -101,9 +104,9 @@ public class EffectsSubPhase extends AbstractPhase {
                 }
             }
 
-            public void render(Graphics g) {
+            public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
                 if (phaseManager.getCurrentPhase() != null) {
-                    phaseManager.getCurrentPhase().render(g);
+                    phaseManager.getCurrentPhase().render(container, game, g);
                 }
             }
 
@@ -111,7 +114,7 @@ public class EffectsSubPhase extends AbstractPhase {
                 return current >= this.personsTargets.size();
             }
 
-            private class EvadeSelectPhase extends AbstractPhase {
+            private class EvadeSelectPhase extends Phase {
 
                 private final Person person;
                 private EvadeSelector evadeSelector;
@@ -121,13 +124,13 @@ public class EffectsSubPhase extends AbstractPhase {
                 }
 
                 @Override
-                public void render(Graphics g) {
+                public void render(GameContainer container, StateBasedGame game, Graphics g) {
                     evadeSelector.render(g);
                 }
 
                 @Override
-                public void update(long elapsedTime) {
-                    evadeSelector.update(elapsedTime);
+                public void update(GameContainer container, StateBasedGame game, int delta) {
+                    evadeSelector.update(delta);
 
                     if (evadeSelector.isFinalized()) {
                         battleActionResult.setPersonEvaded(
@@ -138,40 +141,36 @@ public class EffectsSubPhase extends AbstractPhase {
                 }
 
                 @Override
-                public void onAdd() {
+                public void initResources(GameContainer container, StateBasedGame game) {
                     this.evadeSelector = new EvadeSelector(battleActionResult.getAction(), person);
                 }
 
                 @Override
-                public void onEnter() {
+                public void enter(GameContainer container, StateBasedGame game) {
                     person.getGameActionControl().advance(GameAction.SELECTED);
                 }
 
                 @Override
-                public void onExit() {
+                public void leave(GameContainer container, StateBasedGame game) throws SlickException {
                     person.getGameActionControl().back();
                 }
             }
         }// </editor-fold>
 
-        private class EffectPhase extends AbstractPhase {
+        private class EffectPhase extends Phase {
 
             private EffectAnimation effectAnimation;
 
             @Override
-            public void onEnter() {
+            public void enter(GameContainer container, StateBasedGame game) {
                 this.effectAnimation = new EffectAnimation(
                         parentScene.getVisualBattleMap(),
                         battleActionResult);
             }
 
             @Override
-            public void onExit() {
-            }
-
-            @Override
-            public void update(long elapsedTime) {
-                effectAnimation.update(elapsedTime);
+            public void update(GameContainer container, StateBasedGame game, int delta) {
+                effectAnimation.update(delta);
 
                 if (effectAnimation.isFinalized()) {
                     parentScene.toPersonActionSubPhase(battleActionResult);
@@ -179,7 +178,7 @@ public class EffectsSubPhase extends AbstractPhase {
             }
 
             @Override
-            public void render(Graphics g) {
+            public void render(GameContainer container, StateBasedGame game, Graphics g) {
                 effectAnimation.render(g);
             }
         }

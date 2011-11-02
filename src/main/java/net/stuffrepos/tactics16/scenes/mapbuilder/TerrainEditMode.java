@@ -9,14 +9,16 @@ import net.stuffrepos.tactics16.components.MapCursor;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.VisualMap;
 import net.stuffrepos.tactics16.game.Terrain;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.util.javabasic.StringUtil;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-class TerrainEditMode extends AbstractPhase {
+class TerrainEditMode extends Phase {
 
     private PhaseTitle title;
     private MapCursor mapCursor;
@@ -43,9 +45,9 @@ class TerrainEditMode extends AbstractPhase {
     }
 
     @Override
-    public void update(long elapsedTime) {
-        terrainPallete.update(elapsedTime);
-        mapCursor.update(elapsedTime);
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        terrainPallete.update(delta);
+        mapCursor.update(delta);
 
         if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
             scene.toMenuMode();
@@ -59,7 +61,7 @@ class TerrainEditMode extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) {
         terrainPallete.render(g);
         visualMap.render(g);
         status.render(g);
@@ -99,7 +101,7 @@ class TerrainEditMode extends AbstractPhase {
     }
 
     @Override
-    public void onEnter() {
+    public void enter(GameContainer container, StateBasedGame game) {
         visualMap = new VisualMap(scene.getMap());
         visualMap.getPosition().setXY(
                 Layout.OBJECT_GAP,

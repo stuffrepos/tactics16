@@ -2,24 +2,24 @@ package net.stuffrepos.tactics16.scenes;
 
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.game.Map;
-import net.stuffrepos.tactics16.phase.Phase;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.components.PhaseTitle;
-import net.stuffrepos.tactics16.components.Text;
-import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.components.VisualThumbnailMap;
 import net.stuffrepos.tactics16.components.menu.Menu;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
+import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class SelectMapScene implements Phase {
+public class SelectMapScene extends Phase {
 
     private Menu mapSelector;
     private Runnable callback;
@@ -33,17 +33,20 @@ public class SelectMapScene implements Phase {
         this.onlyPlayables = onlyPlayables;
     }
 
-    public void update(long elapsedTime) {
-        mapSelector.update(elapsedTime);        
+    @Override
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        mapSelector.update(delta);        
     }
 
-    public void render(Graphics g) {
+    @Override
+    public void render(GameContainer container, StateBasedGame game, Graphics g) {
         mapSelector.render(g);
         visualMap.render(g);
         title.render(g);
     }
 
-    public void onAdd() {
+    @Override
+    public void initResources(GameContainer container, StateBasedGame game) {
         title = new PhaseTitle("Select Map");
 
         mapSelector = new Menu();
@@ -79,9 +82,6 @@ public class SelectMapScene implements Phase {
         return selectedMap;
     }
 
-    public void onRemove() {
-    }
-
     private void setSelectedMap(Map map) {
         this.selectedMap = map;
     }
@@ -92,10 +92,8 @@ public class SelectMapScene implements Phase {
                 : null;
     }
 
-    public void onExit() {
-    }
-
-    public void onEnter() {
+    @Override
+    public void enter(GameContainer container, StateBasedGame game) {
         setSelectedMap(null);
     }
 

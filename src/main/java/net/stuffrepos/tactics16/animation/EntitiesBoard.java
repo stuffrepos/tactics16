@@ -12,10 +12,10 @@ public class EntitiesBoard implements VisualEntity {
 
     private List<VisualEntity> children = new LinkedList<VisualEntity>();
 
-    public void update(long elapsedTime) {
+    public void update(int delta) {
         List<VisualEntity> toRemove = new LinkedList<VisualEntity>();
         for (VisualEntity animation : children) {
-            animation.update(elapsedTime);
+            animation.update(delta);
             if (animation.isFinalized()) {
                 toRemove.add(animation);
             }

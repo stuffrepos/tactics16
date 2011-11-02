@@ -29,11 +29,11 @@ public class VisualBattleMap implements VisualEntity {
         }
     }
 
-    public void update(long elapsedTime) {
-        visualMap.update(elapsedTime);
-        checkedAreasLayer.update(elapsedTime);
-        personsLayer.update(elapsedTime);
-        cursorsLayer.update(elapsedTime);
+    public void update(int delta) {
+        visualMap.update(delta);
+        checkedAreasLayer.update(delta);
+        personsLayer.update(delta);
+        cursorsLayer.update(delta);
     }
 
     public void render(Graphics g) {

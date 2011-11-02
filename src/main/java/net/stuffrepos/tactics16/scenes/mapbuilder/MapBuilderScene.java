@@ -3,13 +3,16 @@ package net.stuffrepos.tactics16.scenes.mapbuilder;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.PhaseTitle;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
+import net.stuffrepos.tactics16.phase.PhaseManager;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MapBuilderScene extends AbstractPhase {
+public class MapBuilderScene extends Phase {
 
     private static final MapBuilderScene instance = new MapBuilderScene();
     private final MenuMode menuMode = new MenuMode(this);
@@ -47,7 +50,7 @@ public class MapBuilderScene extends AbstractPhase {
     }
 
     @Override
-    public void onAdd() {
+    public void initResources(GameContainer container, StateBasedGame game) {
         toMenuMode();
     }
 
@@ -57,7 +60,7 @@ public class MapBuilderScene extends AbstractPhase {
 
     public void setMap(Map map) {
         this.map = map;
-        this.menuMode.onEnter();
+        this.menuMode.enter(null, null);
     }
 
     public void quit() {

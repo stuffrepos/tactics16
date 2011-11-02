@@ -26,11 +26,11 @@ public class TextMovimentAnimation implements VisualEntity {
         this.delay = delay;
     }
 
-    public void update(long elapsedTime) {
+    public void update(int delta) {
         if (moviment.isFinalized()) {
-            delayElapsedTime += elapsedTime;
+            delayElapsedTime += delta;
         } else {
-            moviment.update(elapsedTime);
+            moviment.update(delta);
         }
     }
 

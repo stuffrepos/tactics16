@@ -6,13 +6,15 @@ import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.menu.Menu;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class OptionsSubPhase extends AbstractPhase {
+public class OptionsSubPhase extends Phase {
 
     private final BattleScene parentScene;
     private Menu menu = new Menu(new CommonMenuOption("Back",GameKey.CANCEL) {
@@ -35,12 +37,12 @@ public class OptionsSubPhase extends AbstractPhase {
     }
 
     @Override
-    public void update(long elapsedTime) {
-        menu.update(elapsedTime);
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        menu.update(delta);
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) {
         menu.render(g);
     }
 }

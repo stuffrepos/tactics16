@@ -32,8 +32,8 @@ public class PersonInfo implements VisualEntity {
         textMovimentAnimation.getDialog().setFlat(true);
     }
 
-    public void update(long elapsedTime) {
-        textMovimentAnimation.update(elapsedTime);
+    public void update(int delta) {
+        textMovimentAnimation.update(delta);
     }
 
     public void render(Graphics g) {

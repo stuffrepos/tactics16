@@ -161,16 +161,16 @@ public abstract class Keyboard implements Object2D, VisualEntity {
         return ((int) Math.ceil((double) CHARS.length / (double) MAX_BUTTON_X) + Button.BUTTON_GAP) * MAX_BUTTON_X - Button.BUTTON_GAP;
     }
 
-    public void update(long elapsedTime) {
+    public void update(int delta) {
         for (PositionableButton button : buttons) {
-            button.update(elapsedTime);
+            button.update(delta);
         }
 
         if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
             deleteCharacter();
         }
 
-        cursor.update(elapsedTime);
+        cursor.update(delta);
     }
 
     public void render(Graphics g) {

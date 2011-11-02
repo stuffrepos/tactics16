@@ -13,13 +13,15 @@ import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.components.MapCursor;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.VisualMap;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-class PersonsPositionMode extends AbstractPhase {
+class PersonsPositionMode extends Phase {
 
     private PlayerPallete playerPallete = new PlayerPallete();
     private PhaseTitle title;
@@ -40,8 +42,8 @@ class PersonsPositionMode extends AbstractPhase {
                 playerPallete.getPosition().getY());
     }
 
-    public void update(long elapsedTime) {
-        playerPallete.update(elapsedTime);
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        playerPallete.update(delta);
         if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
             scene.toMenuMode();
         } else if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
@@ -49,10 +51,10 @@ class PersonsPositionMode extends AbstractPhase {
         }
 
         updateStatusDialog();
-        mapCursor.update(elapsedTime);
+        mapCursor.update(delta);
         for (Integer player : playerPanels.keySet()) {
             for (GlowingRectangle glowingRectangle : playerPanels.get(player)) {
-                glowingRectangle.update(elapsedTime);
+                glowingRectangle.update(delta);
             }
         }
     }
@@ -69,7 +71,7 @@ class PersonsPositionMode extends AbstractPhase {
         status.setText(b.toString());
     }
 
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) {
         title.render(g);
         playerPallete.render(g);
         visualMap.render(g, this.playerPallete.getPlayerColors());
@@ -99,7 +101,7 @@ class PersonsPositionMode extends AbstractPhase {
         }
     }
 
-    public void onEnter() {
+    public void enter(GameContainer container, StateBasedGame game) {
         visualMap = new VisualMap(scene.getMap());
         visualMap.getPosition().setXY(
                 Layout.OBJECT_GAP,

@@ -56,9 +56,9 @@ public class PropertyBox implements VisualEntity, Object2D {
         return propertyName.getHeight();
     }
 
-    public void update(long elapsedTime) {
-        propertyName.update(elapsedTime);
-        propertyValue.update(elapsedTime);
+    public void update(int delta) {
+        propertyName.update(delta);
+        propertyValue.update(delta);
     }
 
     public void render(Graphics g) {

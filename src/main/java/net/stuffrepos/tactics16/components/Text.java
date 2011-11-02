@@ -164,7 +164,7 @@ public class Text implements Object2D, VisualEntity {
         this.height.clear();
     }
 
-    public void update(long elapsedTime) {
+    public void update(int delta) {
     }
 
     public boolean isFinalized() {

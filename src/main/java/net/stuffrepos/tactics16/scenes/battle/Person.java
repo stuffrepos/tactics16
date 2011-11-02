@@ -52,8 +52,8 @@ public class Person extends DataObject implements VisualEntity {
         }
     }
 
-    public void update(long elapsedTime) {
-        this.elapsedTime += elapsedTime;
+    public void update(int delta) {
+        this.elapsedTime += delta;
     }
 
     public GameImage getCurrentImage() {

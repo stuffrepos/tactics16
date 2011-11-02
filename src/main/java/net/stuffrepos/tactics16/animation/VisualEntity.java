@@ -8,7 +8,7 @@ import org.newdawn.slick.Graphics;
  */
 public interface VisualEntity {
 
-    public void update(long elapsedTime);
+    public void update(int delta);
     public void render(Graphics g);
     public boolean isFinalized();    
 }

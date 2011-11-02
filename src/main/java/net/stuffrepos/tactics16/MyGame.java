@@ -4,7 +4,6 @@ import net.stuffrepos.tactics16.datamanager.DataManager;
 import net.stuffrepos.tactics16.phase.PhaseManager;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,17 +12,18 @@ import java.util.Map;
 import java.util.TreeMap;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.components.Object2D;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
 import net.stuffrepos.tactics16.phase.Phase;
 import org.newdawn.slick.AppGameContainer;
-import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.state.GameState;
+import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.Transition;
 
 /**
  *
@@ -37,24 +37,27 @@ public class MyGame {
     private static MyGame instance;
     AppGameContainer app;
     private GameContainer gameContainer;
-    private BasicGame game = new BasicGame("Tactics16") {
+    private StateBasedGame game = new StateBasedGame("Tactics16") {
 
         @Override
-        public void init(GameContainer gc) throws SlickException {
-            MyGame.this.initResources(gc);
+        public void initStatesList(GameContainer container) throws SlickException {
+            MyGame.this.initResources(container);
         }
 
         @Override
-        public void update(GameContainer gc, int delta) throws SlickException {
-            MyGame.this.update(delta);
-        }
-
-        public void render(GameContainer gc, Graphics graphics) throws SlickException {            
-            MyGame.this.render(gc, graphics);
+        public void addState(GameState state) {
+            if (this.getState(state.getID()) == null) {
+                try {
+                    super.addState(state);
+                    state.init(gameContainer, this);
+                } catch (SlickException ex) {
+                    throw new RuntimeException();
+                }
+            }
         }
     };
     private DataManager loader;
-    private PhaseManager phaseManager = new PhaseManager();
+    private PhaseManager phaseManager = new PhaseManager(true);
     private KeyMapping keyMapping = new KeyMapping();
     private TrueTypeFont font;
     //private Font font = new Font("Purisa", Font.PLAIN, 12);
@@ -91,6 +94,25 @@ public class MyGame {
         }
     }
     private Phase initialPhase;
+    private PhaseManager.SubPhaseManager mainPhaseManager = new PhaseManager.SubPhaseManager() {
+
+        public void onChange(Phase phase, Phase previousPhase, Transition leaveTransition, Transition enterTransation) throws SlickException {
+            MyGame.getInstance().enterGameStateState(phase, leaveTransition, enterTransation);
+        }
+    };
+    private PhaseManager.SubPhaseManager noMainPhaseManager = new PhaseManager.SubPhaseManager() {
+
+        public void onChange(Phase phase, Phase previousPhase, Transition leaveTransition, Transition enterTransation) throws SlickException {
+            if (previousPhase != null) {
+                previousPhase.leave(gameContainer, game);
+            }
+
+            if (phase != null) {
+                phase.init(gameContainer, game);
+                phase.enter(gameContainer, game);
+            }
+        }
+    };
 
     private MyGame(String dataPath) throws SlickException {
         loader = new DataManager(new File(dataPath));
@@ -105,34 +127,10 @@ public class MyGame {
         keyMapping.setMapping(GameKey.NEXT, Input.KEY_NEXT);
     }
 
-    public void initResources(GameContainer gameContainer) {
+    private void initResources(GameContainer gameContainer) {
         this.font = new TrueTypeFont(new Font(DEFAULT_TRUE_TYPE_FAMILY_NAME, Font.PLAIN, 12), true);
         this.gameContainer = gameContainer;
         loader.loadDirectory(loader.getDataDirectory());
-    }
-
-    public void update(long elapsedTime) {
-        try {
-            this.phaseManager.getCurrentPhase().update(elapsedTime);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            this.quit();
-        }
-    }
-
-    public void render(GameContainer gc, Graphics g) {
-        if (font != null) {
-            g.setFont(font);
-        }
-
-        g.setColor(org.newdawn.slick.Color.black);
-        g.fillRect(0, 0, gc.getWidth(), gc.getHeight());
-        try {
-            this.phaseManager.getCurrentPhase().render(g);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            this.quit();
-        }                
     }
 
     public void quit() {
@@ -193,6 +191,21 @@ public class MyGame {
         return screenObject2D;
     }
 
+    private void enterGameStateState(Phase phase, Transition leaveTransition, Transition enterTransation) throws SlickException {
+        if (game.getState(phase.getID()) == null) {
+            game.addState(phase);
+        }
+        game.enterState(phase.getID(), leaveTransition, enterTransation);
+    }
+
+    public PhaseManager.SubPhaseManager getMainSubPhaseManager() {
+        return mainPhaseManager;
+    }
+
+    public PhaseManager.SubPhaseManager getNoMainSubPhaseManager() {
+        return noMainPhaseManager;
+    }
+
     public class KeyMapping {
 
         private Map<GameKey, List<Integer>> mapping = new TreeMap<GameKey, List<Integer>>();
@@ -220,12 +233,12 @@ public class MyGame {
         }
     }
 
-    private class BootstrapPhase extends AbstractPhase {
+    private class BootstrapPhase extends Phase {
 
         @Override
-        public void render(Graphics g) {
+        public void enter(GameContainer container, StateBasedGame game) throws SlickException {
             phaseManager.clear();
-            phaseManager.change(initialPhase);
+            phaseManager.change(initialPhase, null, new FadeInTransition(Color.black));
         }
     }
 }

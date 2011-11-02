@@ -6,23 +6,23 @@ import net.stuffrepos.tactics16.scenes.mapbuilder.MapBuilderScene;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.TextBox;
 import org.newdawn.slick.Graphics;
-import java.awt.event.KeyEvent;
 import net.stuffrepos.tactics16.GameKey;
-import net.stuffrepos.tactics16.animation.transitioneffect.FadeIn;
 import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.Text;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.menu.Menu;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
-import org.newdawn.slick.Color;
+import net.stuffrepos.tactics16.phase.Phase;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MainMenuScene extends AbstractPhase {
+public class MainMenuScene extends Phase {
 
     public static final Font MAIN_TITLE_FONT = new Font("purisa", Font.BOLD, 48);
     private static final MainMenuScene instance = new MainMenuScene();
@@ -96,8 +96,7 @@ public class MainMenuScene extends AbstractPhase {
     }
 
     @Override
-    public void onAdd() {
-
+    public void initResources(GameContainer container, StateBasedGame game) throws SlickException {
         title = new Text();
         title.setFont(MAIN_TITLE_FONT);
         title.setColor(PhaseTitle.DEFAULT_COLOR);
@@ -141,17 +140,15 @@ public class MainMenuScene extends AbstractPhase {
 
         keysHelp.getPosition().setY(
                 Layout.getBottom(mainMenu) + Layout.OBJECT_GAP);
-
-        new FadeIn(MyGame.getInstance().getPhaseManager());
     }
 
     @Override
-    public void update(long elapsedTime) {
-        mainMenu.update(elapsedTime);
+    public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+        mainMenu.update(delta);
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         mainMenu.render(g);
         title.render(g);
         keysHelp.render(g);

@@ -48,7 +48,7 @@ public class TerrainPallete implements Object2D {
 
     }
 
-    public void update(long elapsedTime) {
+    public void update(int elapsedTime) {
         cursor.update(elapsedTime);
         spriteCursor.update(elapsedTime);
     }

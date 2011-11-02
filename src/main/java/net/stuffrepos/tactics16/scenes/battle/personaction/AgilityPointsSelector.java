@@ -60,8 +60,8 @@ public class AgilityPointsSelector implements VisualEntity, Object2D {
         text.setText("AP: +" + this.count + "/" + max);
     }
 
-    public void update(long elapsedTime) {
-        spheres.update(elapsedTime);
+    public void update(int delta) {
+        spheres.update(delta);
     }
 
     public void render(Graphics g) {

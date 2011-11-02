@@ -16,19 +16,22 @@ import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job.GameAction;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.game.Terrain;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.battle.BattleAction;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.MapCheckedArea;
 import net.stuffrepos.tactics16.scenes.battle.Person;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class PersonActionSubPhase extends AbstractPhase {
+public class PersonActionSubPhase extends Phase {
 
     private final BattleScene parentScene;
     private final SelectPersonStep selectPersonStep = new SelectPersonStep();
@@ -39,7 +42,7 @@ public class PersonActionSubPhase extends AbstractPhase {
     }
 
     @Override
-    public void onEnter() {
+    public void enter(GameContainer container, StateBasedGame game) {
         parentScene.getPhaseManager().change(selectPersonStep);
     }
 
@@ -47,6 +50,8 @@ public class PersonActionSubPhase extends AbstractPhase {
     public String toString() {
         if (parentScene.getPhaseManager().getCurrentPhase() == null) {
             return null;
+        } else if (parentScene.getPhaseManager().getCurrentPhase() == this) {
+            return super.toString();
         } else {
             return parentScene.getPhaseManager().getCurrentPhase().toString();
         }
@@ -59,13 +64,13 @@ public class PersonActionSubPhase extends AbstractPhase {
         }
     }
 
-    private class SelectPersonStep extends AbstractPhase {
+    private class SelectPersonStep extends Phase {
 
         private MapCursor selectPersonCursor;
 
         // <editor-fold defaultstate="collapsed" desc="implementation">
         @Override
-        public void onEnter() {
+        public void enter(GameContainer container, StateBasedGame game) {
             this.selectPersonCursor = parentScene.getVisualBattleMap().createMapCursor();
             if (cursorLastPosition != null) {
                 this.selectPersonCursor.getCursor().moveTo(cursorLastPosition);
@@ -73,12 +78,12 @@ public class PersonActionSubPhase extends AbstractPhase {
         }
 
         @Override
-        public void onExit() {
+        public void leave(GameContainer container, StateBasedGame game) throws SlickException {
             this.selectPersonCursor.finalizeEntity();
         }
 
         @Override
-        public void update(long elapsedTime) {
+        public void update(GameContainer container, StateBasedGame game, int delta) {            
             if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
                 Person person = parentScene.getVisualBattleMap().getBattleGame().getPersonOnMapPosition(selectPersonCursor.getCursor().getPosition());
                 if (person != null && !parentScene.isUsed(person) && person.getPlayer().equals(parentScene.getCurrentPlayer())) {
@@ -89,7 +94,7 @@ public class PersonActionSubPhase extends AbstractPhase {
         }
 
         @Override
-        public void render(Graphics g) {
+        public void render(GameContainer container, StateBasedGame game, Graphics g) {
         }
 
         @Override
@@ -120,7 +125,7 @@ public class PersonActionSubPhase extends AbstractPhase {
         }
         // </editor-fold>
 
-        private class SelectMovimentTargetStep extends AbstractPhase {
+        private class SelectMovimentTargetStep extends Phase {
 
             private MapCheckedArea mapCheckedArea;
             private Person selectedPerson;
@@ -151,7 +156,7 @@ public class PersonActionSubPhase extends AbstractPhase {
             }
 
             @Override
-            public void onEnter() {
+            public void enter(GameContainer container, StateBasedGame game) {
                 parentScene.putPersonOnPosition(selectedPerson, selectedPersonPosition);
                 selectedPerson.getGameActionControl().advance(GameAction.SELECTED);
                 mapCheckedArea = parentScene.getVisualBattleMap().createMapCheckedArea(
@@ -162,14 +167,14 @@ public class PersonActionSubPhase extends AbstractPhase {
             }
 
             @Override
-            public void onExit() {
+            public void leave(GameContainer container, StateBasedGame game) throws SlickException {
                 movimentCursor.finalizeEntity();
                 mapCheckedArea.finalizeEntity();
                 selectedPerson.getGameActionControl().back();
             }
 
             @Override
-            public void update(long elapsedTime) {
+            public void update(GameContainer container, StateBasedGame game, int delta) {
                 if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
                     if (mapCheckedArea.inArea(movimentCursor.getCursor().getPosition())) {
                         parentScene.getPhaseManager().advance(new PersonMovimentStep());
@@ -185,13 +190,13 @@ public class PersonActionSubPhase extends AbstractPhase {
             }
 
             // </editor-fold>
-            private class PersonMovimentStep extends AbstractPhase {
+            private class PersonMovimentStep extends Phase {
 
                 private PersonMovimentAnimation moviment;
 
                 // <editor-fold defaultstate="collapsed" desc="implementation">
                 @Override
-                public void onEnter() {
+                public void enter(GameContainer container, StateBasedGame game) {
                     moviment = new PersonMovimentAnimation(
                             selectedPerson,
                             parentScene.getVisualBattleMap(),
@@ -199,8 +204,8 @@ public class PersonActionSubPhase extends AbstractPhase {
                 }
 
                 @Override
-                public void update(long elapsedTime) {
-                    moviment.update(elapsedTime);
+                public void update(GameContainer container, StateBasedGame game, int delta) {
+                    moviment.update(delta);
                     if (moviment.isFinalized()) {
                         parentScene.putPersonOnPosition(selectedPerson, moviment.getTerrainTarget());
                         parentScene.getPhaseManager().change(new SelectActionStep());
@@ -208,30 +213,30 @@ public class PersonActionSubPhase extends AbstractPhase {
                 }
 
                 @Override
-                public void onExit() {
+                public void leave(GameContainer container, StateBasedGame game) throws SlickException {
                     if (!moviment.isFinalized()) {
                     }
                 }// </editor-fold>
 
-                private class SelectActionStep extends AbstractPhase {
+                private class SelectActionStep extends Phase {
 
                     private Menu actionMenu;
                     private TextBox actionStatus;
 
                     // <editor-fold defaultstate="collapsed" desc="implementation">
                     @Override
-                    public void update(long elapsedTime) {
-                        actionMenu.update(elapsedTime);
+                    public void update(GameContainer container, StateBasedGame game, int delta) {
+                        actionMenu.update(delta);
                     }
 
                     @Override
-                    public void render(Graphics g) {
+                    public void render(GameContainer container, StateBasedGame game, Graphics g) {
                         actionMenu.render(g);
                         actionStatus.render(g);
                     }
 
                     @Override
-                    public void onEnter() {
+                    public void enter(GameContainer container, StateBasedGame game) {
                         actionMenu = new Menu();
                         actionStatus = new TextBox();
 
@@ -295,7 +300,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                     }
 
                     // </editor-fold>
-                    private class SelectTargetStep extends AbstractPhase {
+                    private class SelectTargetStep extends Phase {
 
                         private MapCheckedArea mapCheckedArea;
                         private Action selectedAction;
@@ -307,7 +312,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                         }
 
                         @Override
-                        public void onEnter() {
+                        public void enter(GameContainer container, StateBasedGame game) {
                             mapCheckedArea = parentScene.getVisualBattleMap().createMapCheckedArea(
                                     calculateSelectedActionReachArea(),
                                     0xFF0000);
@@ -316,13 +321,13 @@ public class PersonActionSubPhase extends AbstractPhase {
                         }
 
                         @Override
-                        public void onExit() {
+                        public void leave(GameContainer container, StateBasedGame game) throws SlickException {
                             targetCursor.finalizeEntity();
                             mapCheckedArea.finalizeEntity();
                         }
 
                         @Override
-                        public void update(long elapsedTime) {
+                        public void update(GameContainer container, StateBasedGame game, int delta) {
                             if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
                                 if (mapCheckedArea.inArea(targetCursor.getCursor().getPosition())) {
                                     parentScene.getPhaseManager().advance(new ConfirmActionStep(targetCursor.getCursor().getPosition()));
@@ -346,7 +351,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                         }
                         // </editor-fold>
 
-                        private class ConfirmActionStep extends AbstractPhase {
+                        private class ConfirmActionStep extends Phase {
 
                             private final Coordinate targetPosition;
                             private Menu menu;
@@ -376,7 +381,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                             }
 
                             @Override
-                            public void onEnter() {
+                            public void enter(GameContainer container, StateBasedGame game) {
                                 Coordinate visualTargetPosition = parentScene.getVisualBattleMap().getVisualMap().getTerrainPosition(targetPosition);
                                 this.targetRay = parentScene.getVisualBattleMap().createMapCheckedArea(
                                         calculateTargetActionRayArea(),
@@ -401,7 +406,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                             }
 
                             @Override
-                            public void onExit() {
+                            public void leave(GameContainer container, StateBasedGame game) throws SlickException {
                                 targetRay.finalizeEntity();
                                 for (Person person : personsTargets) {
                                     person.getGameActionControl().back();
@@ -409,13 +414,13 @@ public class PersonActionSubPhase extends AbstractPhase {
                             }
 
                             @Override
-                            public void update(long elapsedTime) {
-                                menu.update(elapsedTime);
-                                agilityPointsSelector.update(elapsedTime);
+                            public void update(GameContainer container, StateBasedGame game, int delta) {
+                                menu.update(delta);
+                                agilityPointsSelector.update(delta);
                             }
 
                             @Override
-                            public void render(Graphics g) {
+                            public void render(GameContainer container, StateBasedGame game, Graphics g) {
                                 menu.render(g);
                                 agilityPointsSelector.render(g);
                             }
@@ -434,12 +439,12 @@ public class PersonActionSubPhase extends AbstractPhase {
                                 return area;
                             }// </editor-fold>
 
-                            private class PersonAction extends AbstractPhase {
+                            private class PersonAction extends Phase {
 
                                 private PersonActionAnimation actionAnimation;
 
                                 @Override
-                                public void onEnter() {
+                                public void enter(GameContainer container, StateBasedGame game) {
                                     actionAnimation = new PersonActionAnimation(
                                             parentScene.getVisualBattleMap(),
                                             selectedPerson,
@@ -448,7 +453,7 @@ public class PersonActionSubPhase extends AbstractPhase {
                                 }
 
                                 @Override
-                                public void update(long elapsedTime) {
+                                public void update(GameContainer container, StateBasedGame game, int delta) {
                                     if (actionAnimation.isFinalized()) {
                                         parentScene.toEffectSubPhase(
                                                 new BattleAction(

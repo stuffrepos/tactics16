@@ -227,7 +227,7 @@ public class TextBox implements Object2D, VisualEntity {
         return text.getFont();
     }
 
-    public void update(long elapsedTime) {
+    public void update(int delta) {
     }
 
     public boolean isFinalized() {

@@ -7,10 +7,12 @@ import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.phase.PhaseManager;
+import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
@@ -43,8 +45,8 @@ public class MessageBox implements VisualEntity, Object2D {
         this.timeout = timeout;
     }
 
-    public void update(long elapsedTime) {
-        this.elapsedTime += elapsedTime;
+    public void update(int delta) {        
+        this.elapsedTime += delta;
         if (!isFinalized()) {
             for (GameKey gameKey : GameKey.values()) {
                 if (MyGame.getInstance().isKeyPressed(gameKey)) {
@@ -104,7 +106,7 @@ public class MessageBox implements VisualEntity, Object2D {
         return this;
     }
 
-    private class EmbeddedPhase extends AbstractPhase {
+    private class EmbeddedPhase extends Phase {
 
         private final PhaseManager phaseManager;
         private Phase previousPhase;
@@ -116,8 +118,8 @@ public class MessageBox implements VisualEntity, Object2D {
         }
 
         @Override
-        public void update(long elapsedTime) {
-            MessageBox.this.update(elapsedTime);
+        public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+            MessageBox.this.update(delta);
 
             if (MessageBox.this.isFinalized()) {
                 phaseManager.back();
@@ -125,8 +127,8 @@ public class MessageBox implements VisualEntity, Object2D {
         }
 
         @Override
-        public void render(Graphics g) {
-            previousPhase.render(g);
+        public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
+            previousPhase.render(container, game, g);
             MessageBox.this.render(g);
         }
     }

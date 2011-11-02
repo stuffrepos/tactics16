@@ -14,13 +14,15 @@ import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.VisualMap;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class MenuMode extends AbstractPhase {
+public class MenuMode extends Phase {
 
     private SelectMapScene selectMapScene;
     private Menu menu = new Menu(new CommonMenuOption[]{
@@ -231,13 +233,13 @@ public class MenuMode extends AbstractPhase {
 
     // <editor-fold defaultstate="collapsed" desc="Phase implementation">
     @Override
-    public void update(long elapsedTime) {
-        menu.update(elapsedTime);
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        menu.update(delta);
         updateStatusText();
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) {
         menu.render(g);
         if (visualMap != null) {
             visualMap.render(g);
@@ -247,7 +249,7 @@ public class MenuMode extends AbstractPhase {
     }
 
     @Override
-    public void onEnter() {
+    public void enter(GameContainer container, StateBasedGame game) {
         if (scene.getMap() == null) {
             visualMap = null;
         } else {

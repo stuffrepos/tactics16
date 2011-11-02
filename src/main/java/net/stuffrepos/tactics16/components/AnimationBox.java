@@ -83,8 +83,8 @@ public class AnimationBox implements VisualEntity, Object2D {
         });
     }
 
-    public void update(long elapsedTime) {
-        this.elapsedTime += elapsedTime;
+    public void update(int delta) {
+        this.elapsedTime += delta;
     }
 
     public void render(Graphics g) {

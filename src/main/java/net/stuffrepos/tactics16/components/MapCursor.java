@@ -35,9 +35,9 @@ public class MapCursor implements VisualEntity {
         });
     }
 
-    public void update(long elapsedTime) {
-        cursor.update(elapsedTime);
-        visualCursor.update(elapsedTime);
+    public void update(int delta) {
+        cursor.update(delta);
+        visualCursor.update(delta);
     }
 
     public void render(Graphics g) {

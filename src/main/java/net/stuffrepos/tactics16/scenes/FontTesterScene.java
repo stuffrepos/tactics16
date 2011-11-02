@@ -14,16 +14,18 @@ import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.Text;
 import net.stuffrepos.tactics16.components.TextBox;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.cursors.ObjectCursor1D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class FontTesterScene extends AbstractPhase {
+public class FontTesterScene extends Phase {
 
     private static final FontTesterScene instance = new FontTesterScene();
     private final EntitiesBoard entitiesBoard = new EntitiesBoard();
@@ -38,7 +40,7 @@ public class FontTesterScene extends AbstractPhase {
     }
 
     @Override
-    public void onAdd() {
+    public void initResources(GameContainer container, StateBasedGame game) {
         entitiesBoard.getChildren().clear();
         PhaseTitle title = new PhaseTitle("Text Font Tester");
         entitiesBoard.getChildren().add(title);
@@ -111,9 +113,9 @@ public class FontTesterScene extends AbstractPhase {
     }
 
     @Override
-    public void update(long elapsedTime) {
-        fontsCursor.update(elapsedTime);
-        entitiesBoard.update(elapsedTime);
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        fontsCursor.update(delta);
+        entitiesBoard.update(delta);
 
         if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
             MyGame.getInstance().getPhaseManager().back();
@@ -121,7 +123,7 @@ public class FontTesterScene extends AbstractPhase {
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) {
         entitiesBoard.render(g);
     }
 

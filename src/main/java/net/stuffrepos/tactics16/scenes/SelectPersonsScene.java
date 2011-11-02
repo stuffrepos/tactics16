@@ -16,19 +16,21 @@ import net.stuffrepos.tactics16.components.JobBoxInfo;
 import net.stuffrepos.tactics16.components.Object2D;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
-import net.stuffrepos.tactics16.phase.AbstractPhase;
+import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.util.cache.CacheableMapValue;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class SelectPersonsScene extends AbstractPhase {
+public class SelectPersonsScene extends Phase {
 
     @Override
-    public void onEnter() {
+    public void enter(GameContainer container, StateBasedGame game) {
         battleGame.resetPlayers();
         currentPlayer = 0;
     }
@@ -116,7 +118,7 @@ public class SelectPersonsScene extends AbstractPhase {
     }
 
     @Override
-    public void onAdd() {
+    public void initResources(GameContainer container, StateBasedGame game) {
 
         title = new PhaseTitle("Select Persons");
 
@@ -181,16 +183,16 @@ public class SelectPersonsScene extends AbstractPhase {
     }
 
     @Override
-    public void update(long elapsedTime) {
-        jobSelector.update(elapsedTime);
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        jobSelector.update(delta);
         if (jobBoxInfo != null) {
-            jobBoxInfo.update(elapsedTime);
+            jobBoxInfo.update(delta);
         }
         updateStatusDialog();
     }
 
     @Override
-    public void render(Graphics g) {
+    public void render(GameContainer container, StateBasedGame game, Graphics g) {
         title.render(g);
         statusDialog.render(g);
         jobSelector.render(g);

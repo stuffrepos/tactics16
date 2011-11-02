@@ -39,7 +39,7 @@ public class EffectAnimation {
             if (first) {
                 first = false;
             } else {
-                effect.update(-(long) (Math.random() * 250));
+                effect.update(-(int) (Math.random() * 250));
             }
             effects.addEntity(effect);
             Person person = visualBattleMap.getBattleGame().getPersonOnMapPosition(rayTarget);
@@ -49,11 +49,11 @@ public class EffectAnimation {
         }
     }
 
-    public void update(long elapsedTime) {
+    public void update(int delta) {
         if (info == null) {
-            effects.update(elapsedTime);
+            effects.update(delta);
         } else {
-            info.update(elapsedTime);
+            info.update(delta);
         }
 
         if (effects.isFinalized() && info == null) {
