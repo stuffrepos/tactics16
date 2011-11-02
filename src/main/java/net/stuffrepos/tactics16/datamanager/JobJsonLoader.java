@@ -13,6 +13,7 @@ import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.JobSpriteActionGroup;
 import net.stuffrepos.tactics16.game.Reach;
 import net.stuffrepos.tactics16.scenes.battle.Player;
+import net.stuffrepos.tactics16.util.image.ColorUtil;
 
 /**
  *
@@ -88,7 +89,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             @Override
             public void iterate(JSONObject jsonObject, String key) throws JSONException {
                 jobSpriteActionGroup.setMapping(
-                        Integer.parseInt(key, 16),
+                        ColorUtil.byRgba(Integer.parseInt(key, 16)),
                         Player.Color.valueOf(jsonObject.getString(key)));
             }
         };

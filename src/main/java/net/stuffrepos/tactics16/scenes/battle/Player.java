@@ -2,8 +2,6 @@ package net.stuffrepos.tactics16.scenes.battle;
 
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.animation.SpriteAnimation;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +15,10 @@ import net.stuffrepos.tactics16.game.JobSpriteActionGroup;
 import net.stuffrepos.tactics16.util.cache.CacheableMapValue;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
+import net.stuffrepos.tactics16.util.image.ImageUtil;
+import net.stuffrepos.tactics16.util.image.PixelImageCopyIterator;
 import net.stuffrepos.tactics16.util.image.PixelImageIterator;
+import org.newdawn.slick.ImageBuffer;
 
 /**
  *
@@ -60,18 +61,16 @@ public class Player extends DataObject {
                 }
 
                 private GameImage createSelectedImage(GameImage image, final float factor) {
-
-                    final BufferedImage newImage =
-                            new BufferedImage(image.getImage().getWidth(), image.getImage().getHeight(), Transparency.BITMASK);
+                    final ImageBuffer newImage = new ImageBuffer(image.getImage().getWidth(), image.getImage().getHeight());
 
                     new PixelImageIterator(image.getImage()) {
 
                         @Override
-                        public void iterate(int x, int y, int rgb) {
-                            if ((rgb & 0x00FFFFFF) == 0x00FF00FF) {
-                                newImage.setRGB(x, y, 0);
+                        public void iterate(int x, int y, org.newdawn.slick.Color color) {
+                            if (org.newdawn.slick.Color.magenta.equals(color)) {
+                                newImage.setRGBA(x, y, 0, 0, 0, 0);
                             } else {
-                                newImage.setRGB(x, y, ColorUtil.rgba(ColorUtil.applyFactor(new org.newdawn.slick.Color(rgb), factor)));
+                                ImageUtil.setColor(newImage, x, y, ColorUtil.applyFactor(color, factor));
                             }
 
 
@@ -111,23 +110,7 @@ public class Player extends DataObject {
                 }
 
                 private GameImage createSelectedImage(GameImage image) {
-
-                    final BufferedImage newImage =
-                            new BufferedImage(image.getImage().getWidth(), image.getImage().getHeight(), Transparency.BITMASK);
-
-                    new PixelImageIterator(image.getImage()) {
-
-                        @Override
-                        public void iterate(int x, int y, int rgb) {
-                            if ((rgb & 0xFF000000) == 0) {
-                                newImage.setRGB(x, y, 0);
-                            } else {
-                                newImage.setRGB(x, y, ColorUtil.rgba(ColorUtil.grayScale(new org.newdawn.slick.Color(rgb))));
-                            }
-                        }
-                    };
-
-                    GameImage gameImage = new GameImage(newImage);
+                    GameImage gameImage = new GameImage(ImageUtil.grayScale(image.getImage()));
                     gameImage.getCenter().set(image.getCenter());
 
                     return gameImage;
@@ -277,8 +260,8 @@ public class Player extends DataObject {
                 return max;
             }
 
-            public int getColor(float factor, float minLimit, float maxLimit) {
-                return ColorUtil.rgba(ColorUtil.getBetweenColor(min, max, calculateRealFactor(factor, minLimit, maxLimit)));
+            public org.newdawn.slick.Color getColor(float factor, float minLimit, float maxLimit) {
+                return ColorUtil.getBetweenColor(min, max, calculateRealFactor(factor, minLimit, maxLimit));
             }
 
             private static float calculateRealFactor(float factor, float minLimit, float maxLimit) {
@@ -288,26 +271,26 @@ public class Player extends DataObject {
         private java.util.Map<Color, MaskedColor> mapping = new TreeMap<Color, MaskedColor>();
         private java.util.Map<GameImage, CacheableValue<GameImage>> maskedImages =
                 new HashMap<GameImage, CacheableValue<GameImage>>();
-        private CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<Integer, Integer>> jobsColors =
-                new CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<Integer, Integer>>() {
+        private CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<org.newdawn.slick.Color, org.newdawn.slick.Color>> jobsColors =
+                new CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<org.newdawn.slick.Color, org.newdawn.slick.Color>>() {
 
                     @Override
-                    protected CacheableMapValue<Integer, Integer> calculate(final JobSpriteActionGroup jobSpriteActionGroup) {
-                        return new CacheableMapValue<Integer, Integer>() {
+                    protected CacheableMapValue<org.newdawn.slick.Color, org.newdawn.slick.Color> calculate(final JobSpriteActionGroup jobSpriteActionGroup) {
+                        return new CacheableMapValue<org.newdawn.slick.Color, org.newdawn.slick.Color>() {
 
                             @Override
-                            protected Integer calculate(Integer originalRgb) {
-                                Player.Color playerColor = jobSpriteActionGroup.getMapping(originalRgb);
+                            protected org.newdawn.slick.Color calculate(org.newdawn.slick.Color originalColor) {
+                                Player.Color playerColor = jobSpriteActionGroup.getMapping(originalColor);
                                 if (playerColor != null) {
                                     return mapping.get(playerColor).getColor(
                                             ColorUtil.getBetweenFactor(
                                             jobSpriteActionGroup.getPlayerColorMin(playerColor),
                                             jobSpriteActionGroup.getPlayerColorMax(playerColor),
-                                            originalRgb),
+                                            originalColor),
                                             jobSpriteActionGroup.getColorMappingMin(),
                                             jobSpriteActionGroup.getColorMappingMax());
                                 } else {
-                                    return originalRgb;
+                                    return originalColor;
                                 }
                             }
                         };
@@ -326,17 +309,14 @@ public class Player extends DataObject {
 
                     @Override
                     protected GameImage calculate() {
-                        final GameImage maskedImage = image.clone();
+                        return image.clone(
+                                new PixelImageCopyIterator(image.getImage()) {
 
-                        new PixelImageIterator(image.getImage()) {
-
-                            @Override
-                            public void iterate(int x, int y, int rgb) {
-                                maskedImage.getImage().setRGB(x, y, jobsColors.getValue(jobSpriteActionGroup).getValue(rgb));
-                            }
-                        };
-
-                        return maskedImage;
+                                    @Override
+                                    protected org.newdawn.slick.Color iterate(int x, int y, org.newdawn.slick.Color color) {
+                                        return jobsColors.getValue(jobSpriteActionGroup).getValue(color);
+                                    }
+                                }.build());
                     }
                 };
                 maskedImages.put(image, cachedMaskedImage);

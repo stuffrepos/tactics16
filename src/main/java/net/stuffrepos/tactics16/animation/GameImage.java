@@ -1,12 +1,10 @@
 package net.stuffrepos.tactics16.animation;
 
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
-import net.stuffrepos.tactics16.util.image.ImageUtil;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.opengl.ImageData;
 
 /**
  *
@@ -21,7 +19,7 @@ public class GameImage implements Cloneable {
 
         @Override
         protected GameImage calculate() {
-            GameImage scaledImage = new GameImage(ImageUtil.scaleImage(ImageUtil.slickToAwt(image), scale));
+            GameImage scaledImage = new GameImage(image.getScaledCopy((float)scale));
             scaledImage.getCenter().setXY(
                     (int) (center.getX() * scale),
                     (int) (center.getY() * scale));
@@ -45,8 +43,8 @@ public class GameImage implements Cloneable {
         this.center = new Coordinate();
     }
 
-    public GameImage(BufferedImage image) {
-        this(ImageUtil.awtToSlick(image));
+    public GameImage(ImageData imageData) {
+        this(new Image(imageData));
     }
 
     public void render(Graphics g, Coordinate position) {
@@ -67,13 +65,12 @@ public class GameImage implements Cloneable {
             g.drawImage(
                     image,
                     x - center.getX(),
-                    y - center.getY(),
-                    null);
+                    y - center.getY());
         }
     }
 
-    public BufferedImage getImage() {
-        return ImageUtil.slickToAwt(image);
+    public Image getImage() {
+        return image;
     }
 
     public Coordinate getCenter() {
@@ -82,12 +79,11 @@ public class GameImage implements Cloneable {
 
     @Override
     public GameImage clone() {
-        BufferedImage bufferedImage = new BufferedImage(
-                image.getWidth(),
-                image.getHeight(),
-                Transparency.BITMASK);
-
-        GameImage gameImage = new GameImage(bufferedImage);
+        return clone(this.image);
+    }
+    
+    public GameImage clone(Image image) {
+        GameImage gameImage = new GameImage(image);
         gameImage.getCenter().set(center);
         gameImage.setScale(scale);
 

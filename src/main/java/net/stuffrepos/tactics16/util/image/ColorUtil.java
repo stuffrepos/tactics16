@@ -62,6 +62,10 @@ public class ColorUtil {
         }
     }
 
+    public static Color getColorBitmask(Color color) {
+        return byRgba(getRgbBitmask(rgba(color)));
+    }
+
     private static int limitColor(float color) {
         return limitColor((int) color);
     }
@@ -138,5 +142,13 @@ public class ColorUtil {
 
     public static int getBlue(int rgba) {
         return (rgba & 0x000000FF);
+    }
+
+    public static Color byRgba(int rgba) {
+        return new Color(getRed(rgba), getGreen(rgba), getBlue(rgba), getAlpha(rgba));
+    }
+
+    public static Color opaque(Color c) {
+        return new Color(c.getRed(), c.getGreen(), c.getBlue());
     }
 }

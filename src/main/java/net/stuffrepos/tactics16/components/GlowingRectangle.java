@@ -2,11 +2,11 @@ package net.stuffrepos.tactics16.components;
 
 import net.stuffrepos.tactics16.game.Coordinate;
 import java.awt.Dimension;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
+import net.stuffrepos.tactics16.util.image.ColorUtil;
 import net.stuffrepos.tactics16.util.image.ImageUtil;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.ImageBuffer;
 
 public class GlowingRectangle {
 
@@ -35,25 +35,19 @@ public class GlowingRectangle {
         float d = (MAX_TRANSPARENCY - MIN_TRANSPARENCY) / (cursorImages.length - 1);
 
         for (int i = 0; i < cursorImages.length; ++i) {
-             BufferedImage bufferedImage = new BufferedImage(
-                    this.size.width,
-                    this.size.height,
-                    Transparency.TRANSLUCENT);
-
             float transparency = d * i + MIN_TRANSPARENCY;
             int alpha = ((int) (0xFF * transparency)) << 24;
             int rgb = alpha | this.color;
 
-            for (int x = 0; x < cursorImages[i].getWidth(); ++x) {
-                for (int y = 0; y < cursorImages[i].getHeight(); ++y) {
-                    bufferedImage.setRGB(
-                            x,
-                            y,
-                            rgb);
+            final ImageBuffer buffer = ImageUtil.newImageBuffer(this.size);
+
+            for (int x = 0; x < buffer.getWidth(); ++x) {
+                for (int y = 0; y < buffer.getHeight(); ++y) {
+                    ImageUtil.setColor(buffer, x, y, ColorUtil.byRgba(rgb));
                 }
             }
             
-            cursorImages[i] = ImageUtil.awtToSlick(bufferedImage);
+            cursorImages[i] = new Image(buffer);
         }
     }
 

@@ -1,7 +1,10 @@
 package net.stuffrepos.tactics16.util.image;
 
+import java.awt.Dimension;
+import net.stuffrepos.tactics16.game.Coordinate;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
 /**
  *
@@ -37,5 +40,12 @@ public class DrawerUtil {
 
         g.setColor(c);
     }
-    
+
+    public static void drawImage(Graphics g, Image image, Coordinate coordinate) {
+        g.drawImage(image, coordinate.getX(), coordinate.getY());
+    }
+
+    public static void fillRect(Graphics g, Dimension size) {
+        g.fillRect(0, 0, size.width, size.height);
+    }
 }

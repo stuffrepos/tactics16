@@ -1,10 +1,12 @@
 package net.stuffrepos.tactics16.game;
 
+import java.util.HashMap;
 import java.util.Map.Entry;
 import net.stuffrepos.tactics16.animation.AnimationGroup;
 import net.stuffrepos.tactics16.scenes.battle.Player;
 import net.stuffrepos.tactics16.animation.SpriteAnimation;
 import java.util.TreeMap;
+import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.game.Job.GameAction;
 import net.stuffrepos.tactics16.animation.ImageGroup;
 import net.stuffrepos.tactics16.scenes.battle.Player.Color;
@@ -20,8 +22,8 @@ public class JobSpriteActionGroup {
 
     private float colorMappingMin = 0.0f;
     private float colorMappingMax = 1.0f;
-    private java.util.Map<Integer, Player.Color> colorMapping =
-            new TreeMap<Integer, Player.Color>();
+    private java.util.Map<org.newdawn.slick.Color, Player.Color> colorMapping =
+            new HashMap<org.newdawn.slick.Color, Player.Color>();
     private java.util.Map<Job.GameAction, SpriteAnimation> spriteActions =
             new TreeMap<Job.GameAction, SpriteAnimation>();
     private ImageGroup images = new ImageGroup();
@@ -39,13 +41,13 @@ public class JobSpriteActionGroup {
                     return onAttackingAnimation;
                 }
             };
-    private CacheableMapValue<Player.Color,Integer> minColors = new CacheableMapValue<Player.Color, Integer>() {
+    private CacheableMapValue<Player.Color,org.newdawn.slick.Color> minColors = new CacheableMapValue<Player.Color, org.newdawn.slick.Color>() {
 
         @Override
-        protected Integer calculate(Color playerColor) {
-            int min = 0;
+        protected org.newdawn.slick.Color calculate(Color playerColor) {
+            org.newdawn.slick.Color min = org.newdawn.slick.Color.black;
 
-            for(Entry<Integer,Player.Color> e: colorMapping.entrySet()) {
+            for(Entry<org.newdawn.slick.Color,Player.Color> e: colorMapping.entrySet()) {
                 if (e.getValue().equals(playerColor) && ColorUtil.compareColor(e.getKey(),min) < 0 ) {
                     min = e.getKey();
                 }
@@ -54,13 +56,13 @@ public class JobSpriteActionGroup {
             return min;
         }
     };
-    private CacheableMapValue<Player.Color,Integer> maxColors = new CacheableMapValue<Player.Color, Integer>() {
+    private CacheableMapValue<Player.Color,org.newdawn.slick.Color> maxColors = new CacheableMapValue<Player.Color, org.newdawn.slick.Color>() {
 
         @Override
-        protected Integer calculate(Color playerColor) {
-            int max = 0;
+        protected org.newdawn.slick.Color calculate(Color playerColor) {
+            org.newdawn.slick.Color max = org.newdawn.slick.Color.black;
 
-            for(Entry<Integer,Player.Color> e: colorMapping.entrySet()) {
+            for(Entry<org.newdawn.slick.Color,Player.Color> e: colorMapping.entrySet()) {
                 if (e.getValue().equals(playerColor) && ColorUtil.compareColor(e.getKey(),max) > 0 ) {
                     max = e.getKey();
                 }
@@ -76,14 +78,14 @@ public class JobSpriteActionGroup {
         }
     }
 
-    public void setMapping(Integer spriteColor, Player.Color playerColor) {
-        colorMapping.put(0x00FFFFFF & spriteColor, playerColor);
+    public void setMapping(org.newdawn.slick.Color spriteColor, Player.Color playerColor) {        
+        colorMapping.put(ColorUtil.opaque(spriteColor), playerColor);
         minColors.clear();
         maxColors.clear();
     }
 
-    public Player.Color getMapping(int rgb) {
-        return colorMapping.get(0x00FFFFFF & rgb);
+    public Player.Color getMapping(org.newdawn.slick.Color color) {
+        return colorMapping.get(ColorUtil.opaque(color));
     }
 
     public SpriteAnimation getSpriteAction(GameAction gameAction) {
@@ -108,11 +110,11 @@ public class JobSpriteActionGroup {
         }
     }
 
-    public int getPlayerColorMin(Player.Color playerColor) {
+    public org.newdawn.slick.Color getPlayerColorMin(Player.Color playerColor) {
         return minColors.getValue(playerColor);
     }
 
-    public int getPlayerColorMax(Player.Color playerColor) {
+    public org.newdawn.slick.Color getPlayerColorMax(Player.Color playerColor) {
         return maxColors.getValue(playerColor);
     }
 

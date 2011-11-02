@@ -2,7 +2,6 @@ package net.stuffrepos.tactics16.animation.transitioneffect;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
-import java.awt.image.BufferedImage;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.Text;
@@ -10,11 +9,9 @@ import net.stuffrepos.tactics16.phase.AbstractPhase;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.phase.PhaseManager;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
-import net.stuffrepos.tactics16.util.image.ImageUtil;
-import net.stuffrepos.tactics16.util.image.PixelImageIterator;
+import net.stuffrepos.tactics16.util.image.PixelImageCopyIterator;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.opengl.pbuffer.PBufferGraphics;
 
 /**
  *
@@ -70,20 +67,14 @@ public class FadeIn extends AbstractPhase {
             imageGraphics.destroy();
 
             final float colorFactor = calculateColorFactor();
-            
-            final BufferedImage bufferedImage = ImageUtil.slickToAwt(image);
 
-            new PixelImageIterator(bufferedImage) {
+            g.drawImage(new PixelImageCopyIterator(image) {
 
                 @Override
-                public void iterate(int x, int y, int rgb) {
-                    bufferedImage.setRGB(x, y, ColorUtil.rgba(ColorUtil.applyFactor(new Color(rgb), colorFactor)));
+                protected Color iterate(int x, int y, Color color) {
+                    return ColorUtil.applyFactor(color, colorFactor);
                 }
-            };
-            
-            g.drawImage(ImageUtil.awtToSlick(bufferedImage), 0, 0, null);
-
-            //status.render(g);
+            }.build(), 0, 0);
         } catch (SlickException ex) {
             throw new RuntimeException(ex);
         }
