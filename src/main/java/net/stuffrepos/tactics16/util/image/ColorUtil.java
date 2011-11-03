@@ -46,7 +46,7 @@ public class ColorUtil {
                     limitColor(color.getBlue() * factor),
                     limitColor(color.getAlpha() * factor));
         } else {
-            return new Color(0);
+            return new Color(0, 0, 0, 0);
         }
 
 
