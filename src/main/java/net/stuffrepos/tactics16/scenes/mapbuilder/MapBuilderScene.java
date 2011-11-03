@@ -4,8 +4,8 @@ import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.phase.Phase;
-import net.stuffrepos.tactics16.phase.PhaseManager;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
@@ -50,7 +50,7 @@ public class MapBuilderScene extends Phase {
     }
 
     @Override
-    public void initResources(GameContainer container, StateBasedGame game) {
+    public void enter(GameContainer container, StateBasedGame game) throws SlickException {
         toMenuMode();
     }
 
