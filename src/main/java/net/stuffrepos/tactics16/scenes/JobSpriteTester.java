@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.scenes;
 
+import java.util.Collections;
 import org.newdawn.slick.Graphics;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -16,7 +17,12 @@ import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.battle.Player;
+import net.stuffrepos.tactics16.util.cursors.Cursor1D;
+import net.stuffrepos.tactics16.util.cursors.ObjectCursor1D;
+import net.stuffrepos.tactics16.util.image.DrawerUtil;
+import net.stuffrepos.tactics16.util.javabasic.CollectionUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -25,13 +31,25 @@ import org.newdawn.slick.state.StateBasedGame;
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class JobSpriteTester extends Phase {
-
+    
     private static final int ANIMATION_BOX_SIZE = 60;
     private static final JobSpriteTester instance = new JobSpriteTester();
     private EntitiesBoard board = new EntitiesBoard();
     private SpritesBoard spritesBoard;
-    private static final double MOVIMENT_SPEED = 5.0;
-
+    private static final double MOVIMENT_SPEED = 5.0;    
+    private static final Color[] COLORS = new Color[]{
+        Color.black,
+        Color.white,
+        Color.gray,
+        Color.magenta,
+        Color.cyan,
+        Color.blue,
+        Color.red,
+        Color.yellow,
+        Color.green    
+    };
+    private ObjectCursor1D<Color> backgroundColorCursor;
+    
     private JobSpriteTester() {
     }
 
@@ -40,8 +58,11 @@ public class JobSpriteTester extends Phase {
     }
 
     @Override
-    public void initResources(GameContainer container, StateBasedGame game) {
-        board.getChildren().clear();
+    public void initResources(GameContainer container, StateBasedGame game) {        
+        backgroundColorCursor = new ObjectCursor1D<Color>(
+                CollectionUtil.listFromArray(COLORS));
+        backgroundColorCursor.getCursor().setKeys(GameKey.PREVIOUS, GameKey.NEXT);
+        board.getChildren().clear();        
         final PhaseTitle title = new PhaseTitle("Job Sprite Tester");
 
         board.getChildren().add(title);
@@ -56,7 +77,8 @@ public class JobSpriteTester extends Phase {
     }
 
     @Override
-    public void update(GameContainer container, StateBasedGame game, int delta) {
+    public void update(GameContainer container, StateBasedGame game, int delta) {        
+        backgroundColorCursor.update(delta);
         board.update(delta);
 
         if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
@@ -74,6 +96,8 @@ public class JobSpriteTester extends Phase {
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) {
+        g.setColor(backgroundColorCursor.getSelected());
+        DrawerUtil.fillScreen(g);
         board.render(g);
     }
 
@@ -84,7 +108,7 @@ public class JobSpriteTester extends Phase {
         public SpritesBoard() {
             for (int playerIndex = 0; playerIndex < Map.MAX_PLAYERS; ++playerIndex) {
                 Player player = new Player("Player " + (playerIndex + 1), playerIndex);
-
+                
                 int jobIndex = 0;
                 for (Job job : MyGame.getInstance().getLoader().getJobs()) {
                     int actionIndex = 0;

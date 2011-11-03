@@ -1,6 +1,7 @@
 package net.stuffrepos.tactics16.util.image;
 
 import java.awt.Dimension;
+import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.game.Coordinate;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -47,5 +48,9 @@ public class DrawerUtil {
 
     public static void fillRect(Graphics g, Dimension size) {
         g.fillRect(0, 0, size.width, size.height);
+    }
+
+    public static void fillScreen(Graphics g) {
+        g.fillRect(0, 0, MyGame.getInstance().getWidth(), MyGame.getInstance().getHeight());
     }
 }
