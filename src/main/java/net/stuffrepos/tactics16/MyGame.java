@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -19,7 +20,8 @@ import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.TrueTypeFont;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.state.GameState;
 import org.newdawn.slick.state.StateBasedGame;
 import org.newdawn.slick.state.transition.FadeInTransition;
@@ -32,7 +34,15 @@ import tactics16.util.ObjectCursor1D;
  */
 public class MyGame {
 
-    public static final String DEFAULT_TRUE_TYPE_FAMILY_NAME = "Liberation Mono";
+    public static enum FontType {
+
+        Common,
+        MainTitle,
+        PhaseTitle,
+        Message
+    }
+    private static final String COMMON_FONT_NAME = "Liberation Mono";
+    private static final String TITLE_FONT_NAME = "Purisa";
     private static final Dimension DEFAULT_SCREEN_SIZE = new Dimension(800, 600);
     private static MyGame instance;
     AppGameContainer app;
@@ -59,7 +69,7 @@ public class MyGame {
     private DataManager loader;
     private PhaseManager phaseManager = new PhaseManager(true);
     private KeyMapping keyMapping = new KeyMapping();
-    private TrueTypeFont font;
+    private EnumMap<FontType, org.newdawn.slick.Font> fonts;
     //private Font font = new Font("Purisa", Font.PLAIN, 12);
     private Object2D screenObject2D = new Object2D() {
 
@@ -127,10 +137,22 @@ public class MyGame {
         keyMapping.setMapping(GameKey.NEXT, Input.KEY_NEXT);
     }
 
-    private void initResources(GameContainer gameContainer) {
-        this.font = new TrueTypeFont(new Font(DEFAULT_TRUE_TYPE_FAMILY_NAME, Font.PLAIN, 12), true);
+    private void initResources(GameContainer gameContainer) throws SlickException {
+        fonts = new EnumMap<FontType, org.newdawn.slick.Font>(FontType.class);
+        fonts.put(FontType.Common, createUnicodeFont(COMMON_FONT_NAME, Font.PLAIN, 12));
+        fonts.put(FontType.Message, createUnicodeFont(MyGame.COMMON_FONT_NAME, Font.BOLD, 16));
+        fonts.put(FontType.MainTitle, createUnicodeFont(TITLE_FONT_NAME, Font.BOLD, 48));
+        fonts.put(FontType.PhaseTitle, createUnicodeFont(TITLE_FONT_NAME, Font.BOLD, 24));        
         this.gameContainer = gameContainer;
         loader.loadDirectory(loader.getDataDirectory());
+    }
+
+    private UnicodeFont createUnicodeFont(String name, int style, int size) throws SlickException {
+        UnicodeFont font = new UnicodeFont(new Font(name, style, size));
+        font.addAsciiGlyphs();
+        font.getEffects().add(new ColorEffect());
+        font.loadGlyphs();
+        return font;
     }
 
     public void quit() {
@@ -155,8 +177,8 @@ public class MyGame {
         return keyMapping;
     }
 
-    public org.newdawn.slick.Font getFont() {
-        return font;
+    public org.newdawn.slick.Font getFont(FontType fontType) {
+        return fonts.get(fontType);
     }
 
     public GameImage getImage(File file) {

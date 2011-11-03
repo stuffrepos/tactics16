@@ -1,9 +1,9 @@
 package net.stuffrepos.tactics16.components;
 
 import org.newdawn.slick.Color;
-import java.awt.Font;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.Layout;
+import net.stuffrepos.tactics16.MyGame.FontType;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 
 /**
@@ -12,7 +12,7 @@ import net.stuffrepos.tactics16.animation.VisualEntity;
  */
 public class PhaseTitle implements VisualEntity, Object2D {
 
-    public static final Font PHASE_TITLE_FONT = new Font("purisa", Font.BOLD, 24);
+ 
     public static final Color DEFAULT_COLOR = new Color(0x00FF00);
     private Text text;
 
@@ -20,7 +20,7 @@ public class PhaseTitle implements VisualEntity, Object2D {
         this.text = new Text();
         this.text.setColor(DEFAULT_COLOR);
         this.text.setText(text);
-        this.text.setFont(PHASE_TITLE_FONT);
+        this.text.setFont(FontType.PhaseTitle);
         this.text.getPosition().setXY(Layout.getCentralizedLeft(this.text), Layout.OBJECT_GAP);
     }
 

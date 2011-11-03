@@ -5,6 +5,7 @@ import java.awt.Font;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
+import net.stuffrepos.tactics16.MyGame.FontType;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.phase.Phase;
@@ -22,7 +23,6 @@ public class MessageBox implements VisualEntity, Object2D {
 
     public static final Color DEFAULT_BACKGROUND_COLOR = Color.white;
     public static final Color DEFAULT_FOREGROUND_COLOR = Color.black;
-    public static final Font DEFAULT_FONT = new Font(MyGame.DEFAULT_TRUE_TYPE_FAMILY_NAME, Font.BOLD, 16);
     private boolean finalized;
     private TextBox textBox;
     private long elapsedTime = 0;
@@ -38,7 +38,7 @@ public class MessageBox implements VisualEntity, Object2D {
         textBox.setFlat(true);
         textBox.setBackgroundColor(DEFAULT_BACKGROUND_COLOR);
         textBox.setForegroundColor(DEFAULT_FOREGROUND_COLOR);
-        textBox.setFont(DEFAULT_FONT);
+        textBox.setFont(FontType.Message);
         if (centralizeOn != null) {
             getPosition().set(Layout.getCentralizedOnObject2D(centralizeOn, this));
         }

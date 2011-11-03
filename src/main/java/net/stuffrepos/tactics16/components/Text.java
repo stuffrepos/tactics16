@@ -3,13 +3,13 @@ package net.stuffrepos.tactics16.components;
 import net.stuffrepos.tactics16.util.Align;
 import java.awt.Font;
 import net.stuffrepos.tactics16.MyGame;
+import net.stuffrepos.tactics16.MyGame.FontType;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.TrueTypeFont;
-import org.newdawn.slick.UnicodeFont;
 
 /**
  *
@@ -20,7 +20,7 @@ public class Text implements Object2D, VisualEntity {
     public static final int MAX_MARGIN = 10;
     private Align align = Align.NEGATIVE;
     public static final Color DEFAULT_COLOR = Color.white;
-    private org.newdawn.slick.Font font = MyGame.getInstance().getFont();
+    private org.newdawn.slick.Font font = MyGame.getInstance().getFont(FontType.Common);
     private String text;
     private Coordinate position = new Coordinate();
     private Color color;
@@ -158,8 +158,8 @@ public class Text implements Object2D, VisualEntity {
         return font;
     }
 
-    public void setFont(Font font) {
-        this.font = new TrueTypeFont(font, true, new char[]{'t'});        
+    public void setFont(FontType fontType) {
+        this.font = MyGame.getInstance().getFont(fontType);
         this.width.clear();
         this.height.clear();
     }

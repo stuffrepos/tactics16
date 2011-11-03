@@ -197,7 +197,7 @@ public class Menu implements Object2D {
     }
 
     private Font getFont() {
-        return MyGame.getInstance().getFont();
+        return MyGame.getInstance().getFont(MyGame.FontType.Common);
     }
 
     // <editor-fold defaultstate="collapsed" desc="class Colors">

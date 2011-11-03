@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.components;
 
-import java.awt.Font;
+import net.stuffrepos.tactics16.MyGame.FontType;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.util.Align;
@@ -217,10 +217,10 @@ public class TextBox implements Object2D, VisualEntity {
     public void setVerticalPosition(Align align) {
     }
 
-    public void setFont(Font font) {
+    public void setFont(FontType fontType) {
         this.width.clear();
         this.height.clear();
-        text.setFont(font);
+        text.setFont(fontType);
     }
 
     public org.newdawn.slick.Font getFont() {

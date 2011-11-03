@@ -24,7 +24,6 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class MainMenuScene extends Phase {
 
-    public static final Font MAIN_TITLE_FONT = new Font("purisa", Font.BOLD, 48);
     private static final MainMenuScene instance = new MainMenuScene();
     private Text title;
     private TextBox keysHelp;
@@ -98,7 +97,7 @@ public class MainMenuScene extends Phase {
     @Override
     public void initResources(GameContainer container, StateBasedGame game) throws SlickException {
         title = new Text();
-        title.setFont(MAIN_TITLE_FONT);
+        title.setFont(MyGame.FontType.MainTitle);
         title.setColor(PhaseTitle.DEFAULT_COLOR);
         title.setText("Tactics16");
 
