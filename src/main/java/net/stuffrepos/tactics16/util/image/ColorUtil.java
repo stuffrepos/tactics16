@@ -27,8 +27,22 @@ public class ColorUtil {
     }
 
     public static Color grayScale(Color color) {
-        int c = Math.max(color.getRed(), Math.max(color.getGreen(), color.getBlue()));
-        return new Color(c, c, c);
+        int c = (color.getRed() + color.getBlue() + color.getGreen()) / 3;
+        return new Color(c, c, c, color.getAlpha());
+    }
+
+    public static Color tonalize(Color color, Color tonalize) {                
+        //float scale = (color.getRed() + color.getBlue() + color.getGreen()) / (float) (3 * 255);
+        float scale = Math.max(color.getRed(), Math.max(color.getGreen(), color.getBlue())) / (float) 255;
+        return scale(tonalize, scale, color.getAlpha());
+    }
+
+    private static Color scale(Color tonalize, float scale, int fixedAlpha) {
+        return new Color(
+                (int) (tonalize.getRed() * scale),
+                (int) (tonalize.getGreen() * scale),
+                (int) (tonalize.getBlue() * scale),
+                fixedAlpha);
     }
 
     public static Color getBetweenColor(Color beginColor, Color endColor, float factor) {

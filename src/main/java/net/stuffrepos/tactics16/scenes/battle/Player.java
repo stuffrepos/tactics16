@@ -1,24 +1,24 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
+import net.stuffrepos.tactics16.scenes.battle.playercolors.PlayerColors;
+import net.stuffrepos.tactics16.scenes.battle.playercolors.PlayerColorMode;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.animation.SpriteAnimation;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.TreeMap;
 import net.stuffrepos.tactics16.game.DataObject;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Job.GameAction;
 import net.stuffrepos.tactics16.game.JobSpriteActionGroup;
+import net.stuffrepos.tactics16.scenes.battle.playercolors.SelectivePlayerColorMode;
 import net.stuffrepos.tactics16.util.cache.CacheableMapValue;
-import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
 import net.stuffrepos.tactics16.util.image.ImageUtil;
-import net.stuffrepos.tactics16.util.image.PixelImageCopyIterator;
 import net.stuffrepos.tactics16.util.image.PixelImageIterator;
 import org.newdawn.slick.ImageBuffer;
+import org.newdawn.slick.SlickException;
 
 /**
  *
@@ -27,25 +27,21 @@ import org.newdawn.slick.ImageBuffer;
 public class Player extends DataObject {
 
     private static final int SELECTED_ACTION_CHANGE_FRAME_INTERVAL = 100;
-    private CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<GameImage, GameImage>> images =
-            new CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<GameImage, GameImage>>() {
+    private static PlayerColorMode colorMode = SelectivePlayerColorMode.getInstance();
 
-                @Override
-                protected CacheableMapValue<GameImage, GameImage> calculate(final JobSpriteActionGroup jobSpriteActionGroup) {
-                    return new CacheableMapValue<GameImage, GameImage>() {
-
-                        @Override
-                        protected GameImage calculate(GameImage gameImage) {
-                            GameImage valueImage = PLAYER_COLORS.get(index).getMaskedImage(jobSpriteActionGroup, gameImage);
-                            if (valueImage.getScale() == 1.0) {
-                                return valueImage;
-                            } else {
-                                return valueImage.getScaledImage();
-                            }
-                        }
-                    };
-                }
-            };
+    public static void setColorMode(PlayerColorMode aColorMode) {
+        colorMode = aColorMode;
+        for (Player player : PLAYERS) {
+            player.jobAnimations.clear();
+            player.selectedAnimations.clear();
+            player.usedAnimations.clear();
+        }        
+    }
+    
+    public static PlayerColorMode getColorMode() {
+        return colorMode;
+    }
+    
     private CacheableMapValue<Job, SpriteAnimation> selectedAnimations =
             new CacheableMapValue<Job, SpriteAnimation>() {
 
@@ -133,6 +129,7 @@ public class Player extends DataObject {
             };
     private final int index;
     public static final ArrayList<PlayerColors> PLAYER_COLORS;
+    private static final ArrayList<Player> PLAYERS;
 
     static {
         PlayerColors player1Colors = new PlayerColors();
@@ -156,6 +153,15 @@ public class Player extends DataObject {
         PLAYER_COLORS.add(player2Colors);
         PLAYER_COLORS.add(player3Colors);
         PLAYER_COLORS.add(player4Colors);
+
+        PLAYERS = new ArrayList<Player>();
+        for (int i = 0; i < PLAYER_COLORS.size(); i++) {
+            PLAYERS.add(new Player("Player " + (i + 1), i));
+        }
+    }
+
+    public static Player getPlayer(int playerIndex) {
+        return PLAYERS.get(playerIndex);
     }
     private PlayerControl control = new HumanPlayerControl();
     private List<Person> persons = new ArrayList<Person>();
@@ -194,13 +200,17 @@ public class Player extends DataObject {
         }
     };
 
-    public Player(String name, int index) {
+    private Player(String name, int index) {
         super(name);
         this.index = index;
     }
 
     private GameImage getImage(JobSpriteActionGroup jobSpriteActionGroup, GameImage spriteImage) {
-        return images.getValue(jobSpriteActionGroup).getValue(spriteImage);
+        try {
+            return colorMode.applyColors(spriteImage, PLAYER_COLORS.get(index), jobSpriteActionGroup);
+        } catch (SlickException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     public List<Person> getPersons() {
@@ -238,95 +248,5 @@ public class Player extends DataObject {
 
         MAIN,
         SECUNDARY,
-    }
-
-    public static class PlayerColors {
-
-        private static class MaskedColor {
-
-            private int min;
-            private int max;
-
-            public MaskedColor(int min, int max) {
-                this.min = min;
-                this.max = max;
-            }
-
-            public int getMin() {
-                return min;
-            }
-
-            public int getMax() {
-                return max;
-            }
-
-            public org.newdawn.slick.Color getColor(float factor, float minLimit, float maxLimit) {
-                return ColorUtil.getBetweenColor(min, max, calculateRealFactor(factor, minLimit, maxLimit));
-            }
-
-            private static float calculateRealFactor(float factor, float minLimit, float maxLimit) {
-                return factor * (maxLimit - minLimit) + minLimit;
-            }
-        }
-        private java.util.Map<Color, MaskedColor> mapping = new TreeMap<Color, MaskedColor>();
-        private java.util.Map<GameImage, CacheableValue<GameImage>> maskedImages =
-                new HashMap<GameImage, CacheableValue<GameImage>>();
-        private CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<org.newdawn.slick.Color, org.newdawn.slick.Color>> jobsColors =
-                new CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<org.newdawn.slick.Color, org.newdawn.slick.Color>>() {
-
-                    @Override
-                    protected CacheableMapValue<org.newdawn.slick.Color, org.newdawn.slick.Color> calculate(final JobSpriteActionGroup jobSpriteActionGroup) {
-                        return new CacheableMapValue<org.newdawn.slick.Color, org.newdawn.slick.Color>() {
-
-                            @Override
-                            protected org.newdawn.slick.Color calculate(org.newdawn.slick.Color originalColor) {
-                                Player.Color playerColor = jobSpriteActionGroup.getMapping(originalColor);
-                                if (playerColor != null) {
-                                    return mapping.get(playerColor).getColor(
-                                            ColorUtil.getBetweenFactor(
-                                            jobSpriteActionGroup.getPlayerColorMin(playerColor),
-                                            jobSpriteActionGroup.getPlayerColorMax(playerColor),
-                                            originalColor),
-                                            jobSpriteActionGroup.getColorMappingMin(),
-                                            jobSpriteActionGroup.getColorMappingMax());
-                                } else {
-                                    return originalColor;
-                                }
-                            }
-                        };
-                    }
-                };
-
-        public void setMapping(Color playerColor, int minRgb, int maxRgb) {
-            mapping.put(playerColor, new MaskedColor(minRgb, maxRgb));
-        }
-
-        public GameImage getMaskedImage(final JobSpriteActionGroup jobSpriteActionGroup, final GameImage image) {
-            CacheableValue<GameImage> cachedMaskedImage = maskedImages.get(image);
-
-            if (cachedMaskedImage == null) {
-                cachedMaskedImage = new CacheableValue<GameImage>() {
-
-                    @Override
-                    protected GameImage calculate() {
-                        return image.clone(
-                                new PixelImageCopyIterator(image.getImage()) {
-
-                                    @Override
-                                    protected org.newdawn.slick.Color iterate(int x, int y, org.newdawn.slick.Color color) {
-                                        return jobsColors.getValue(jobSpriteActionGroup).getValue(color);
-                                    }
-                                }.build());
-                    }
-                };
-                maskedImages.put(image, cachedMaskedImage);
-            }
-
-            return cachedMaskedImage.getValue();
-        }
-
-        public org.newdawn.slick.Color getDefault() {
-            return new org.newdawn.slick.Color(mapping.get(Color.MAIN).getColor(0.5f, 0.0f, 1.0f));
-        }
     }
 }

@@ -46,7 +46,7 @@ public class BattleGame {
     public void resetPlayers() {
         players.clear();
         for (int i = 0; i < map.getPlayerCount(); ++i) {
-            players.add(new Player("Player " + (i + 1), i));
+            players.add(Player.getPlayer(i));
         }
     }
 

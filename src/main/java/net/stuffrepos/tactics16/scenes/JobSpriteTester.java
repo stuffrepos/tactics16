@@ -1,6 +1,5 @@
 package net.stuffrepos.tactics16.scenes;
 
-import java.util.Collections;
 import org.newdawn.slick.Graphics;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -12,11 +11,15 @@ import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.components.AbstractObject2D;
 import net.stuffrepos.tactics16.components.AnimationBox;
 import net.stuffrepos.tactics16.components.PhaseTitle;
+import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.battle.Player;
+import net.stuffrepos.tactics16.scenes.battle.playercolors.PlayerColorMode;
+import net.stuffrepos.tactics16.scenes.battle.playercolors.SelectivePlayerColorMode;
+import net.stuffrepos.tactics16.scenes.battle.playercolors.SingleColorPlayerColorMode;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.cursors.ObjectCursor1D;
 import net.stuffrepos.tactics16.util.image.DrawerUtil;
@@ -49,7 +52,13 @@ public class JobSpriteTester extends Phase {
         Color.green    
     };
     private ObjectCursor1D<Color> backgroundColorCursor;
-    
+    private static final PlayerColorMode[] PLAYER_COLOR_MODES = new PlayerColorMode[]{
+        SelectivePlayerColorMode.getInstance(),
+        SingleColorPlayerColorMode.getInstance()
+    };
+    private ObjectCursor1D<PlayerColorMode> playerColorModeCursor;
+    private TextBox info;
+
     private JobSpriteTester() {
     }
 
@@ -58,11 +67,28 @@ public class JobSpriteTester extends Phase {
     }
 
     @Override
-    public void initResources(GameContainer container, StateBasedGame game) {        
+    public void initResources(GameContainer container, StateBasedGame game) {
+        info = new TextBox();
+        info.setText(Player.getColorMode().getClass().getSimpleName());
+        info.getPosition().setXY(Layout.OBJECT_GAP, Layout.getScreenHeight() - Layout.OBJECT_GAP - info.getHeight());
         backgroundColorCursor = new ObjectCursor1D<Color>(
                 CollectionUtil.listFromArray(COLORS));
         backgroundColorCursor.getCursor().setKeys(GameKey.PREVIOUS, GameKey.NEXT);
-        board.getChildren().clear();        
+        playerColorModeCursor = new ObjectCursor1D<PlayerColorMode>(
+                CollectionUtil.listFromArray(PLAYER_COLOR_MODES));
+        playerColorModeCursor.getCursor().setKeys(null, GameKey.CONFIRM);
+        playerColorModeCursor.getCursor().addListener(new Listener<Cursor1D>() {
+
+            public void onChange(Cursor1D source) {
+                Player.setColorMode(playerColorModeCursor.getSelected());
+                info.setText(Player.getColorMode().getClass().getSimpleName());
+                rebuildBoard();
+            }
+        });
+    }
+
+    private void rebuildBoard() {
+        board.getChildren().clear();
         final PhaseTitle title = new PhaseTitle("Job Sprite Tester");
 
         board.getChildren().add(title);
@@ -77,8 +103,10 @@ public class JobSpriteTester extends Phase {
     }
 
     @Override
-    public void update(GameContainer container, StateBasedGame game, int delta) {        
+    public void update(GameContainer container, StateBasedGame game, int delta) {
+        info.update(delta);
         backgroundColorCursor.update(delta);
+        playerColorModeCursor.update(delta);
         board.update(delta);
 
         if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
@@ -99,6 +127,7 @@ public class JobSpriteTester extends Phase {
         g.setColor(backgroundColorCursor.getSelected());
         DrawerUtil.fillScreen(g);
         board.render(g);
+        info.render(g);
     }
 
     private static class SpritesBoard extends AbstractObject2D implements VisualEntity {
@@ -107,8 +136,8 @@ public class JobSpriteTester extends Phase {
 
         public SpritesBoard() {
             for (int playerIndex = 0; playerIndex < Map.MAX_PLAYERS; ++playerIndex) {
-                Player player = new Player("Player " + (playerIndex + 1), playerIndex);
-                
+                Player player = Player.getPlayer(playerIndex);
+
                 int jobIndex = 0;
                 for (Job job : MyGame.getInstance().getLoader().getJobs()) {
                     int actionIndex = 0;
