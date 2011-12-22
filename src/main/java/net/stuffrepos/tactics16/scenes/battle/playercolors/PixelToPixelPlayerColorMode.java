@@ -16,25 +16,6 @@ import org.newdawn.slick.SlickException;
 public abstract class PixelToPixelPlayerColorMode implements PlayerColorMode {
 
     private Map<PlayerColors, CacheableMapValue<GameImage, GameImage>> maskedImages = new HashMap<PlayerColors, CacheableMapValue<GameImage, GameImage>>();
-    private CacheableMapValue<PlayerColors, CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<Color, Color>>> jobsColors = new CacheableMapValue<PlayerColors, CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<Color, Color>>>() {
-
-        @Override
-        protected CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<Color, Color>> calculate(final PlayerColors playerColors) {
-            return new CacheableMapValue<JobSpriteActionGroup, CacheableMapValue<Color, Color>>() {
-
-                @Override
-                protected CacheableMapValue<Color, Color> calculate(final JobSpriteActionGroup jobSpriteActionGroup) {
-                    return new CacheableMapValue<Color, Color>() {
-
-                        @Override
-                        protected Color calculate(Color originalColor) {
-                            return getJobColor(playerColors, jobSpriteActionGroup, originalColor);
-                        }
-                    };
-                }
-            };
-        }
-    };
 
     public final GameImage applyColors(GameImage image, PlayerColors playerColors, JobSpriteActionGroup jobSpriteActionGroup) throws SlickException {
         GameImage valueImage = getMaskedImage(image, playerColors, jobSpriteActionGroup);
@@ -56,7 +37,7 @@ public abstract class PixelToPixelPlayerColorMode implements PlayerColorMode {
 
                         @Override
                         protected Color iterate(int x, int y, Color color) {
-                            return jobsColors.getValue(playerColors).getValue(jobSpriteActionGroup).getValue(color);
+                            return getJobColor(playerColors, jobSpriteActionGroup, color);
                         }
                     }.build());
                 }
