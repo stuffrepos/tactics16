@@ -60,6 +60,14 @@ public class MainMenuScene extends Phase {
 
                 }
             },
+            new CommonMenuOption("Animation Tester") {
+
+                @Override
+                public void executeAction() {
+                    MyGame.getInstance().getPhaseManager().advance(AnimationSpriteTester.getInstance());
+
+                }
+            },
             new CommonMenuOption("Message Box Test") {
 
                 @Override
