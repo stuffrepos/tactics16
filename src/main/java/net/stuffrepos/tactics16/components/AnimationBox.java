@@ -28,7 +28,7 @@ public class AnimationBox implements VisualEntity, Object2D {
         protected int calculate() {
             int max = 0;
             for (GameImage image : animation.getImages()) {
-                int width = image.getImage().getWidth();
+                int width = image.getScaledImage().getImage().getWidth();
                 if (width > max) {
                     max = width;
                 }
@@ -42,7 +42,7 @@ public class AnimationBox implements VisualEntity, Object2D {
         protected int calculate() {
             int max = 0;
             for (GameImage image : animation.getImages()) {
-                int height = image.getImage().getHeight();
+                int height = image.getScaledImage().getImage().getHeight();
                 if (height > max) {
                     max = height;
                 }

@@ -16,6 +16,7 @@ import net.stuffrepos.tactics16.scenes.battle.playercolors.SelectivePlayerColorM
 import net.stuffrepos.tactics16.util.cache.CacheableMapValue;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
 import net.stuffrepos.tactics16.util.image.ImageUtil;
+import net.stuffrepos.tactics16.util.image.PixelImageCopyIterator;
 import net.stuffrepos.tactics16.util.image.PixelImageIterator;
 import org.newdawn.slick.ImageBuffer;
 import org.newdawn.slick.SlickException;
@@ -57,27 +58,17 @@ public class Player extends DataObject {
                 }
 
                 private GameImage createSelectedImage(GameImage image, final float factor) {
-                    final ImageBuffer newImage = new ImageBuffer(image.getImage().getWidth(), image.getImage().getHeight());
-
-                    new PixelImageIterator(image.getImage()) {
+                    return image.clone(new PixelImageCopyIterator(image.getImage()) {
 
                         @Override
-                        public void iterate(int x, int y, org.newdawn.slick.Color color) {
+                        protected org.newdawn.slick.Color iterate(int x, int y, org.newdawn.slick.Color color) {
                             if (org.newdawn.slick.Color.magenta.equals(color)) {
-                                newImage.setRGBA(x, y, 0, 0, 0, 0);
+                                return org.newdawn.slick.Color.transparent;
                             } else {
-                                ImageUtil.setColor(newImage, x, y, ColorUtil.applyFactor(color, factor));
+                                return ColorUtil.applyFactor(color, factor);
                             }
-
-
-
                         }
-                    };
-
-                    GameImage gameImage = new GameImage(newImage);
-                    gameImage.getCenter().set(image.getCenter());
-
-                    return gameImage;
+                    }.build());
                 }
 
                 @Override
@@ -106,10 +97,7 @@ public class Player extends DataObject {
                 }
 
                 private GameImage createSelectedImage(GameImage image) {
-                    GameImage gameImage = new GameImage(ImageUtil.grayScale(image.getImage()));
-                    gameImage.getCenter().set(image.getCenter());
-
-                    return gameImage;
+                    return image.clone(ImageUtil.grayScale(image.getImage()));
                 }
 
                 @Override

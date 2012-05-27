@@ -18,12 +18,7 @@ public abstract class PixelToPixelPlayerColorMode implements PlayerColorMode {
     private Map<PlayerColors, CacheableMapValue<GameImage, GameImage>> maskedImages = new HashMap<PlayerColors, CacheableMapValue<GameImage, GameImage>>();
 
     public final GameImage applyColors(GameImage image, PlayerColors playerColors, JobSpriteActionGroup jobSpriteActionGroup) throws SlickException {
-        GameImage valueImage = getMaskedImage(image, playerColors, jobSpriteActionGroup);
-        if (valueImage.getScale() == 1.0) {
-            return valueImage;
-        } else {
-            return valueImage.getScaledImage();
-        }
+        return getMaskedImage(image, playerColors, jobSpriteActionGroup);
     }
 
     private GameImage getMaskedImage(final GameImage image, final PlayerColors playerColors, final JobSpriteActionGroup jobSpriteActionGroup) {

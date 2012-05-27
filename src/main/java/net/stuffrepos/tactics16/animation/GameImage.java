@@ -14,16 +14,19 @@ public class GameImage implements Cloneable {
 
     private Image image;
     private Coordinate center;
-    private double scale = 1.0;
+    private static final double NO_SCALE = 1.0;
+    private double scale = NO_SCALE;
     private CacheableValue<GameImage> scaledImage = new CacheableValue<GameImage>() {
 
         @Override
         protected GameImage calculate() {
-            GameImage scaledImage = new GameImage(image.getScaledCopy((float)scale));
-            scaledImage.getCenter().setXY(
-                    (int) (center.getX() * scale),
-                    (int) (center.getY() * scale));
-            return scaledImage;
+            return new GameImage(
+                    image.getScaledCopy((float) scale),
+                    new Coordinate(
+                    center.getX() * scale,
+                    center.getY() * scale),
+                    NO_SCALE);
+
         }
     };
     private CacheableValue<GameImage> flippedX = new CacheableValue<GameImage>() {
@@ -37,14 +40,19 @@ public class GameImage implements Cloneable {
             return flipped;
         }
     };
-    
-    public GameImage(Image image) {        
-        this.image = image;
-        this.center = new Coordinate();
+
+    public GameImage(Image image) {
+        this(image, new Coordinate(), 1.0);
     }
 
     public GameImage(ImageData imageData) {
         this(new Image(imageData));
+    }
+
+    public GameImage(Image image, Coordinate center, double scale) {
+        this.image = image;
+        this.center = center.clone();
+        this.scale = scale;
     }
 
     public void render(Graphics g, Coordinate position) {
@@ -59,13 +67,17 @@ public class GameImage implements Cloneable {
 
         assert invertY == false : "Not yet implemented Y invert";                
 
-        if (invertX) {            
-            flippedX.getValue().render(g,x,y,false,false);
+        if (scale == NO_SCALE) {
+            if (invertX) {
+                flippedX.getValue().render(g, x, y, false, false);
+            } else {
+                g.drawImage(
+                        image,
+                        x - center.getX(),
+                        y - center.getY());
+            }
         } else {
-            g.drawImage(
-                    image,
-                    x - center.getX(),
-                    y - center.getY());
+            scaledImage.getValue().render(g, x, y, invertX, invertY);
         }
     }
 
@@ -74,20 +86,20 @@ public class GameImage implements Cloneable {
     }
 
     public Coordinate getCenter() {
-        return center;
+        if (scale == NO_SCALE) {
+            return center;
+        } else {
+            return scaledImage.getValue().getCenter();
+        }
     }
 
     @Override
     public GameImage clone() {
         return clone(this.image);
     }
-    
-    public GameImage clone(Image image) {
-        GameImage gameImage = new GameImage(image);
-        gameImage.getCenter().set(center);
-        gameImage.setScale(scale);
 
-        return gameImage;
+    public GameImage clone(Image image) {
+        return new GameImage(image, center, scale);
     }
 
     public void render(Graphics g, Coordinate position, boolean invertX, boolean invertY) {
