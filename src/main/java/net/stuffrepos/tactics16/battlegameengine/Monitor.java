@@ -8,74 +8,74 @@ import net.stuffrepos.tactics16.battlegameengine.Map.Coordinate;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public interface Monitor<PersonId, PlayerId> {
+public interface Monitor {
 
     public void notifyNewTurn(int currentTurn);
 
-    public void notifyPersonsActOrderDefined(List<PersonId> persons);
+    public void notifyPersonsActOrderDefined(List<Integer> persons);
 
-    public void notifySelectedPerson(PersonId selectedPerson);
+    public void notifySelectedPerson(Integer selectedPerson);
 
-    public Coordinate requestMovimentTarget(PersonId person, Map map,
+    public Coordinate requestMovimentTarget(Integer person, Map map,
             Coordinate originalPosition,
             Collection<Coordinate> movimentRange);
 
-    public void notifyOutOfReachMoviment(PersonId person, Coordinate coordinate);
+    public void notifyOutOfReachMoviment(Integer person, Coordinate coordinate);
 
-    public void notifyPersonMoved(PersonId person,
+    public void notifyPersonMoved(Integer person,
             Coordinate originalPosition,
             Coordinate movimentTarget);
 
     public Action requestPersonAction(
-            PersonId person,
+            Integer person,
             Map map,
             Coordinate personPosition,
             java.util.Map<Action, Boolean> classifyPersonActions);
 
-    public void notifyMovimentCancelled(PersonId person,
+    public void notifyMovimentCancelled(Integer person,
             Coordinate originalPosition,
             Coordinate movimentTarget);
 
-    public void notifySelectedAction(PersonId person, Action selectedAction);
+    public void notifySelectedAction(Integer person, Action selectedAction);
 
-    public void notifyNotEnabledAction(PersonId person, Action selectedAction);
+    public void notifyNotEnabledAction(Integer person, Action selectedAction);
 
     public void notifyChooseActionCancelled(
-            PersonId person,
+            Integer person,
             Action selectedAction);
 
-    public void notifyChoosedTarget(PersonId person, Coordinate actionTarget);
+    public void notifyChoosedTarget(Integer person, Coordinate actionTarget);
 
-    public void notifyOutOfReach(PersonId person, Action selectedAction);
+    public void notifyOutOfReach(Integer person, Action selectedAction);
 
     public Coordinate requestActionTarget(
-            PersonId person,
+            Integer person,
             Map map,
             Coordinate get,
             Action selectedAction,
             Collection<Coordinate> actionRange);
 
-    public boolean requestActConfirm(PersonId person, Action selectedAction,
+    public boolean requestActConfirm(Integer person, Action selectedAction,
             Coordinate actionTarget,
-            Collection<Coordinate> actRay, Collection<PersonId> affectedPersons);
+            Collection<Coordinate> actRay, Collection<Integer> affectedPersons);
 
-    public void notifyConfirmCancelled(PersonId person, Action selectedAction,
+    public void notifyConfirmCancelled(Integer person, Action selectedAction,
             Coordinate actionTarget);
 
     public void notifyPerformedAction(
-            PersonId agentPerson,
+            Integer agentPerson,
             Action action,
             Coordinate target,
             Collection<Coordinate> buildActionReachRay,
-            Collection<PersonId> affectedPersons,
+            Collection<Integer> affectedPersons,
             int agentLostSpecialPoints,
             int agentLostHealthPoints);
 
     public void notifyActionAffectedPerson(
-            PersonId affectedPerson,
+            Integer affectedPerson,
             boolean hits,
             int damage,
             boolean affectedPersonIsAlive);
 
-    public void notifyWiningPlayer(PlayerId winnerPlayer);
+    public void notifyWiningPlayer(Integer winnerPlayer);
 }

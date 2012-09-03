@@ -17,7 +17,7 @@ import net.stuffrepos.tactics16.battlegameengine.Map.Coordinate;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class BattleGame<PersonId, PlayerId> {
+public class BattleGame {
 
     private final Map map;
     private Monitor monitor;
@@ -27,15 +27,15 @@ public class BattleGame<PersonId, PlayerId> {
 
     public BattleGame(
             Map map,
-            java.util.Map<PersonId, Person> persons,
-            java.util.Map<PersonId, PlayerId> personsPlayers,
-            java.util.Map<PersonId, Coordinate> personsPositions,
-            Monitor<PersonId, PlayerId> monitor) {
+            java.util.Map<Integer, Person> persons,
+            java.util.Map<Integer, Integer> personsPlayers,
+            java.util.Map<Integer, Coordinate> personsPositions,
+            Monitor monitor) {
         this.map = map.clone();
         this.monitor = monitor;
         this.personSet = new PersonSet();
 
-        for (Entry<PersonId, Person> e : persons.entrySet()) {
+        for (Entry<Integer, Person> e : persons.entrySet()) {
             this.personSet.addPerson(
                     e.getKey(),
                     e.getValue().clone(),
@@ -49,9 +49,9 @@ public class BattleGame<PersonId, PlayerId> {
         turnLoop:
         while (true) {
             monitor.notifyNewTurn(++turn);
-            List<PersonId> persons = finders.orderPersonsToAct();
+            List<Integer> persons = finders.orderPersonsToAct();
             monitor.notifyPersonsActOrderDefined(persons);
-            for (PersonId selectedPerson : persons) {
+            for (Integer selectedPerson : persons) {
                 if (definitions.isPersonAlive(selectedPerson)) {
                     monitor.notifySelectedPerson(selectedPerson);
                     personActs(selectedPerson);
@@ -64,7 +64,7 @@ public class BattleGame<PersonId, PlayerId> {
         monitor.notifyWiningPlayer(finders.getWinnerPlayer());
     }
 
-    private void personActs(PersonId personId) {
+    private void personActs(Integer personId) {
         PersonActPhase currentPhase = PersonActPhase.Moviment;
         Action selectedAction = null;
         Coordinate originalPosition = personSet.getPerson(personId).getPosition();
@@ -161,8 +161,8 @@ public class BattleGame<PersonId, PlayerId> {
         }
     }
 
-    private void performAction(PersonId agentPerson, Action action, Coordinate target) {
-        Collection<PersonId> affectedPersons = findAffectedActionPersons(action, target);
+    private void performAction(Integer agentPerson, Action action, Coordinate target) {
+        Collection<Integer> affectedPersons = findAffectedActionPersons(action, target);
 
         int lostSpecialPoints = definitions.actionLostSpecialPoints(agentPerson, action);
         int lostHealthPoints = definitions.actionLostHealthPoints(agentPerson, action);
@@ -179,7 +179,7 @@ public class BattleGame<PersonId, PlayerId> {
                 lostSpecialPoints,
                 lostHealthPoints);
 
-        for (PersonId affectedPerson : findAffectedActionPersons(action, target)) {
+        for (Integer affectedPerson : findAffectedActionPersons(action, target)) {
             boolean hits = definitions.hits(action, affectedPerson);
             int damage = 0;
             if (hits) {
@@ -196,7 +196,7 @@ public class BattleGame<PersonId, PlayerId> {
         }
     }
 
-    private java.util.Map<Action, Boolean> classifyPersonActions(PersonId person) {
+    private java.util.Map<Action, Boolean> classifyPersonActions(Integer person) {
         java.util.Map<Action, Boolean> classifiedActions = new HashMap<Action, Boolean>();
         for (Action action : personSet.getPerson(person).getActions()) {
             classifiedActions.put(action, definitions.isActionEnabled(person, action));
@@ -204,21 +204,21 @@ public class BattleGame<PersonId, PlayerId> {
         return classifiedActions;
     }
 
-    private Collection<Coordinate> buildMovimentRange(PersonId person) {
+    private Collection<Coordinate> buildMovimentRange(Integer person) {
         return buildMovimentRange(
                 person,
                 personSet.getPerson(person).getPosition(),
                 personSet.getPerson(person).getMoviment());
     }
 
-    private Set<Coordinate> buildMovimentRange(PersonId person, Coordinate current, int movimentLeft) {
+    private Set<Coordinate> buildMovimentRange(Integer person, Coordinate current, int movimentLeft) {
         Set<Coordinate> range = new TreeSet<Coordinate>(CoordinateComparator.getInstance());
 
         if (map.getSquare(current).isMovimentBlocked()) {
             return range;
         }
 
-        PersonId personOnPosition = personSet.getPersonOnPosition(current);
+        Integer personOnPosition = personSet.getPersonOnPosition(current);
 
         if (personOnPosition != null && !person.equals(personOnPosition)) {
             if (definitions.isEnemy(person, personOnPosition)) {
@@ -243,7 +243,7 @@ public class BattleGame<PersonId, PlayerId> {
      * @param action
      * @return
      */
-    private Set<Coordinate> buildActionRange(PersonId person, Action action) {
+    private Set<Coordinate> buildActionRange(Integer person, Action action) {
         Set<Coordinate> range = new TreeSet<Coordinate>(CoordinateComparator.getInstance());
 
         for (int distance = action.getReach().getMinimum();
@@ -279,10 +279,10 @@ public class BattleGame<PersonId, PlayerId> {
 
     }
 
-    private Collection<PersonId> findAffectedActionPersons(Action action, Coordinate target) {
-        Set<PersonId> affectedPersons = new HashSet<PersonId>();
+    private Collection<Integer> findAffectedActionPersons(Action action, Coordinate target) {
+        Set<Integer> affectedPersons = new HashSet<Integer>();
         for (Coordinate coordinate : buildActionReachRay(action, target)) {
-            PersonId person = personSet.getPersonOnPosition(coordinate);
+            Integer person = personSet.getPersonOnPosition(coordinate);
             if (person != null) {
                 affectedPersons.add(person);
             }
@@ -337,9 +337,9 @@ public class BattleGame<PersonId, PlayerId> {
 
     private class Finders {
 
-        private Collection<PlayerId> getAlivePlayers() {
-            List<PlayerId> alivePlayers = new LinkedList<PlayerId>();
-            for (PlayerId player : personSet.getPlayers()) {
+        private Collection<Integer> getAlivePlayers() {
+            List<Integer> alivePlayers = new LinkedList<Integer>();
+            for (Integer player : personSet.getPlayers()) {
                 if (definitions.isPlayerAlive(player)) {
                     alivePlayers.add(player);
                 }
@@ -347,9 +347,9 @@ public class BattleGame<PersonId, PlayerId> {
             return alivePlayers;
         }
 
-        private Collection<PersonId> getPlayerAlivePersons(PlayerId playerId) {
-            List<PersonId> alivePersons = new LinkedList<PersonId>();
-            for (PersonId personId : personSet.getPersonsByPlayer(playerId)) {
+        private Collection<Integer> getPlayerAlivePersons(Integer playerId) {
+            List<Integer> alivePersons = new LinkedList<Integer>();
+            for (Integer personId : personSet.getPersonsByPlayer(playerId)) {
                 if (definitions.isPersonAlive(personId)) {
                     alivePersons.add(personId);
                 }
@@ -357,13 +357,13 @@ public class BattleGame<PersonId, PlayerId> {
             return alivePersons;
         }
 
-        private List<PersonId> orderPersonsToAct() {
-            List<PlayerId> orderedObjects = orderReverseObjectsByPersonsCount(
+        private List<Integer> orderPersonsToAct() {
+            List<Integer> orderedObjects = orderReverseObjectsByPersonsCount(
                     getAlivePlayers());
-            List<PersonId> orderedPersons = new LinkedList<PersonId>();
+            List<Integer> orderedPersons = new LinkedList<Integer>();
 
-            for (PlayerId playerId : orderedObjects) {
-                List<PersonId> playerPersons = new LinkedList<PersonId>(getPlayerAlivePersons(playerId));
+            for (Integer playerId : orderedObjects) {
+                List<Integer> playerPersons = new LinkedList<Integer>(getPlayerAlivePersons(playerId));
                 Collections.shuffle(playerPersons);
 
                 if (orderedPersons == null) {
@@ -379,12 +379,12 @@ public class BattleGame<PersonId, PlayerId> {
             return orderedPersons;
         }
 
-        private List<PlayerId> orderReverseObjectsByPersonsCount(Collection<PlayerId> players) {
-            List<PlayerId> result = new LinkedList<PlayerId>(players);
-            Collections.sort(result, new Comparator<PlayerId>() {
-                public int compare(PlayerId player1, PlayerId player2) {
-                    Collection<PersonId> player1AlivePersons = getPlayerAlivePersons(player1);
-                    Collection<PersonId> player2AlivePersons = getPlayerAlivePersons(player2);
+        private List<Integer> orderReverseObjectsByPersonsCount(Collection<Integer> players) {
+            List<Integer> result = new LinkedList<Integer>(players);
+            Collections.sort(result, new Comparator<Integer>() {
+                public int compare(Integer player1, Integer player2) {
+                    Collection<Integer> player1AlivePersons = getPlayerAlivePersons(player1);
+                    Collection<Integer> player2AlivePersons = getPlayerAlivePersons(player2);
 
                     if (player1AlivePersons.size() > player2AlivePersons.size()) {
                         return -1;
@@ -398,8 +398,8 @@ public class BattleGame<PersonId, PlayerId> {
             return result;
         }
 
-        private PlayerId getWinnerPlayer() {
-            Collection<PlayerId> aliveObjects = getAlivePlayers();
+        private Integer getWinnerPlayer() {
+            Collection<Integer> aliveObjects = getAlivePlayers();
             switch (aliveObjects.size()) {
                 case 0:
                     throw new IllegalStateException("There is no one player alive.");
@@ -413,28 +413,28 @@ public class BattleGame<PersonId, PlayerId> {
 
     private class Definitions {
 
-        private boolean isPersonAlive(PersonId person) {
+        private boolean isPersonAlive(Integer person) {
             return personSet.getPerson(person).getHealthPoints() <= 0;
         }
 
-        private boolean isPlayerAlive(PlayerId player) {
+        private boolean isPlayerAlive(Integer player) {
             return !finders.getPlayerAlivePersons(player).isEmpty();
         }
 
-        private boolean isActionEnabled(PersonId person, Action action) {
+        private boolean isActionEnabled(Integer person, Action action) {
             return personSet.getPerson(person).getSpecialPoints() >= action.costSpecialPoints();
         }
 
-        private boolean isEnemy(PersonId person, PersonId otherPerson) {
+        private boolean isEnemy(Integer person, Integer otherPerson) {
             return !personSet.getPerson(person).getPlayer().equals(
                     personSet.getPerson(otherPerson).getPlayer());
         }
 
-        private boolean hits(Action action, PersonId affectedPerson) {
+        private boolean hits(Action action, Integer affectedPerson) {
             return dice(action.getAccuracy()) >= dice(personSet.getPerson(affectedPerson).getEvasiveness());
         }
 
-        private int damage(Action action, PersonId affectedPerson) {
+        private int damage(Action action, Integer affectedPerson) {
             return java.lang.Math.max(action.getPower() - personSet.getPerson(affectedPerson).getResistence(), 0);
         }
 
@@ -449,11 +449,11 @@ public class BattleGame<PersonId, PlayerId> {
             return result;
         }
 
-        private int actionLostSpecialPoints(PersonId agentPerson, Action action) {
+        private int actionLostSpecialPoints(Integer agentPerson, Action action) {
             throw new UnsupportedOperationException("Not yet implemented");
         }
 
-        private int actionLostHealthPoints(PersonId agentPerson, Action action) {
+        private int actionLostHealthPoints(Integer agentPerson, Action action) {
             throw new UnsupportedOperationException("Not yet implemented");
         }
     }
@@ -515,39 +515,39 @@ public class BattleGame<PersonId, PlayerId> {
 
     private class PersonSet {
 
-        private java.util.Map<PersonId, PersonData> persons =
-                new HashMap<PersonId, PersonData>();
-        private java.util.Map<Coordinate, PersonId> mapPersons =
-                new TreeMap<Coordinate, PersonId>(CoordinateComparator.getInstance());
-        private java.util.Map<PlayerId, Collection<PersonId>> playerPersons =
-                new HashMap<PlayerId, Collection<PersonId>>();
+        private java.util.Map<Integer, PersonData> persons =
+                new HashMap<Integer, PersonData>();
+        private java.util.Map<Coordinate, Integer> mapPersons =
+                new TreeMap<Coordinate, Integer>(CoordinateComparator.getInstance());
+        private java.util.Map<Integer, Collection<Integer>> playerPersons =
+                new HashMap<Integer, Collection<Integer>>();
 
-        private void addPerson(PersonId personId, Person person, Coordinate position, PlayerId playerId) {
+        private void addPerson(Integer personId, Person person, Coordinate position, Integer playerId) {
             persons.put(personId, new PersonData(person));
             persons.get(personId).setPlayer(playerId);
             persons.get(personId).setPosition(position);
         }
 
-        public PersonId getPersonOnPosition(Coordinate position) {
+        public Integer getPersonOnPosition(Coordinate position) {
             return mapPersons.get(position);
         }
 
-        private Iterable<PlayerId> getPlayers() {
+        private Iterable<Integer> getPlayers() {
             return playerPersons.keySet();
         }
 
-        private Iterable<PersonId> getPersonsByPlayer(PlayerId playerId) {
+        private Iterable<Integer> getPersonsByPlayer(Integer playerId) {
             return playerPersons.get(playerId);
         }
 
-        private PersonData getPerson(PersonId personId) {
+        private PersonData getPerson(Integer personId) {
             return persons.get(personId);
         }
 
         public class PersonData {
 
-            private PersonId id;
-            private PlayerId playerId;
+            private Integer id;
+            private Integer playerId;
             private int healthPoints;
             private int specialPoints;
             private Person person;
@@ -573,7 +573,7 @@ public class BattleGame<PersonId, PlayerId> {
                 return person.getActions();
             }
 
-            private PlayerId getPlayer() {
+            private Integer getPlayer() {
                 return playerId;
             }
 
@@ -586,13 +586,13 @@ public class BattleGame<PersonId, PlayerId> {
                 mapPersons.put(position, id);
             }
 
-            private void setPlayer(PlayerId playerId) {
+            private void setPlayer(Integer playerId) {
                 if (this.playerId != null) {
                     playerPersons.get(this.playerId).remove(this.id);
                 }
 
                 if (playerPersons.get(playerId) == null) {
-                    playerPersons.put(playerId, new HashSet<PersonId>());
+                    playerPersons.put(playerId, new HashSet<Integer>());
                 }
 
                 this.playerId = playerId;
