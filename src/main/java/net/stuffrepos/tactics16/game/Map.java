@@ -8,12 +8,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import net.stuffrepos.tactics16.animation.GameImage;
+import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.battlegameengine.Map.Square;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Map implements Nameable {
+public class Map implements Nameable, net.stuffrepos.tactics16.battlegameengine.Map {
 
     public static final int MAX_PLAYERS = 4;
     public static final int MIN_PLAYERS = 2;
@@ -81,11 +83,11 @@ public class Map implements Nameable {
         }
     }
 
-    public Integer getHeight() {
+    public int getHeight() {
         return terrains.getHeight();
     }
 
-    public Integer getWidth() {
+    public int getWidth() {
         return terrains.getWidth();
     }
 
@@ -175,7 +177,7 @@ public class Map implements Nameable {
         return c.inRectangle(0, 0, getWidth(), getHeight());
     }
 
-    public Terrain getTerrain(Coordinate position) {
+    public Terrain getTerrain(MapCoordinate position) {
         return getTerrain(position.getX(), position.getY());
     }
 
@@ -194,6 +196,10 @@ public class Map implements Nameable {
     public boolean isPlayable() {
         return personInitialPositions.isPlayable() &&
                 terrains.isPlayable();        
+    }
+
+    public Square getSquare(MapCoordinate coordinate) {
+        return getTerrain(coordinate);
     }
 
     public interface Iterator {

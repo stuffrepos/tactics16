@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.battlegameengine;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -11,71 +12,108 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import net.stuffrepos.tactics16.battlegameengine.Map.Coordinate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.util.javabasic.CollectionUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class BattleGame {
+public class BattleGameEngine {
 
+    private static final Log log = LogFactory.getLog(BattleGameEngine.class);
     private final Map map;
-    private Monitor monitor;
-    private final PersonSet personSet;
+    private final PersonSet personSet = new PersonSet();
     private final Definitions definitions = new Definitions();
     private final Finders finders = new Finders();
+    private boolean running;
 
-    public BattleGame(
+    public BattleGameEngine(
             Map map,
             java.util.Map<Integer, Person> persons,
             java.util.Map<Integer, Integer> personsPlayers,
-            java.util.Map<Integer, Coordinate> personsPositions,
-            Monitor monitor) {
-        this.map = map.clone();
-        this.monitor = monitor;
-        this.personSet = new PersonSet();
+            java.util.Map<Integer, MapCoordinate> personsPositions) {
+
+        assert map != null;
+        assert persons.size() >= 2 : "persons.size(): " + persons.size();
+        assert personsPlayers.size() == persons.size();
+        assert personsPositions.size() == persons.size();
+
+        this.map = map;
 
         for (Entry<Integer, Person> e : persons.entrySet()) {
             this.personSet.addPerson(
                     e.getKey(),
-                    e.getValue().clone(),
+                    e.getValue(),
                     personsPositions.get(e.getKey()).clone(),
                     personsPlayers.get(e.getKey()));
         }
     }
 
-    public void run() {
+    public void run(Monitor monitor) {
         int turn = 0;
         turnLoop:
         while (true) {
+            if (log.isDebugEnabled()) {
+                log.debug("New turn: " + (turn + 1));
+            }
+
             monitor.notifyNewTurn(++turn);
             List<Integer> persons = finders.orderPersonsToAct();
+
+            if (log.isDebugEnabled()) {
+                log.debug(Arrays.toString(persons.toArray(new Integer[0])));
+            }
+
             monitor.notifyPersonsActOrderDefined(persons);
             for (Integer selectedPerson : persons) {
                 if (definitions.isPersonAlive(selectedPerson)) {
                     monitor.notifySelectedPerson(selectedPerson);
-                    personActs(selectedPerson);
+                    personActs(monitor, selectedPerson);
                     if (finders.getAlivePlayers().size() < 2) {
                         break turnLoop;
                     }
                 }
             }
+
+            if (turn > 10) {
+                return;
+            }
         }
         monitor.notifyWiningPlayer(finders.getWinnerPlayer());
     }
 
-    private void personActs(Integer personId) {
+    public void waitRequest() {
+        this.running = false;
+        while (!this.running) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+
+    public void resumeRequest() {
+        this.running = true;
+    }
+
+    private void personActs(Monitor monitor, Integer personId) {
         PersonActPhase currentPhase = PersonActPhase.Moviment;
         Action selectedAction = null;
-        Coordinate originalPosition = personSet.getPerson(personId).getPosition();
-        Coordinate movimentTarget = null;
-        Coordinate actionTarget = null;
+        MapCoordinate originalPosition = personSet.getPerson(personId).getPosition();
+        MapCoordinate movimentTarget = null;
+        MapCoordinate actionTarget = null;
 
         phaseLoop:
         while (true) {
             switch (currentPhase) {
                 case Moviment:
-                    Collection<Coordinate> movimentRange = buildMovimentRange(personId);
+                    Collection<MapCoordinate> movimentRange = buildMovimentRange(personId);
                     movimentTarget = monitor.requestMovimentTarget(
                             personId,
                             map,
@@ -114,7 +152,7 @@ public class BattleGame {
                     continue;
 
                 case ChooseTarget:
-                    Collection<Coordinate> actionRange = buildActionRange(personId, selectedAction);
+                    Collection<MapCoordinate> actionRange = buildActionRange(personId, selectedAction);
                     actionTarget = monitor.requestActionTarget(
                             personId,
                             map,
@@ -135,7 +173,7 @@ public class BattleGame {
                     continue;
 
                 case Confirm:
-                    Collection<Coordinate> actRay = buildActionReachRay(
+                    Collection<MapCoordinate> actRay = buildActionReachRay(
                             selectedAction,
                             personSet.getPerson(personId).getPosition());
                     boolean confirm = monitor.requestActConfirm(
@@ -146,7 +184,7 @@ public class BattleGame {
                             findAffectedActionPersons(selectedAction, actionTarget));
 
                     if (confirm) {
-                        performAction(personId, selectedAction, actionTarget);
+                        performAction(monitor, personId, selectedAction, actionTarget);
                         break phaseLoop;
                     } else {
                         monitor.notifyConfirmCancelled(personId,
@@ -161,7 +199,7 @@ public class BattleGame {
         }
     }
 
-    private void performAction(Integer agentPerson, Action action, Coordinate target) {
+    private void performAction(Monitor monitor, Integer agentPerson, Action action, MapCoordinate target) {
         Collection<Integer> affectedPersons = findAffectedActionPersons(action, target);
 
         int lostSpecialPoints = definitions.actionLostSpecialPoints(agentPerson, action);
@@ -204,15 +242,15 @@ public class BattleGame {
         return classifiedActions;
     }
 
-    private Collection<Coordinate> buildMovimentRange(Integer person) {
+    private Collection<MapCoordinate> buildMovimentRange(Integer person) {
         return buildMovimentRange(
                 person,
                 personSet.getPerson(person).getPosition(),
                 personSet.getPerson(person).getMoviment());
     }
 
-    private Set<Coordinate> buildMovimentRange(Integer person, Coordinate current, int movimentLeft) {
-        Set<Coordinate> range = new TreeSet<Coordinate>(CoordinateComparator.getInstance());
+    private Set<MapCoordinate> buildMovimentRange(Integer person, MapCoordinate current, int movimentLeft) {
+        Set<MapCoordinate> range = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
 
         if (map.getSquare(current).isMovimentBlocked()) {
             return range;
@@ -229,7 +267,7 @@ public class BattleGame {
         }
 
         if (movimentLeft > 0) {
-            for (Coordinate neighbor : findMapNeighbors(current, 1, 1)) {
+            for (MapCoordinate neighbor : findMapNeighbors(current, 1, 1)) {
                 range.addAll(buildMovimentRange(person, neighbor, movimentLeft - 1));
             }
         }
@@ -243,8 +281,8 @@ public class BattleGame {
      * @param action
      * @return
      */
-    private Set<Coordinate> buildActionRange(Integer person, Action action) {
-        Set<Coordinate> range = new TreeSet<Coordinate>(CoordinateComparator.getInstance());
+    private Set<MapCoordinate> buildActionRange(Integer person, Action action) {
+        Set<MapCoordinate> range = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
 
         for (int distance = action.getReach().getMinimum();
                 distance <= action.getReach().getMaximum();
@@ -264,9 +302,9 @@ public class BattleGame {
         }
 
         if (action.getReach().getDirect()) {
-            Set<Coordinate> onSight = new TreeSet<Coordinate>(CoordinateComparator.getInstance());
+            Set<MapCoordinate> onSight = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
 
-            for (Coordinate coordinate : range) {
+            for (MapCoordinate coordinate : range) {
                 if (onSight(personSet.getPerson(person).getPosition(), coordinate)) {
                     onSight.add(coordinate);
                 }
@@ -279,9 +317,9 @@ public class BattleGame {
 
     }
 
-    private Collection<Integer> findAffectedActionPersons(Action action, Coordinate target) {
+    private Collection<Integer> findAffectedActionPersons(Action action, MapCoordinate target) {
         Set<Integer> affectedPersons = new HashSet<Integer>();
-        for (Coordinate coordinate : buildActionReachRay(action, target)) {
+        for (MapCoordinate coordinate : buildActionReachRay(action, target)) {
             Integer person = personSet.getPersonOnPosition(coordinate);
             if (person != null) {
                 affectedPersons.add(person);
@@ -291,12 +329,12 @@ public class BattleGame {
         return affectedPersons;
     }
 
-    private Collection<Coordinate> buildActionReachRay(Action action, Coordinate target) {
+    private Collection<MapCoordinate> buildActionReachRay(Action action, MapCoordinate target) {
         return findMapNeighbors(target, 0, action.getReach().getRay());
     }
 
-    private Collection<Coordinate> findMapNeighbors(Coordinate current, int minimumRay, Integer maximumRay) {
-        Set<Coordinate> neighbors = new TreeSet<Coordinate>(CoordinateComparator.getInstance());
+    private Collection<MapCoordinate> findMapNeighbors(MapCoordinate current, int minimumRay, Integer maximumRay) {
+        Set<MapCoordinate> neighbors = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
 
         for (int ray = minimumRay;
                 ray <= maximumRay;
@@ -313,7 +351,7 @@ public class BattleGame {
         return neighbors;
     }
 
-    private boolean inMap(Coordinate coordinate) {
+    private boolean inMap(MapCoordinate coordinate) {
         return inMap(coordinate.getX(), coordinate.getY());
     }
 
@@ -324,8 +362,8 @@ public class BattleGame {
                 && y < map.getHeight();
     }
 
-    private boolean onSight(Coordinate c1, Coordinate c2) {
-        for (Coordinate coordinate : Math.betweenCoordinates(c1, c2)) {
+    private boolean onSight(MapCoordinate c1, MapCoordinate c2) {
+        for (MapCoordinate coordinate : Math.betweenCoordinates(c1, c2)) {
             if (map.getSquare(coordinate).isActionBlocked()
                     || personSet.getPersonOnPosition(coordinate) != null) {
                 return false;
@@ -347,7 +385,7 @@ public class BattleGame {
             return alivePlayers;
         }
 
-        private Collection<Integer> getPlayerAlivePersons(Integer playerId) {
+        private List<Integer> getPlayerAlivePersons(int playerId) {
             List<Integer> alivePersons = new LinkedList<Integer>();
             for (Integer personId : personSet.getPersonsByPlayer(playerId)) {
                 if (definitions.isPersonAlive(personId)) {
@@ -358,12 +396,12 @@ public class BattleGame {
         }
 
         private List<Integer> orderPersonsToAct() {
-            List<Integer> orderedObjects = orderReverseObjectsByPersonsCount(
+            List<Integer> orderedPlayers = orderPlayersByDescendingAlivePersons(
                     getAlivePlayers());
-            List<Integer> orderedPersons = new LinkedList<Integer>();
+            List<Integer> orderedPersons = null;
 
-            for (Integer playerId : orderedObjects) {
-                List<Integer> playerPersons = new LinkedList<Integer>(getPlayerAlivePersons(playerId));
+            for (Integer playerId : orderedPlayers) {
+                List<Integer> playerPersons = getPlayerAlivePersons(playerId);
                 Collections.shuffle(playerPersons);
 
                 if (orderedPersons == null) {
@@ -379,7 +417,7 @@ public class BattleGame {
             return orderedPersons;
         }
 
-        private List<Integer> orderReverseObjectsByPersonsCount(Collection<Integer> players) {
+        private List<Integer> orderPlayersByDescendingAlivePersons(Collection<Integer> players) {
             List<Integer> result = new LinkedList<Integer>(players);
             Collections.sort(result, new Comparator<Integer>() {
                 public int compare(Integer player1, Integer player2) {
@@ -413,28 +451,28 @@ public class BattleGame {
 
     private class Definitions {
 
-        private boolean isPersonAlive(Integer person) {
+        private boolean isPersonAlive(int person) {
             return personSet.getPerson(person).getHealthPoints() <= 0;
         }
 
-        private boolean isPlayerAlive(Integer player) {
+        private boolean isPlayerAlive(int player) {
             return !finders.getPlayerAlivePersons(player).isEmpty();
         }
 
-        private boolean isActionEnabled(Integer person, Action action) {
+        private boolean isActionEnabled(int person, Action action) {
             return personSet.getPerson(person).getSpecialPoints() >= action.costSpecialPoints();
         }
 
-        private boolean isEnemy(Integer person, Integer otherPerson) {
+        private boolean isEnemy(int person, int otherPerson) {
             return !personSet.getPerson(person).getPlayer().equals(
                     personSet.getPerson(otherPerson).getPlayer());
         }
 
-        private boolean hits(Action action, Integer affectedPerson) {
+        private boolean hits(Action action, int affectedPerson) {
             return dice(action.getAccuracy()) >= dice(personSet.getPerson(affectedPerson).getEvasiveness());
         }
 
-        private int damage(Action action, Integer affectedPerson) {
+        private int damage(Action action, int affectedPerson) {
             return java.lang.Math.max(action.getPower() - personSet.getPerson(affectedPerson).getResistence(), 0);
         }
 
@@ -449,11 +487,11 @@ public class BattleGame {
             return result;
         }
 
-        private int actionLostSpecialPoints(Integer agentPerson, Action action) {
+        private int actionLostSpecialPoints(int agentPerson, Action action) {
             throw new UnsupportedOperationException("Not yet implemented");
         }
 
-        private int actionLostHealthPoints(Integer agentPerson, Action action) {
+        private int actionLostHealthPoints(int agentPerson, Action action) {
             throw new UnsupportedOperationException("Not yet implemented");
         }
     }
@@ -466,7 +504,7 @@ public class BattleGame {
         Confirm
     }
 
-    private static class CoordinateImpl implements Map.Coordinate {
+    private static class CoordinateImpl implements Map.MapCoordinate {
 
         final int x;
         final int y;
@@ -485,12 +523,12 @@ public class BattleGame {
         }
 
         @Override
-        public Coordinate clone() {
+        public MapCoordinate clone() {
             return new CoordinateImpl(x, y);
         }
     }
 
-    private static class CoordinateComparator implements Comparator<Coordinate> {
+    private static class CoordinateComparator implements Comparator<MapCoordinate> {
 
         private static final CoordinateComparator instance = new CoordinateComparator();
 
@@ -498,7 +536,7 @@ public class BattleGame {
             return instance;
         }
 
-        public int compare(Coordinate c1, Coordinate c2) {
+        public int compare(MapCoordinate c1, MapCoordinate c2) {
             if (c1.getX() < c2.getX()) {
                 return -1;
             } else if (c1.getX() > c2.getX()) {
@@ -517,18 +555,18 @@ public class BattleGame {
 
         private java.util.Map<Integer, PersonData> persons =
                 new HashMap<Integer, PersonData>();
-        private java.util.Map<Coordinate, Integer> mapPersons =
-                new TreeMap<Coordinate, Integer>(CoordinateComparator.getInstance());
+        private java.util.Map<MapCoordinate, Integer> mapPersons =
+                new TreeMap<MapCoordinate, Integer>(CoordinateComparator.getInstance());
         private java.util.Map<Integer, Collection<Integer>> playerPersons =
                 new HashMap<Integer, Collection<Integer>>();
 
-        private void addPerson(Integer personId, Person person, Coordinate position, Integer playerId) {
-            persons.put(personId, new PersonData(person));
+        private void addPerson(int personId, Person person, MapCoordinate position, int playerId) {
+            persons.put(personId, new PersonData(person, personId));
             persons.get(personId).setPlayer(playerId);
             persons.get(personId).setPosition(position);
         }
 
-        public Integer getPersonOnPosition(Coordinate position) {
+        public Integer getPersonOnPosition(MapCoordinate position) {
             return mapPersons.get(position);
         }
 
@@ -536,25 +574,27 @@ public class BattleGame {
             return playerPersons.keySet();
         }
 
-        private Iterable<Integer> getPersonsByPlayer(Integer playerId) {
+        private Iterable<Integer> getPersonsByPlayer(int playerId) {
             return playerPersons.get(playerId);
         }
 
-        private PersonData getPerson(Integer personId) {
+        private PersonData getPerson(int personId) {
+            assert persons.get(personId) != null : "Person id: " + personId;
             return persons.get(personId);
         }
 
         public class PersonData {
 
-            private Integer id;
+            private final int id;
             private Integer playerId;
             private int healthPoints;
             private int specialPoints;
-            private Person person;
-            private Coordinate position;
+            private final Person person;
+            private MapCoordinate position;
 
-            public PersonData(Person person) {
-                this.person = person.clone();
+            public PersonData(Person person, int id) {
+                this.person = person;
+                this.id = id;
             }
 
             private int getHealthPoints() {
@@ -577,7 +617,7 @@ public class BattleGame {
                 return playerId;
             }
 
-            private void setPosition(Coordinate position) {
+            private void setPosition(MapCoordinate position) {
                 if (this.position != null) {
                     mapPersons.remove(this.position);
                 }
@@ -586,7 +626,7 @@ public class BattleGame {
                 mapPersons.put(position, id);
             }
 
-            private void setPlayer(Integer playerId) {
+            private void setPlayer(int playerId) {
                 if (this.playerId != null) {
                     playerPersons.get(this.playerId).remove(this.id);
                 }
@@ -599,7 +639,7 @@ public class BattleGame {
                 playerPersons.get(playerId).add(this.id);
             }
 
-            private Coordinate getPosition() {
+            private MapCoordinate getPosition() {
                 return position;
             }
 
@@ -635,8 +675,8 @@ public class BattleGame {
                     : ray - (angle + ray) % (ray * 2);
         }
 
-        private static Iterable<Coordinate> betweenCoordinates(Coordinate c0, Coordinate c1) {
-            Set<Coordinate> coordinates = new TreeSet<Coordinate>(CoordinateComparator.getInstance());
+        private static Iterable<MapCoordinate> betweenCoordinates(MapCoordinate c0, MapCoordinate c1) {
+            Set<MapCoordinate> coordinates = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
 
             int x0 = c0.getX();
             int y0 = c0.getY();

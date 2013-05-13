@@ -79,6 +79,13 @@
                     <include>*/**</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>**/*.properties</include>
+                </includes>
+            </resource>      
         </resources>
     </build>
     <dependencies>
@@ -97,6 +104,17 @@
             <groupId>slick</groupId>
             <artifactId>slick</artifactId>
             <version>1559</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.4</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <properties>

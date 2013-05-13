@@ -2,13 +2,16 @@ package net.stuffrepos.tactics16.scenes.battle;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import net.stuffrepos.tactics16.battlegameengine.BattleGameEngine;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
+import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.math.Interval;
 
 /**
@@ -19,6 +22,31 @@ public class BattleGame {
 
     private Map map;
     private List<Player> players = new ArrayList<Player>();
+    private CacheableValue<BattleGameEngine> battleGameEngine = new CacheableValue<BattleGameEngine>() {
+        @Override
+        protected BattleGameEngine calculate() {
+            java.util.Map<Integer, net.stuffrepos.tactics16.battlegameengine.Person> persons = new HashMap<Integer, net.stuffrepos.tactics16.battlegameengine.Person>();
+            java.util.Map<Integer, Integer> personsPlayers = new HashMap<Integer, Integer>();
+            java.util.Map<Integer, net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate> personsPositions = new HashMap<Integer, net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate>();
+
+            int playerId = 0;
+            int personId = 0;
+            for (Player player : players) {
+                int playerPersonId = 0;
+                for (Person person : player.getPersons()) {
+                    persons.put(personId, person);
+                    personsPlayers.put(personId, playerId);
+                    personsPositions.put(personId, getPersonInitialPosition(playerId, playerPersonId));
+                    playerPersonId++;
+                    personId++;
+                }
+                playerId++;
+
+            }
+
+            return new BattleGameEngine(map, persons, personsPlayers, personsPositions);
+        }
+    };
 
     public BattleGame(Map map) {
         assert map != null : "map is null";
@@ -155,12 +183,16 @@ public class BattleGame {
 
     /**
      * x = 20
+     *
      * @param source
      * @param target
      * @return
      */
-    public static List<Coordinate> calculateTrajetory(Coordinate source,Coordinate target) {
-        
+    public static List<Coordinate> calculateTrajetory(Coordinate source, Coordinate target) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public BattleGameEngine getBattleGameEngine() {
+        return battleGameEngine.getValue();
     }
 }

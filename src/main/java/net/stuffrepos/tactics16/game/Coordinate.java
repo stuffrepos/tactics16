@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.game;
 
+import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 import net.stuffrepos.tactics16.util.listeners.ListenerManager;
 import org.json.JSONException;
@@ -9,7 +10,7 @@ import org.json.JSONObject;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Coordinate implements Comparable<Coordinate>, Cloneable {
+public class Coordinate implements Comparable<Coordinate>, Cloneable, MapCoordinate {
 
     private ListenerManager<Coordinate> listenerManager = new ListenerManager<Coordinate>(this);
     private double x;

@@ -5,13 +5,14 @@ import org.newdawn.slick.Graphics;
 import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.animation.GameImage;
+import net.stuffrepos.tactics16.battlegameengine.Map.Square;
 
-public class Terrain implements Nameable {
+public class Terrain implements Nameable, Square {
 
     private List<GameImage> images = new LinkedList<GameImage>();
     private String name;
-    private Boolean allowMoviment;
-    private Boolean allowAction;
+    private boolean allowMoviment = true;
+    private boolean allowAction = true;
 
     public Terrain(String name) {
         this.name = name;
@@ -47,5 +48,13 @@ public class Terrain implements Nameable {
 
     public void render(Graphics g, int x, int y) {
         images.get(0).render(g, x, y);
+    }
+
+    public boolean isMovimentBlocked() {
+        return !this.getAllowMoviment();
+    }
+
+    public boolean isActionBlocked() {
+        return !this.getAllowAction();
     }
 }

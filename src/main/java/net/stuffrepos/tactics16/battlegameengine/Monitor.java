@@ -2,7 +2,7 @@ package net.stuffrepos.tactics16.battlegameengine;
 
 import java.util.Collection;
 import java.util.List;
-import net.stuffrepos.tactics16.battlegameengine.Map.Coordinate;
+import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
 
 /**
  *
@@ -16,25 +16,25 @@ public interface Monitor {
 
     public void notifySelectedPerson(Integer selectedPerson);
 
-    public Coordinate requestMovimentTarget(Integer person, Map map,
-            Coordinate originalPosition,
-            Collection<Coordinate> movimentRange);
+    public MapCoordinate requestMovimentTarget(Integer person, Map map,
+            MapCoordinate originalPosition,
+            Collection<MapCoordinate> movimentRange);
 
-    public void notifyOutOfReachMoviment(Integer person, Coordinate coordinate);
+    public void notifyOutOfReachMoviment(Integer person, MapCoordinate coordinate);
 
     public void notifyPersonMoved(Integer person,
-            Coordinate originalPosition,
-            Coordinate movimentTarget);
+            MapCoordinate originalPosition,
+            MapCoordinate movimentTarget);
 
     public Action requestPersonAction(
             Integer person,
             Map map,
-            Coordinate personPosition,
+            MapCoordinate personPosition,
             java.util.Map<Action, Boolean> classifyPersonActions);
 
     public void notifyMovimentCancelled(Integer person,
-            Coordinate originalPosition,
-            Coordinate movimentTarget);
+            MapCoordinate originalPosition,
+            MapCoordinate movimentTarget);
 
     public void notifySelectedAction(Integer person, Action selectedAction);
 
@@ -44,29 +44,29 @@ public interface Monitor {
             Integer person,
             Action selectedAction);
 
-    public void notifyChoosedTarget(Integer person, Coordinate actionTarget);
+    public void notifyChoosedTarget(Integer person, MapCoordinate actionTarget);
 
     public void notifyOutOfReach(Integer person, Action selectedAction);
 
-    public Coordinate requestActionTarget(
+    public MapCoordinate requestActionTarget(
             Integer person,
             Map map,
-            Coordinate get,
+            MapCoordinate get,
             Action selectedAction,
-            Collection<Coordinate> actionRange);
+            Collection<MapCoordinate> actionRange);
 
     public boolean requestActConfirm(Integer person, Action selectedAction,
-            Coordinate actionTarget,
-            Collection<Coordinate> actRay, Collection<Integer> affectedPersons);
+            MapCoordinate actionTarget,
+            Collection<MapCoordinate> actRay, Collection<Integer> affectedPersons);
 
     public void notifyConfirmCancelled(Integer person, Action selectedAction,
-            Coordinate actionTarget);
+            MapCoordinate actionTarget);
 
     public void notifyPerformedAction(
             Integer agentPerson,
             Action action,
-            Coordinate target,
-            Collection<Coordinate> buildActionReachRay,
+            MapCoordinate target,
+            Collection<MapCoordinate> buildActionReachRay,
             Collection<Integer> affectedPersons,
             int agentLostSpecialPoints,
             int agentLostHealthPoints);
