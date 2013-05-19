@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes;
+package net.stuffrepos.tactics16.scenes.test;
 
 import java.util.LinkedList;
 import java.util.List;

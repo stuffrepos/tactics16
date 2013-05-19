@@ -1,14 +1,10 @@
 package net.stuffrepos.tactics16.scenes.battle.effects;
 
 import org.newdawn.slick.Graphics;
-import java.util.Map;
 import net.stuffrepos.tactics16.animation.EntitiesLayer;
 import net.stuffrepos.tactics16.animation.TemporaryAnimation;
-import net.stuffrepos.tactics16.game.Coordinate;
+import net.stuffrepos.tactics16.battlegameengine.events.PerformedActionNotify;
 import net.stuffrepos.tactics16.game.Job.GameAction;
-import net.stuffrepos.tactics16.scenes.battle.BattleAction;
-import net.stuffrepos.tactics16.scenes.battle.BattleActionResult;
-import net.stuffrepos.tactics16.scenes.battle.Person;
 import net.stuffrepos.tactics16.scenes.battle.PersonInfo;
 import net.stuffrepos.tactics16.scenes.battle.VisualBattleMap;
 
@@ -20,31 +16,35 @@ public class EffectAnimation {
 
     private EntitiesLayer effects;
     private EntitiesLayer info;
-    private final BattleActionResult battleActionResult;
+    private PerformedActionNotify event;
+    private final VisualBattleMap visualBattleMap;
 
     public EffectAnimation(
             VisualBattleMap visualBattleMap,
-            BattleActionResult battleActionResult) {
-        this.battleActionResult = battleActionResult;
-        this.battleActionResult.getAction().getAgent().getGameActionControl().back();        
-        effects = new EntitiesLayer();
+            PerformedActionNotify event) {
+        
+        this.effects = new EntitiesLayer();
+        this.event = event;
+        this.visualBattleMap = visualBattleMap;
+        
         boolean first = true;
+        visualBattleMap.getBattleGame().getPerson(event.getAgentPerson()).getGameActionControl().back();
 
-        for (Coordinate rayTarget : this.battleActionResult.getAction().getRayTargets()) {
+        for (Integer affectedPerson : event.getAffectedPersons()) {
             TemporaryAnimation effect = new TemporaryAnimation(
-                    this.battleActionResult.getAction().getAgent().getJob().getSpriteActionGroup().getSpriteAction(
+                    visualBattleMap.getBattleGame().getPerson(event.getAgentPerson()).getJob().getSpriteActionGroup().getSpriteAction(
                     GameAction.EFFECT),
                     1);
-            effect.getPosition().set(visualBattleMap.getVisualMap().getPersonPosition(rayTarget));
+            effect.getPosition().set(visualBattleMap.getBattleGame().getPerson(affectedPerson).getPosition());
             if (first) {
                 first = false;
             } else {
                 effect.update(-(int) (Math.random() * 250));
             }
             effects.addEntity(effect);
-            Person person = visualBattleMap.getBattleGame().getPersonOnMapPosition(rayTarget);
-            if (person != null && !battleActionResult.isPersonEvaded(person)) {
-                person.getGameActionControl().advance(GameAction.DAMAGED);
+
+            if (event.getAffectedPersonResult(affectedPerson).isHits()) {
+                visualBattleMap.getBattleGame().getPerson(affectedPerson).getGameActionControl().advance(GameAction.DAMAGED);
             }
         }
     }
@@ -58,22 +58,22 @@ public class EffectAnimation {
 
         if (effects.isFinalized() && info == null) {
             info = new EntitiesLayer();
-            for (Person person : battleActionResult.getAction().getPersonsTargets()) {
-                person.getGameActionControl().back();
+            for (int affectedPerson : event.getAffectedPersons()) {
+                visualBattleMap.getBattleGame().getPerson(affectedPerson).getGameActionControl().back();
 
                 PersonInfo.Type type;
                 String value;
 
-                if (battleActionResult.isPersonEvaded(person)) {
-                    type = PersonInfo.Type.AGILITY;
-                    value = String.format("-%d AP", battleActionResult.getAction().agilityPointsNeededToEvade(person));
-                } else {
+                if (event.getAffectedPersonResult(affectedPerson).isHits()) {
                     type = PersonInfo.Type.DAMAGE;
-                    value = String.format("-%d HP", battleActionResult.getAction().calculateDamage(person));
+                    value = String.format("-%d HP", event.getAffectedPersonResult(affectedPerson).getDamage());
+                } else {
+                    type = PersonInfo.Type.NEUTRAL;
+                    value = "Missed";
                 }
 
                 info.addEntity(new PersonInfo(
-                        person,
+                        visualBattleMap.getBattleGame().getPerson(affectedPerson),
                         type, value));
             }
         }

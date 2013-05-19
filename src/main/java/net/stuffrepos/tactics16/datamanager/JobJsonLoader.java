@@ -29,7 +29,8 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
     protected Job fromJson() throws JSONException {
         final Job job = new Job(getRootJson().getString("name"));
         job.setEvasiveness(getRootJson().getInt("evasiveness"));
-        job.setDefense(getRootJson().getInt("defense"));
+        job.setResistence(getRootJson().getInt("resistence"));
+        job.setMoviment(getRootJson().getInt("moviment"));
 
         job.getSpriteActionGroup().addAnimationGroup(
                 new AnimationGroupJsonLoader(getRootJson().getJSONObject("animationGroup"), getFile()).loadObject());
@@ -48,7 +49,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
 
     private Action loadAction(JSONObject jsonObject) throws JSONException {
         Action action = new Action(jsonObject.getString("name"));
-        action.setAgility(jsonObject.getInt("agility"));
+        action.setAccuracy(jsonObject.getInt("accuracy"));
         action.setPower(jsonObject.getInt("power"));
         action.setReach(loadReach(jsonObject.getJSONObject("reach")));
         return action;
@@ -66,13 +67,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             reach.getDistance().setMax(jsonObject.getInt("distanceMax"));
         }
         if (jsonObject.has("ray")) {
-            reach.getRay().setMinMax(jsonObject.getInt("ray"));
-        }
-        if (jsonObject.has("rayMin")) {
-            reach.getRay().setMin(jsonObject.getInt("rayMin"));
-        }
-        if (jsonObject.has("rayMax")) {
-            reach.getRay().setMax(jsonObject.getInt("rayMax"));
+            reach.setRay(jsonObject.getInt("ray"));
         }
         if (jsonObject.has("clearTrajectory")) {
             reach.setClearTrajetory(jsonObject.getBoolean("clearTrajectory"));

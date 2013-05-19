@@ -12,10 +12,24 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
-import net.stuffrepos.tactics16.util.javabasic.CollectionUtil;
+import net.stuffrepos.tactics16.battlegameengine.events.ChooseActionCancelled;
+import net.stuffrepos.tactics16.battlegameengine.events.ChoosedTarget;
+import net.stuffrepos.tactics16.battlegameengine.events.ConfirmCancelledNotify;
+import net.stuffrepos.tactics16.battlegameengine.events.MovimentCancelledNotify;
+import net.stuffrepos.tactics16.battlegameengine.events.NewTurn;
+import net.stuffrepos.tactics16.battlegameengine.events.NotEnabledActionNotify;
+import net.stuffrepos.tactics16.battlegameengine.events.OutOfReachMoviment;
+import net.stuffrepos.tactics16.battlegameengine.events.OutOfReachNotify;
+import net.stuffrepos.tactics16.battlegameengine.events.PerformedActionNotify;
+import net.stuffrepos.tactics16.battlegameengine.events.PersonMoved;
+import net.stuffrepos.tactics16.battlegameengine.events.PersonsActOrderDefined;
+import net.stuffrepos.tactics16.battlegameengine.events.SelectedActionNotify;
+import net.stuffrepos.tactics16.battlegameengine.events.SelectedPersonNotify;
+import net.stuffrepos.tactics16.battlegameengine.events.WinningPlayerNotify;
+import net.stuffrepos.tactics16.battlegameengine.events.ActionTargetRequest;
+import net.stuffrepos.tactics16.battlegameengine.events.MovimentTargetRequest;
+import net.stuffrepos.tactics16.battlegameengine.events.PersonActionRequest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -23,16 +37,16 @@ import org.apache.commons.logging.LogFactory;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class BattleGameEngine {
+public class BattleEngine {
 
-    private static final Log log = LogFactory.getLog(BattleGameEngine.class);
+    private static final Log log = LogFactory.getLog(BattleEngine.class);
     private final Map map;
     private final PersonSet personSet = new PersonSet();
     private final Definitions definitions = new Definitions();
     private final Finders finders = new Finders();
     private boolean running;
 
-    public BattleGameEngine(
+    public BattleEngine(
             Map map,
             java.util.Map<Integer, Person> persons,
             java.util.Map<Integer, Integer> personsPlayers,
@@ -62,17 +76,20 @@ public class BattleGameEngine {
                 log.debug("New turn: " + (turn + 1));
             }
 
-            monitor.notifyNewTurn(++turn);
+            monitor.notify(new NewTurn(++turn));
             List<Integer> persons = finders.orderPersonsToAct();
 
             if (log.isDebugEnabled()) {
                 log.debug(Arrays.toString(persons.toArray(new Integer[0])));
             }
 
-            monitor.notifyPersonsActOrderDefined(persons);
+            monitor.notify(new PersonsActOrderDefined(persons));
             for (Integer selectedPerson : persons) {
                 if (definitions.isPersonAlive(selectedPerson)) {
-                    monitor.notifySelectedPerson(selectedPerson);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Selected person: " + selectedPerson);
+                    }
+                    monitor.notify(new SelectedPersonNotify(selectedPerson));
                     personActs(monitor, selectedPerson);
                     if (finders.getAlivePlayers().size() < 2) {
                         break turnLoop;
@@ -84,14 +101,14 @@ public class BattleGameEngine {
                 return;
             }
         }
-        monitor.notifyWiningPlayer(finders.getWinnerPlayer());
+        monitor.notify(new WinningPlayerNotify(finders.getWinnerPlayer()));
     }
 
     public void waitRequest() {
         this.running = false;
         while (!this.running) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(1000 / 60);
             } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
@@ -114,82 +131,89 @@ public class BattleGameEngine {
             switch (currentPhase) {
                 case Moviment:
                     Collection<MapCoordinate> movimentRange = buildMovimentRange(personId);
-                    movimentTarget = monitor.requestMovimentTarget(
+                    if (log.isDebugEnabled()) {
+                        log.debug("Moviment range: " + mapCoordinateListToString(movimentRange));
+                    }
+                    movimentTarget = monitor.request(new MovimentTargetRequest(
                             personId,
                             map,
                             personSet.getPerson(personId).getPosition(),
-                            movimentRange);
+                            movimentRange));
+
+                    if (log.isDebugEnabled()) {
+                        log.debug("Moviment position requested: " + mapCoordinateToString(movimentTarget));
+                    }
 
                     if (movimentTarget == null) {
                         continue;
                     } else if (movimentRange.contains(movimentTarget)) {
                         personSet.getPerson(personId).setPosition(movimentTarget);
-                        monitor.notifyPersonMoved(personId, originalPosition, movimentTarget);
+                        monitor.notify(new PersonMoved(personId, originalPosition, movimentTarget));
                         currentPhase = PersonActPhase.ChooseAction;
                     } else {
-                        monitor.notifyOutOfReachMoviment(personId, movimentTarget);
+                        monitor.notify(new OutOfReachMoviment(personId, movimentTarget));
                     }
                     continue;
 
                 case ChooseAction:
-                    selectedAction = monitor.requestPersonAction(
+                    selectedAction = monitor.request(new PersonActionRequest(
                             personId,
                             map,
                             personSet.getPerson(personId).getPosition(),
-                            classifyPersonActions(personId));
+                            classifyPersonActions(personId)));
 
                     if (selectedAction == null) {
-                        personSet.getPerson(personId).setPosition(movimentTarget);
-                        monitor.notifyMovimentCancelled(personId, originalPosition, movimentTarget);
+                        personSet.getPerson(personId).setPosition(originalPosition);
+                        monitor.notify(new MovimentCancelledNotify(personId, originalPosition, movimentTarget));
                         movimentTarget = null;
                         currentPhase = PersonActPhase.Moviment;
                     } else if (definitions.isActionEnabled(personId, selectedAction)) {
-                        monitor.notifySelectedAction(personId, selectedAction);
+                        monitor.notify(new SelectedActionNotify(personId, selectedAction));
                         currentPhase = PersonActPhase.ChooseTarget;
                     } else {
-                        monitor.notifyNotEnabledAction(personId, selectedAction);
+                        monitor.notify(new NotEnabledActionNotify(personId, selectedAction));
                     }
                     continue;
 
                 case ChooseTarget:
                     Collection<MapCoordinate> actionRange = buildActionRange(personId, selectedAction);
-                    actionTarget = monitor.requestActionTarget(
+                    actionTarget = monitor.request(new ActionTargetRequest(
                             personId,
                             map,
                             personSet.getPerson(personId).getPosition(),
                             selectedAction,
-                            actionRange);
+                            actionRange));
 
                     if (actionTarget == null) {
-                        monitor.notifyChooseActionCancelled(personId, selectedAction);
+                        monitor.notify(new ChooseActionCancelled(personId, selectedAction));
                         currentPhase = PersonActPhase.ChooseAction;
                         selectedAction = null;
                     } else if (actionRange.contains(actionTarget)) {
-                        monitor.notifyChoosedTarget(personId, actionTarget);
+                        monitor.notify(new ChoosedTarget(personId, actionTarget));
                         currentPhase = PersonActPhase.Confirm;
                     } else {
-                        monitor.notifyOutOfReach(personId, selectedAction);
+                        monitor.notify(new OutOfReachNotify(personId, selectedAction));
                     }
                     continue;
 
                 case Confirm:
                     Collection<MapCoordinate> actRay = buildActionReachRay(
                             selectedAction,
-                            personSet.getPerson(personId).getPosition());
-                    boolean confirm = monitor.requestActConfirm(
+                            actionTarget);
+                    boolean confirm = monitor.request(new ActConfirmRequest(
                             personId,
                             selectedAction,
                             actionTarget,
                             actRay,
-                            findAffectedActionPersons(selectedAction, actionTarget));
+                            findAffectedActionPersons(selectedAction, actionTarget)));
 
                     if (confirm) {
                         performAction(monitor, personId, selectedAction, actionTarget);
                         break phaseLoop;
                     } else {
-                        monitor.notifyConfirmCancelled(personId,
+                        monitor.notify(new ConfirmCancelledNotify(personId,
                                 selectedAction,
-                                actionTarget);
+                                actionTarget));
                         currentPhase = PersonActPhase.ChooseTarget;
                         continue;
                     }
@@ -200,22 +224,13 @@ public class BattleGameEngine {
     }
 
     private void performAction(Monitor monitor, Integer agentPerson, Action action, MapCoordinate target) {
-        Collection<Integer> affectedPersons = findAffectedActionPersons(action, target);
-
         int lostSpecialPoints = definitions.actionLostSpecialPoints(agentPerson, action);
         int lostHealthPoints = definitions.actionLostHealthPoints(agentPerson, action);
 
         personSet.getPerson(agentPerson).subtractHealthPoints(lostHealthPoints);
         personSet.getPerson(agentPerson).subtractSpecialPoints(lostSpecialPoints);
 
-        monitor.notifyPerformedAction(
-                agentPerson,
-                action,
-                target,
-                buildActionReachRay(action, target),
-                affectedPersons,
-                lostSpecialPoints,
-                lostHealthPoints);
+        java.util.Map<Integer, AffectedPersonResult> affectedPersonResults = new HashMap<Integer, AffectedPersonResult>();
 
         for (Integer affectedPerson : findAffectedActionPersons(action, target)) {
             boolean hits = definitions.hits(action, affectedPerson);
@@ -225,13 +240,38 @@ public class BattleGameEngine {
                 personSet.getPerson(affectedPerson).subtractHealthPoints(damage);
             }
 
-            monitor.notifyActionAffectedPerson(
+            affectedPersonResults.put(
                     affectedPerson,
+                    new AffectedPersonResult(
                     hits,
                     damage,
-                    definitions.isPersonAlive(affectedPerson));
-
+                    definitions.isPersonAlive(affectedPerson)));
         }
+
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("Action performed (agentPerson: %d, action: %s, target: %s, affected person: %d)",
+                    agentPerson,
+                    action.getName(),
+                    mapCoordinateToString(target),
+                    affectedPersonResults.size()));
+
+            for (Entry<Integer, AffectedPersonResult> e : affectedPersonResults.entrySet()) {
+                log.debug(String.format("Affected person (Person: %d, Hit: %b, Damage: %d, Alive: %b)",
+                        e.getKey(),
+                        e.getValue().isHits(),
+                        e.getValue().getDamage(),
+                        e.getValue().isPersonAlive()));
+            }
+        }
+
+        monitor.notify(new PerformedActionNotify(
+                agentPerson,
+                action,
+                target,
+                buildActionReachRay(action, target),
+                affectedPersonResults,
+                lostSpecialPoints,
+                lostHealthPoints));
     }
 
     private java.util.Map<Action, Boolean> classifyPersonActions(Integer person) {
@@ -242,14 +282,15 @@ public class BattleGameEngine {
         return classifiedActions;
     }
 
-    private Collection<MapCoordinate> buildMovimentRange(Integer person) {
+    private Collection<MapCoordinate> buildMovimentRange(int person) {
         return buildMovimentRange(
                 person,
                 personSet.getPerson(person).getPosition(),
-                personSet.getPerson(person).getMoviment());
+                personSet.getPerson(person).getMoviment(),
+                null);
     }
 
-    private Set<MapCoordinate> buildMovimentRange(Integer person, MapCoordinate current, int movimentLeft) {
+    private Set<MapCoordinate> buildMovimentRange(int person, MapCoordinate current, int movimentLeft, MapCoordinate previous) {
         Set<MapCoordinate> range = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
 
         if (map.getSquare(current).isMovimentBlocked()) {
@@ -258,7 +299,7 @@ public class BattleGameEngine {
 
         Integer personOnPosition = personSet.getPersonOnPosition(current);
 
-        if (personOnPosition != null && !person.equals(personOnPosition)) {
+        if (personOnPosition != null && person != personOnPosition) {
             if (definitions.isEnemy(person, personOnPosition)) {
                 return range;
             }
@@ -268,7 +309,9 @@ public class BattleGameEngine {
 
         if (movimentLeft > 0) {
             for (MapCoordinate neighbor : findMapNeighbors(current, 1, 1)) {
-                range.addAll(buildMovimentRange(person, neighbor, movimentLeft - 1));
+                if (previous == null || !neighbor.equals(previous)) {
+                    range.addAll(buildMovimentRange(person, neighbor, movimentLeft - 1, current));
+                }
             }
         }
 
@@ -288,12 +331,10 @@ public class BattleGameEngine {
                 distance <= action.getReach().getMaximum();
                 ++distance) {
             for (int angle = 0; angle < distance * 4; angle++) {
-                int x = (angle / (distance * 2)) % 2 == 0
-                        ? -distance + angle % (distance * 2)
-                        : distance - angle % (distance * 2);
-                int y = ((angle + distance) / (distance * 2)) % 2 == 0
-                        ? -distance + (angle + distance) % (distance * 2)
-                        : distance - (angle + distance) % (distance * 2);
+                int x = personSet.getPerson(person).getPosition().getX()
+                        + Math.integerCosine(distance, angle);
+                int y = personSet.getPerson(person).getPosition().getY()
+                        + Math.integerSine(distance, angle);
 
                 if (inMap(x, y)) {
                     range.add(new CoordinateImpl(x, y));
@@ -330,24 +371,31 @@ public class BattleGameEngine {
     }
 
     private Collection<MapCoordinate> buildActionReachRay(Action action, MapCoordinate target) {
-        return findMapNeighbors(target, 0, action.getReach().getRay());
+        Set<MapCoordinate> coords = findMapNeighbors(target, 0, action.getReach().getRay());
+        coords.add(target);
+        return coords;
     }
 
-    private Collection<MapCoordinate> findMapNeighbors(MapCoordinate current, int minimumRay, Integer maximumRay) {
+    private Set<MapCoordinate> findMapNeighbors(MapCoordinate current, int minimumRay, Integer maximumRay) {
         Set<MapCoordinate> neighbors = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
 
         for (int ray = minimumRay;
                 ray <= maximumRay;
                 ++ray) {
+
             for (int angle = 0; angle < ray * 4; angle++) {
-                int x = Math.integerCosine(ray, angle);
-                int y = Math.integerSine(ray, angle);
+                int cosine = Math.integerCosine(ray, angle);
+                int sine = Math.integerSine(ray, angle);
+                int x = current.getX() + cosine;
+                int y = current.getY() + sine;
 
                 if (inMap(x, y)) {
                     neighbors.add(new CoordinateImpl(x, y));
                 }
             }
+
         }
+
         return neighbors;
     }
 
@@ -364,13 +412,36 @@ public class BattleGameEngine {
 
     private boolean onSight(MapCoordinate c1, MapCoordinate c2) {
         for (MapCoordinate coordinate : Math.betweenCoordinates(c1, c2)) {
-            if (map.getSquare(coordinate).isActionBlocked()
-                    || personSet.getPersonOnPosition(coordinate) != null) {
+            if ((map.getSquare(coordinate).isActionBlocked()
+                    || personSet.getPersonOnPosition(coordinate) != null)
+                    && CoordinateComparator.getInstance().compare(c1, coordinate) != 0
+                    && CoordinateComparator.getInstance().compare(c2, coordinate) != 0) {
                 return false;
             }
         }
 
         return true;
+    }
+
+    private String mapCoordinateToString(MapCoordinate c) {
+        return c == null ? "null" : "(" + c.getX() + "," + c.getY() + ")";
+    }
+
+    private String mapCoordinateListToString(Collection<MapCoordinate> coordinateList) {
+        StringBuilder b = new StringBuilder();
+
+        boolean first = true;
+
+        for (MapCoordinate c : coordinateList) {
+            if (first) {
+                first = false;
+            } else {
+                b.append(",");
+            }
+            b.append(mapCoordinateToString(c));
+        }
+
+        return b.toString();
     }
 
     private class Finders {
@@ -469,7 +540,16 @@ public class BattleGameEngine {
         }
 
         private boolean hits(Action action, int affectedPerson) {
-            return dice(action.getAccuracy()) >= dice(personSet.getPerson(affectedPerson).getEvasiveness());
+            int accuracyDices = dice(action.getAccuracy());
+            int evasivenessDices = dice(personSet.getPerson(affectedPerson).getEvasiveness());
+            if (log.isDebugEnabled()) {
+                log.debug(String.format("Action accuracy: %d/%d - Affected evasiveness: %d/%d",
+                        accuracyDices,
+                        action.getAccuracy(),
+                        evasivenessDices,
+                        personSet.getPerson(affectedPerson).getEvasiveness()));
+            }
+            return accuracyDices >= evasivenessDices;
         }
 
         private int damage(Action action, int affectedPerson) {
@@ -488,11 +568,11 @@ public class BattleGameEngine {
         }
 
         private int actionLostSpecialPoints(int agentPerson, Action action) {
-            throw new UnsupportedOperationException("Not yet implemented");
+            return action.costSpecialPoints();
         }
 
         private int actionLostHealthPoints(int agentPerson, Action action) {
-            throw new UnsupportedOperationException("Not yet implemented");
+            return 0; //TO-DO
         }
     }
 
@@ -519,7 +599,7 @@ public class BattleGameEngine {
         }
 
         public int getX() {
-            return y;
+            return x;
         }
 
         @Override
@@ -652,16 +732,18 @@ public class BattleGameEngine {
             }
 
             private void subtractHealthPoints(int lostHealthPoints) {
-                throw new UnsupportedOperationException("Not yet implemented");
+                this.healthPoints = java.lang.Math.max(0,
+                        this.healthPoints - lostHealthPoints);
             }
 
             private void subtractSpecialPoints(int lostSpecialPoints) {
-                throw new UnsupportedOperationException("Not yet implemented");
+                this.specialPoints = java.lang.Math.max(0,
+                        this.specialPoints - lostSpecialPoints);
             }
         }
     }
 
-    private static class Math {
+    public static class Math {
 
         public static int integerCosine(int ray, int angle) {
             return (angle / (ray * 2)) % 2 == 0
@@ -708,6 +790,31 @@ public class BattleGameEngine {
             }
 
             return coordinates;
+        }
+    }
+
+    public static class AffectedPersonResult {
+
+        private final boolean isAlive;
+        private final int damage;
+        private final boolean hits;
+
+        private AffectedPersonResult(boolean hits, int damage, boolean isAlive) {
+            this.hits = hits;
+            this.damage = damage;
+            this.isAlive = isAlive;
+        }
+
+        public boolean isPersonAlive() {
+            return isAlive;
+        }
+
+        public int getDamage() {
+            return damage;
+        }
+
+        public boolean isHits() {
+            return hits;
         }
     }
 }

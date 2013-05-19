@@ -44,7 +44,7 @@ public class JobBoxInfo implements VisualEntity, Object2D {
         this.job = job;
         jobAnimationBox = new AnimationBox(player.getSpriteAnimation(job, Job.GameAction.STOPPED));
         name = new Text(job.getName());
-        defense = new PropertyBox("Defense", Integer.toString(job.getDefense()), getWidth());
+        defense = new PropertyBox("Defense", Integer.toString(job.getResistence()), getWidth());
         evasiveness = new PropertyBox("Evasiveness", Integer.toString(job.getEvasiveness()), getWidth());
 
         board.getChildren().add(jobAnimationBox);

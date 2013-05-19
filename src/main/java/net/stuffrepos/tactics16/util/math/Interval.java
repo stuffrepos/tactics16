@@ -9,9 +9,13 @@ public class Interval {
     private int min;
     private int max;
 
-    public Interval(int initialValue) {
-        min = initialValue;
-        max = initialValue;
+    public Interval(int minMax) {
+        this(minMax, minMax);        
+    }
+
+    public Interval(int min, int max) {
+        this.min = min;
+        this.max = max;
     }
 
     public int getMin() {

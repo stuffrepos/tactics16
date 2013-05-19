@@ -6,18 +6,19 @@ import net.stuffrepos.tactics16.util.Nameable;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Action implements Nameable {
+public class Action implements Nameable, net.stuffrepos.tactics16.battlegameengine.Action {
     
     private Integer power;
     private String name;
-    private Reach reach;
-    private Integer agility;
+    private Reach reach;    
+    private int accuracy;
+    private int costSpecialPoints;
 
     public Action(String name) {
         this.name = name;
     }
 
-    public Integer getPower() {
+    public int getPower() {
         return power;
     }
 
@@ -33,7 +34,7 @@ public class Action implements Nameable {
         this.name = name;
     }
 
-    public Reach getReach() {
+    public net.stuffrepos.tactics16.battlegameengine.Reach getReach() {
         return reach;
     }
 
@@ -41,11 +42,15 @@ public class Action implements Nameable {
         this.reach = reach;
     }
 
-    public Integer getAgility() {
-        return agility;
+    public void setAccuracy(Integer accuracy) {
+        this.accuracy = accuracy;
     }
 
-    public void setAgility(Integer agility) {
-        this.agility = agility;
+    public int costSpecialPoints() {
+        return costSpecialPoints;
+    }
+
+    public int getAccuracy() {
+        return this.accuracy;
     }
 }

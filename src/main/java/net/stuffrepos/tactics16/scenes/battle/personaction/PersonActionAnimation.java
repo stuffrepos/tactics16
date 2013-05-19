@@ -1,11 +1,13 @@
 package net.stuffrepos.tactics16.scenes.battle.personaction;
 
 import java.util.Set;
-import net.stuffrepos.tactics16.game.Action;
+import net.stuffrepos.tactics16.battlegameengine.Action;
+
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job.GameAction;
 import net.stuffrepos.tactics16.scenes.battle.Person;
 import net.stuffrepos.tactics16.scenes.battle.VisualBattleMap;
+import net.stuffrepos.tactics16.util.math.Interval;
 
 /**
  *
@@ -27,7 +29,7 @@ public class PersonActionAnimation {
         this.selectedPerson.getGameActionControl().advance(GameAction.ATTACKING);
         this.selectedPerson.setSide(target.getX() - selectedPerson.getMapPosition().getX());
         this.targets = this.visualBattleMap.getBattleGame().calculateTargetActionRayArea(
-                target, selectedAction.getReach().getRay());
+                target, new Interval(0, selectedAction.getReach().getRay()));
     }
 
     public boolean isFinalized() {

@@ -1,5 +1,8 @@
 package net.stuffrepos.tactics16.scenes;
 
+import net.stuffrepos.tactics16.scenes.test.JobSpriteTester;
+import net.stuffrepos.tactics16.scenes.test.AnimationSpriteTester;
+import net.stuffrepos.tactics16.scenes.test.FontTesterScene;
 import java.awt.Font;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.scenes.mapbuilder.MapBuilderScene;

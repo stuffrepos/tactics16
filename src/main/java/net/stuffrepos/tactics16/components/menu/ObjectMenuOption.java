@@ -10,9 +10,15 @@ import net.stuffrepos.tactics16.util.Nameable;
 public abstract class ObjectMenuOption<T extends Nameable> implements MenuOption {
 
     private T source;
+    private boolean enabled;
 
     public ObjectMenuOption(T source) {
+        this(source, true);
+    }
+
+    public ObjectMenuOption(T source, boolean enabled) {
         this.source = source;
+        this.enabled = enabled;
     }
 
     public String getText() {
@@ -24,7 +30,7 @@ public abstract class ObjectMenuOption<T extends Nameable> implements MenuOption
     }
 
     public boolean isEnabled() {
-        return true;
+        return enabled;
     }
 
     public T getSource() {

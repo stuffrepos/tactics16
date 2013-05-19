@@ -1,8 +1,9 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
 import java.util.Set;
-import net.stuffrepos.tactics16.game.Action;
+import net.stuffrepos.tactics16.battlegameengine.Action;
 import net.stuffrepos.tactics16.game.Coordinate;
+import net.stuffrepos.tactics16.util.math.Interval;
 
 /**
  *
@@ -18,11 +19,11 @@ public class BattleAction {
 
     public BattleAction(
             BattleGame battleGame, Person agent, Action action,
-            Coordinate target, Integer agentAgilityPoints) {
+            Coordinate target) {
         this.agent = agent;
         this.action = action;
         this.target = target;
-        this.agentAgilityPoints = agentAgilityPoints;
+        this.agentAgilityPoints = 0;
         this.battleGame = battleGame;
     }
 
@@ -46,21 +47,15 @@ public class BattleAction {
         return battleGame.getPersonsOnMapPositions(
                 battleGame.calculateTargetActionRayArea(
                 target,
-                action.getReach().getRay()));
+                new Interval(0,action.getReach().getRay())));
     }
 
     public Set<Coordinate> getRayTargets() {
-        return battleGame.calculateTargetActionRayArea(target, action.getReach().getRay());
+        return battleGame.calculateTargetActionRayArea(target, new Interval(0, action.getReach().getRay()));
     }
 
     public Integer agilityPointsNeededToEvade(Person target) {
-        if (agentAgilityPoints == null) {
-            return null;
-        } else {
-            return Math.max(
-                    0,
-                    getAgentAgilityPoints() + getAction().getAgility() - target.getEvasiveness());
-        }
+        return null;
     }
 
     public int calculateDamage(Person person) {

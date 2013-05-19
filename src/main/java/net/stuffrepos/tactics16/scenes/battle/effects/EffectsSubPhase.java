@@ -1,20 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle.effects;
 
-import org.newdawn.slick.Graphics;
-import java.util.ArrayList;
-import java.util.Set;
-import net.stuffrepos.tactics16.GameKey;
-import net.stuffrepos.tactics16.MyGame;
-import net.stuffrepos.tactics16.game.Job.GameAction;
 import net.stuffrepos.tactics16.phase.Phase;
-import net.stuffrepos.tactics16.phase.PhaseManager;
-import net.stuffrepos.tactics16.scenes.battle.BattleAction;
-import net.stuffrepos.tactics16.scenes.battle.BattleActionResult;
-import net.stuffrepos.tactics16.scenes.battle.BattleScene;
-import net.stuffrepos.tactics16.scenes.battle.Person;
-import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.state.StateBasedGame;
 
 /**
  *
@@ -22,13 +8,7 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class EffectsSubPhase extends Phase {
 
-    private final BattleScene parentScene;
-    private final BattleActionResult battleActionResult;
-
-    public EffectsSubPhase(BattleScene parentScene, BattleAction battleAction) {
-        this.parentScene = parentScene;
-        this.battleActionResult = new BattleActionResult(battleAction);
-    }
+    /*
 
     @Override
     public void enter(GameContainer container, StateBasedGame game) {
@@ -157,30 +137,6 @@ public class EffectsSubPhase extends Phase {
             }
         }// </editor-fold>
 
-        private class EffectPhase extends Phase {
-
-            private EffectAnimation effectAnimation;
-
-            @Override
-            public void enter(GameContainer container, StateBasedGame game) {
-                this.effectAnimation = new EffectAnimation(
-                        parentScene.getVisualBattleMap(),
-                        battleActionResult);
-            }
-
-            @Override
-            public void update(GameContainer container, StateBasedGame game, int delta) {
-                effectAnimation.update(delta);
-
-                if (effectAnimation.isFinalized()) {
-                    parentScene.toPersonActionSubPhase(battleActionResult);
-                }
-            }
-
-            @Override
-            public void render(GameContainer container, StateBasedGame game, Graphics g) {
-                effectAnimation.render(g);
-            }
-        }
     }
+    */
 }

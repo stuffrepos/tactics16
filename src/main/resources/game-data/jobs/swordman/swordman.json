@@ -1,8 +1,9 @@
 {
     objectType: "job",
     name: "Swordman",
-    defense: 3,
+    resistence: 3,
     evasiveness: 3,
+    moviment: 4,
     playerColorsMapping: {
         "colors": {
             "0000FF": "MAIN",
@@ -65,14 +66,23 @@
     },
     actions: [{
         "name": "Sword Attack",
-        "power": 5,
-        "agility": 3,
+        "power": 6,
+        "accuracy": 5,
         "reach": {
             "distanceMin": 1,
-            "distanceMax": 1,
-            "rayMin": 0,
-            "rayMax": 0,
+            "distanceMax": 1,            
+            "ray": 0,
             "clearTrajectory": false
+        }
+    },{
+        "name": "Throw stone",
+        "power": 4,
+        "accuracy": 3,
+        "reach": {
+            "distanceMin": 3,
+            "distanceMax": 5,            
+            "ray": 0,
+            "clearTrajectory": true
         }
     }]
 }

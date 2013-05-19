@@ -1,6 +1,7 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
 import java.util.Collection;
+import java.util.HashSet;
 import net.stuffrepos.tactics16.animation.SpriteAnimation;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.animation.GameImage;
@@ -16,11 +17,9 @@ import net.stuffrepos.tactics16.util.LifoQueue;
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class Person extends DataObject implements VisualEntity, net.stuffrepos.tactics16.battlegameengine.Person {
-
-    private static final int DEFAULT_MOVIMENT = 4;
-    public static final int MAX_HEALTH_POINTS = 10;
-    public static final int MAX_AGILITY_POINTS = 10;
-    public static final int MAX_ACTION_USE_AGILITY_POINTS = MAX_AGILITY_POINTS / 2;
+    
+    public static final int MAX_HEALTH_POINTS = 10;        
+    public static final int MAX_SPECIAL_POINTS = 10;
     private Job.GameAction currentGameAction;
     private Job job;
     private final Coordinate position = new Coordinate();
@@ -28,8 +27,7 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
     private long elapsedTime;
     private int side = 1;
     private Player player;
-    private int healthPoints = MAX_HEALTH_POINTS;
-    private int agilityPoints = MAX_AGILITY_POINTS;
+    private int healthPoints = MAX_HEALTH_POINTS;    
     private GameActionControl gameActionControl = new GameActionControl();
 
     public Person(Player player, String name, Job job) {
@@ -89,16 +87,12 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
     }
 
     public int getMoviment() {
-        return DEFAULT_MOVIMENT;
+        return job.getMoviment();
     }
 
     public int getHealthPoints() {
         return healthPoints;
-    }
-
-    public int getAgilityPoints() {
-        return agilityPoints;
-    }
+    }    
 
     public boolean isFinalized() {
         return false;
@@ -118,15 +112,11 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
     }
 
     public int getDefense() {
-        return job.getDefense();
+        return job.getResistence();
     }
 
     public GameActionControl getGameActionControl() {
         return gameActionControl;
-    }
-
-    public void decreaseAgilityPoints(int ap) {
-        agilityPoints -= ap;        
     }
 
     public void decreaseHealthPoints(int hp) {
@@ -134,23 +124,19 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
     }
 
     public int getResistence() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return job.getResistence();
     }
 
     public int getMaximumHealthPoints() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return MAX_HEALTH_POINTS;
     }
 
     public int getMaximumEspecialPoints() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return MAX_SPECIAL_POINTS;
     }
 
     public Collection<Action> getActions() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public net.stuffrepos.tactics16.battlegameengine.Person clone() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new HashSet<Action>(job.getActions());
     }
 
     public class GameActionControl {

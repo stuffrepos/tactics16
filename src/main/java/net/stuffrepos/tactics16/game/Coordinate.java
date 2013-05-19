@@ -1,5 +1,8 @@
 package net.stuffrepos.tactics16.game;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 import net.stuffrepos.tactics16.util.listeners.ListenerManager;
@@ -12,6 +15,19 @@ import org.json.JSONObject;
  */
 public class Coordinate implements Comparable<Coordinate>, Cloneable, MapCoordinate {
 
+    public static List<Coordinate> list(Collection<MapCoordinate> mapCoordinates) {
+        List<Coordinate> list = new ArrayList<Coordinate>(mapCoordinates.size());
+        for (MapCoordinate mapCoordinate : mapCoordinates) {
+            list.add(Coordinate.fromMapCoordinate(mapCoordinate));
+        }
+
+        return list;
+
+    }
+
+    public static Coordinate fromMapCoordinate(MapCoordinate mapCoordinate) {
+        return new Coordinate(mapCoordinate.getX(), mapCoordinate.getY());
+    }
     private ListenerManager<Coordinate> listenerManager = new ListenerManager<Coordinate>(this);
     private double x;
     private double y;
@@ -141,10 +157,10 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, MapCoordin
     }
 
     public boolean inRectangle(int x, int y, int width, int height) {
-        return this.x >= x &&
-                this.x < x + width &&
-                this.y >= y &&
-                this.y < y + height;
+        return this.x >= x
+                && this.x < x + width
+                && this.y >= y
+                && this.y < y + height;
     }
 
     public void set(Coordinate p, int dx, int dy) {
@@ -152,6 +168,6 @@ public class Coordinate implements Comparable<Coordinate>, Cloneable, MapCoordin
     }
 
     public boolean inRectangle(Coordinate position, Coordinate size) {
-        return inRectangle(position.getX(), position.getY(),size.getX(),size.getY());
+        return inRectangle(position.getX(), position.getY(), size.getX(), size.getY());
     }
 }

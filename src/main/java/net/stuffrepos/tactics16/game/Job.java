@@ -11,10 +11,11 @@ import java.util.Set;
 public class Job implements Nameable {
 
     private String name;
-    private Integer defense;
+    private Integer resistence;
     private Integer evasiveness;
     private Set<Action> actions = new HashSet<Action>();
     private JobSpriteActionGroup spriteActionGroup = new JobSpriteActionGroup();
+    private int moviment;
 
     public Job(String name) {
         this.name = name;
@@ -44,16 +45,24 @@ public class Job implements Nameable {
         this.name = name;
     }
 
-    public Integer getDefense() {
-        return defense;
+    public int getResistence() {
+        return resistence;
     }
 
-    public void setDefense(Integer defense) {
-        this.defense = defense;
+    public void setResistence(int resistence) {
+        this.resistence = resistence;
     }
 
     public JobSpriteActionGroup getSpriteActionGroup() {
         return spriteActionGroup;
+    }
+
+    public void setMoviment(int moviment) {
+        this.moviment = moviment;
+    }
+
+    public int getMoviment() {
+        return this.moviment;
     }
 
     public enum GameAction {

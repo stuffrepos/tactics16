@@ -1,33 +1,29 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
-import org.newdawn.slick.Color;
-import net.stuffrepos.tactics16.scenes.battle.personaction.PersonActionSubPhase;
-import net.stuffrepos.tactics16.Layout;
-import net.stuffrepos.tactics16.MyGame;
-import net.stuffrepos.tactics16.components.TextBox;
-import net.stuffrepos.tactics16.game.Coordinate;
-import net.stuffrepos.tactics16.game.Job;
-import net.stuffrepos.tactics16.phase.PhaseManager;
-import org.newdawn.slick.Graphics;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 import net.stuffrepos.tactics16.GameKey;
-import net.stuffrepos.tactics16.battlegameengine.Action;
-import net.stuffrepos.tactics16.battlegameengine.Map;
+import net.stuffrepos.tactics16.Layout;
+import net.stuffrepos.tactics16.MyGame;
+import net.stuffrepos.tactics16.battlegameengine.BattleEvent;
+import net.stuffrepos.tactics16.battlegameengine.BattleNotify;
+import net.stuffrepos.tactics16.battlegameengine.BattleRequest;
 import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.battlegameengine.Monitor;
-import net.stuffrepos.tactics16.components.MessageBox;
+import net.stuffrepos.tactics16.components.TextBox;
+import net.stuffrepos.tactics16.game.Coordinate;
+import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.phase.Phase;
-import net.stuffrepos.tactics16.scenes.battle.BattleGameEvents.Event;
+import net.stuffrepos.tactics16.phase.PhaseManager;
 import net.stuffrepos.tactics16.scenes.battle.effects.EffectsSubPhase;
-import net.stuffrepos.tactics16.util.image.ColorUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -39,33 +35,22 @@ public class BattleScene extends Phase {
 
     // Layout
     public static final int MAP_GAP = Layout.OBJECT_GAP * 5;
-    private static java.util.Map<Class, EventInitializer> eventInitializer;
+    private final EventProcessorFinder eventProcessorFinder;
     private TextBox statusDialog = new TextBox();
-    // Phases
-    private final PersonActionSubPhase personActionSubPhase = new PersonActionSubPhase(this);
+    // Phases    
     private final OptionsSubPhase optionsSubPhase = new OptionsSubPhase(this);
     private PhaseManager phaseManager = new PhaseManager();
     private VisualBattleMap visualBattleMap;
     private JobAnimationTest jobAnimationTest;
     private int currentPlayer;
-    private Set<Person> usedPersons;
     private Thread engineThread;
-    private Queue<BattleGameEvents.Event> eventQueue = new LinkedList<BattleGameEvents.Event>();
-    private boolean requestMovimentTarget = false;
-    private MapCoordinate requestMovimentTargetReturn = null;
-
-    static {        
-        eventInitializer = new HashMap<Class, EventInitializer>();
-        eventInitializer.put(BattleGameEvents.NewTurnNotifiy.class, new EventInitializer<BattleGameEvents.NewTurnNotifiy>() {
-            public Phase init(Event event) {
-                return new Phase() {
-                };                
-            }
-        });
-    }
-    private Phase currentEventPhase = null;
+    private Queue<BattleEvent> eventQueue = new LinkedList<BattleEvent>();
+    private static final Log log = LogFactory.getLog(BattleScene.class);
+    private RequestProcessor currentRequestProcessor = null;
+    private boolean currentEventPhaseRunning = false;
 
     public BattleScene(BattleGame battleGame) {
+        this.eventProcessorFinder = new EventProcessorFinder(this);
         this.visualBattleMap = new VisualBattleMap(battleGame);
         this.jobAnimationTest = new JobAnimationTest(battleGame);
 
@@ -91,8 +76,6 @@ public class BattleScene extends Phase {
                         battleGame.getPersonInitialPosition(player, person));
             }
         }
-
-        phaseManager.change(personActionSubPhase);
     }
 
     @Override
@@ -104,100 +87,25 @@ public class BattleScene extends Phase {
             public void run() {
                 getVisualBattleMap().getBattleGame().getBattleGameEngine().run(
                         new Monitor() {
-                            public void notifyNewTurn(int currentTurn) {
-                                eventQueue.add(new BattleGameEvents.NewTurnNotifiy(currentTurn));
+                            public void notify(BattleNotify notify) {
+                                eventQueue.add(notify);
                             }
 
-                            public void notifyPersonsActOrderDefined(List<Integer> persons) {
-                                eventQueue.add(new BattleGameEvents.PersonsActOrderDefinedNotifiy(persons));
-                            }
-
-                            public void notifySelectedPerson(Integer selectedPerson) {
-                                eventQueue.add(new BattleGameEvents.SelectedPersonNotify(selectedPerson));
-                            }
-
-                            public MapCoordinate requestMovimentTarget(Integer person, Map map, MapCoordinate originalPosition, Collection<MapCoordinate> movimentRange) {
-                                requestMovimentTarget = true;
-                                requestMovimentTargetReturn = null;
+                            public <T> T request(BattleRequest<T> request) {
+                                eventQueue.add(request);
+                                log.debug("Engine will be blocked by " + request.getClass().getSimpleName());
                                 getVisualBattleMap().getBattleGame().getBattleGameEngine().waitRequest();
-                                return requestMovimentTargetReturn;
-                            }
-
-                            public void notifyOutOfReachMoviment(Integer person, MapCoordinate coordinate) {
-                                eventQueue.add(new BattleGameEvents.OutOfReachMovimentNotifiy(person, coordinate));
-                            }
-
-                            public void notifyPersonMoved(Integer person, MapCoordinate originalPosition, MapCoordinate movimentTarget) {
-                                eventQueue.add(new BattleGameEvents.PersonMovedNotify(person, originalPosition, movimentTarget));
-                            }
-
-                            public Action requestPersonAction(Integer person, Map map, MapCoordinate personPosition, java.util.Map<Action, Boolean> classifyPersonActions) {
-                                throw new UnsupportedOperationException("Not supported yet.");
-                            }
-
-                            public void notifyMovimentCancelled(Integer person, MapCoordinate originalPosition, MapCoordinate movimentTarget) {
-                                eventQueue.add(new BattleGameEvents.MovimentCancelledNotifiy(person, originalPosition, movimentTarget));
-                            }
-
-                            public void notifySelectedAction(Integer person, Action selectedAction) {
-                                eventQueue.add(new BattleGameEvents.SelectedActionNotify(person, selectedAction));
-                            }
-
-                            public void notifyNotEnabledAction(Integer person, Action selectedAction) {
-                                eventQueue.add(new BattleGameEvents.NotEnabledActionNotify(person, selectedAction));
-                            }
-
-                            public void notifyChooseActionCancelled(Integer person, Action selectedAction) {
-                                eventQueue.add(new BattleGameEvents.ChooseActionCancelled(person, selectedAction));
-                            }
-
-                            public void notifyChoosedTarget(Integer person, MapCoordinate actionTarget) {
-                                eventQueue.add(new BattleGameEvents.ChoosedTarget(person, actionTarget));
-                            }
-
-                            public void notifyOutOfReach(Integer person, Action selectedAction) {
-                                eventQueue.add(new BattleGameEvents.OutOfReachNotify(person, selectedAction));
-                            }
-
-                            public MapCoordinate requestActionTarget(Integer person, Map map, MapCoordinate get, Action selectedAction, Collection<MapCoordinate> actionRange) {
-                                throw new UnsupportedOperationException("Not supported yet.");
-                            }
-
-                            public boolean requestActConfirm(Integer person, Action selectedAction, MapCoordinate actionTarget, Collection<MapCoordinate> actRay, Collection<Integer> affectedPersons) {
-                                throw new UnsupportedOperationException("Not supported yet.");
-                            }
-
-                            public void notifyConfirmCancelled(Integer person, Action selectedAction, MapCoordinate actionTarget) {
-                                eventQueue.add(new BattleGameEvents.ConfirmCancelledNotify(person, selectedAction, actionTarget));
-                            }
-
-                            public void notifyPerformedAction(Integer agentPerson, Action action,
-                                    MapCoordinate target, Collection<MapCoordinate> buildActionReachRay,
-                                    Collection<Integer> affectedPersons, int agentLostSpecialPoints,
-                                    int agentLostHealthPoints) {
-                                eventQueue.add(new BattleGameEvents.PerformedActionNotify(
-                                        agentPerson,
-                                        action,
-                                        target,
-                                        buildActionReachRay,
-                                        affectedPersons,
-                                        agentLostSpecialPoints,
-                                        agentLostHealthPoints));
-                            }
-
-                            public void notifyActionAffectedPerson(Integer affectedPerson, boolean hits, int damage, boolean affectedPersonIsAlive) {
-                                eventQueue.add(new BattleGameEvents.ActionAffectedPersonNotify(affectedPerson,
-                                        hits, damage, affectedPersonIsAlive));
-                            }
-
-                            public void notifyWiningPlayer(Integer winnerPlayer) {
-                                eventQueue.add(new BattleGameEvents.WinningPlayerNotify(winnerPlayer));
+                                log.debug("Engine was unblocked by " + request.getClass().getSimpleName());
+                                assert currentRequestProcessor != null;
+                                T answer = (T) currentRequestProcessor.getAnswer();
+                                currentRequestProcessor = null;
+                                return answer;
                             }
                         });
             }
         };
 
-        engineThread.start();        
+        engineThread.start();
     }
 
     @Override
@@ -217,18 +125,17 @@ public class BattleScene extends Phase {
 
         getVisualBattleMap().update(delta);
 
-        if (currentEventPhase == null) {
-            BattleGameEvents.Event event = eventQueue.poll();
-            if (event != null) {
-                currentEventPhase = eventInitializer.get(event.getClass()).init(event);
+        if (!currentEventPhaseRunning) {
+            Phase currentEventPhase = nextEventPhase();
+            if (currentEventPhase != null) {
+                currentEventPhaseRunning = true;
+                phaseManager.change(currentEventPhase);
             }
         }
 
-        if (currentEventPhase != null) {
-            currentEventPhase.update(container, game, delta);
+        if (phaseManager.getCurrentPhase() != null) {
+            phaseManager.getCurrentPhase().update(container, game, delta);
         }
-
-        //phaseManager.getCurrentPhase().update(container, game, delta);
     }
 
     @Override
@@ -236,10 +143,9 @@ public class BattleScene extends Phase {
         getVisualBattleMap().render(g);
         statusDialog.render(g);
 
-        if (currentEventPhase != null) {
-            currentEventPhase.render(container, game, g);
+        if (phaseManager.getCurrentPhase() != null) {
+            phaseManager.getCurrentPhase().render(container, game, g);
         }
-        //phaseManager.getCurrentPhase().render(container, game, g);
     }
 
     private void updateStatusDialog() {
@@ -263,63 +169,44 @@ public class BattleScene extends Phase {
         return visualBattleMap;
     }
 
-    public void toEffectSubPhase(BattleAction battleAction) {
-        usedPersons.add(battleAction.getAgent());
-        battleAction.getAgent().getGameActionControl().set(Job.GameAction.USED);
-
-        getPhaseManager().clear();
-        if (battleAction.getAction() == null) {
-            toPersonActionSubPhase();
-        } else {
-            getPhaseManager().change(new EffectsSubPhase(this, battleAction));
-        }
-    }
-
-    public void toPersonActionSubPhase() {
-        toPersonActionSubPhase(null);
-    }
-
-    public void toPersonActionSubPhase(BattleActionResult battleActionResult) {
-        if (battleActionResult != null) {
-            battleActionResult.applyResults();
-        }
-        getPhaseManager().clear();
-        getPhaseManager().change(personActionSubPhase);
-        if (usedPersons.size() == getCurrentPlayer().getPersons().size()) {
-            newTurn();
-        }
-    }
-
-    public boolean isUsed(Person person) {
-        return usedPersons.contains(person);
-    }
-
     public Player getCurrentPlayer() {
         return getVisualBattleMap().getBattleGame().getPlayer(currentPlayer);
     }
 
-    public void newTurn() {
-        currentPlayer = (currentPlayer + 1) % getVisualBattleMap().getBattleGame().getPlayerCount();
-        if (usedPersons != null) {
-            for (Person person : usedPersons) {
-                person.getGameActionControl().set(Job.GameAction.STOPPED);
-            }
+    public void stopCurrentEventPhase() {
+        currentEventPhaseRunning = false;
+        if (currentRequestProcessor != null) {
+            getVisualBattleMap().getBattleGame().getBattleGameEngine().resumeRequest();
         }
-        usedPersons = new HashSet<Person>();
-        new MessageBox(
-                getCurrentPlayer().getName() + "'s Turn",
-                getVisualBattleMap().getVisualMap(),
-                1000).setBackgroundColor(
-                ColorUtil.transparent(getCurrentPlayer().getDefaultColor(), 0.8f)).setForegroundColor(
-                Color.white).createPhase(phaseManager);
     }
 
-    private void initEvent(Event event) {
-        eventInitializer.get(event.getClass()).init(event);
+    private Phase nextEventPhase() {
+        BattleEvent event = eventQueue.poll();
+        if (event != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("Event polled: " + event.getClass().getSimpleName());
+            }
+
+            EventProcessor eventProcessor = eventProcessorFinder.getEventProcessor(event);
+
+            if (log.isDebugEnabled()) {
+                log.debug("Event processor found: " + eventProcessor.getClass().getSimpleName());
+            }
+
+            if (eventProcessor instanceof RequestProcessor) {
+                currentRequestProcessor = (RequestProcessor) eventProcessor;
+            }
+
+            return eventProcessor.init(event);
+        } else {
+            return null;
+        }
     }
 
-    private interface EventInitializer<EventType extends BattleGameEvents.Event> {
-
-        public Phase init(BattleGameEvents.Event event);
+    public void putPersonOnPosition(Integer person, MapCoordinate originalPosition) {
+        putPersonOnPosition(
+                getVisualBattleMap().getBattleGame().getPerson(person),
+                Coordinate.fromMapCoordinate(originalPosition));
     }
+    
 }

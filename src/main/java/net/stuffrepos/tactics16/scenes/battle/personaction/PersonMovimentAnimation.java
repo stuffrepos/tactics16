@@ -8,6 +8,7 @@ import net.stuffrepos.tactics16.util.MultiLinearMoviment;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 import java.util.LinkedList;
 import java.util.List;
+import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.scenes.battle.Person;
 import net.stuffrepos.tactics16.scenes.battle.VisualBattleMap;
 
@@ -15,7 +16,7 @@ import net.stuffrepos.tactics16.scenes.battle.VisualBattleMap;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-class PersonMovimentAnimation {
+public class PersonMovimentAnimation {
 
     public static final double MOVIMENT_SPEED = Map.TERRAIN_SIZE * 4 / 1000d;
     private Person person;
@@ -23,10 +24,10 @@ class PersonMovimentAnimation {
     private MultiLinearMoviment moviment;
     private final VisualBattleMap visualBattleMap;
 
-    public PersonMovimentAnimation(Person person, VisualBattleMap visualBattleMap, Coordinate terrainTarget) {
+    public PersonMovimentAnimation(Person person, VisualBattleMap visualBattleMap, MapCoordinate terrainTarget) {
         this.person = person;
         this.visualBattleMap = visualBattleMap;
-        this.terrainTarget = terrainTarget;
+        this.terrainTarget = Coordinate.fromMapCoordinate(terrainTarget);
         this.person.getGameActionControl().advance(GameAction.WALKING);
         this.moviment = new MultiLinearMoviment(
                 this.person.getPosition(),

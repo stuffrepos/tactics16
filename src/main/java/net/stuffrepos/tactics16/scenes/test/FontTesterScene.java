@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes;
+package net.stuffrepos.tactics16.scenes.test;
 
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.GameKey;

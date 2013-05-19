@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import net.stuffrepos.tactics16.battlegameengine.BattleGameEngine;
+import net.stuffrepos.tactics16.battlegameengine.BattleEngine;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
@@ -22,9 +22,9 @@ public class BattleGame {
 
     private Map map;
     private List<Player> players = new ArrayList<Player>();
-    private CacheableValue<BattleGameEngine> battleGameEngine = new CacheableValue<BattleGameEngine>() {
+    private CacheableValue<BattleEngine> battleGameEngine = new CacheableValue<BattleEngine>() {
         @Override
-        protected BattleGameEngine calculate() {
+        protected BattleEngine calculate() {
             java.util.Map<Integer, net.stuffrepos.tactics16.battlegameengine.Person> persons = new HashMap<Integer, net.stuffrepos.tactics16.battlegameengine.Person>();
             java.util.Map<Integer, Integer> personsPlayers = new HashMap<Integer, Integer>();
             java.util.Map<Integer, net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate> personsPositions = new HashMap<Integer, net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate>();
@@ -44,7 +44,7 @@ public class BattleGame {
 
             }
 
-            return new BattleGameEngine(map, persons, personsPlayers, personsPositions);
+            return new BattleEngine(map, persons, personsPlayers, personsPositions);
         }
     };
 
@@ -52,7 +52,7 @@ public class BattleGame {
         assert map != null : "map is null";
         setMap(map);
         resetPlayers();
-        
+
     }
 
     public Map getMap() {
@@ -192,7 +192,21 @@ public class BattleGame {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    public BattleGameEngine getBattleGameEngine() {
+    public BattleEngine getBattleGameEngine() {
         return battleGameEngine.getValue();
+    }
+
+    public Person getPerson(int personId) {
+        int personCounter = 0;
+        for (Player player : players) {
+            for (Person playerPerson : player.getPersons()) {
+                if (personCounter == personId) {
+                    return playerPerson;
+                }
+                personCounter++;
+            }
+        }
+
+        throw new RuntimeException("Person not found with ID " + personId);
     }
 }

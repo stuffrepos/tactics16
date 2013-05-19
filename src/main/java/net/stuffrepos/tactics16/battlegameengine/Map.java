@@ -1,5 +1,7 @@
 package net.stuffrepos.tactics16.battlegameengine;
 
+import java.util.Collection;
+
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
@@ -27,4 +29,5 @@ public interface Map {
 
         public MapCoordinate clone();
     }
+    
 }
