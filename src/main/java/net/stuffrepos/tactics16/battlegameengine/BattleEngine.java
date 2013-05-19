@@ -1,6 +1,5 @@
 package net.stuffrepos.tactics16.battlegameengine;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -23,7 +22,6 @@ import net.stuffrepos.tactics16.battlegameengine.events.OutOfReachMoviment;
 import net.stuffrepos.tactics16.battlegameengine.events.OutOfReachNotify;
 import net.stuffrepos.tactics16.battlegameengine.events.PerformedActionNotify;
 import net.stuffrepos.tactics16.battlegameengine.events.PersonMoved;
-import net.stuffrepos.tactics16.battlegameengine.events.PersonsActOrderDefined;
 import net.stuffrepos.tactics16.battlegameengine.events.SelectedActionNotify;
 import net.stuffrepos.tactics16.battlegameengine.events.SelectedPersonNotify;
 import net.stuffrepos.tactics16.battlegameengine.events.WinningPlayerNotify;
@@ -45,6 +43,8 @@ public class BattleEngine {
     private final Definitions definitions = new Definitions();
     private final Finders finders = new Finders();
     private boolean running;
+    public static final float ACT_SPEED_POINTS_COST = 1.0f;
+    private State state = State.NotStarted;
 
     public BattleEngine(
             Map map,
@@ -68,40 +68,44 @@ public class BattleEngine {
         }
     }
 
+    public State getState() {
+        return state;
+    }
+
     public void run(Monitor monitor) {
-        int turn = 0;
-        turnLoop:
-        while (true) {
-            if (log.isDebugEnabled()) {
-                log.debug("New turn: " + (turn + 1));
-            }
+        if (State.NotStarted.equals(state)) {
+            state = State.Started;
+            int turn = 0;
+            turnLoop:
+            while (true) {
+                if (log.isDebugEnabled()) {
+                    log.debug("New turn: " + (turn + 1));
+                }
 
-            monitor.notify(new NewTurn(++turn));
-            List<Integer> persons = finders.orderPersonsToAct();
+                monitor.notify(new NewTurn(++turn));
 
-            if (log.isDebugEnabled()) {
-                log.debug(Arrays.toString(persons.toArray(new Integer[0])));
-            }
+                for (int person : finders.getAlivePersons()) {
+                    personSet.getPerson(person).renewSpeedPoints();
+                }
 
-            monitor.notify(new PersonsActOrderDefined(persons));
-            for (Integer selectedPerson : persons) {
-                if (definitions.isPersonAlive(selectedPerson)) {
+                Integer selectedPerson;
+
+                while ((selectedPerson = finders.nextPersonToAct()) != null) {
                     if (log.isDebugEnabled()) {
                         log.debug("Selected person: " + selectedPerson);
                     }
+
                     monitor.notify(new SelectedPersonNotify(selectedPerson));
                     personActs(monitor, selectedPerson);
                     if (finders.getAlivePlayers().size() < 2) {
                         break turnLoop;
                     }
                 }
-            }
 
-            if (turn > 10) {
-                return;
             }
+            monitor.notify(new WinningPlayerNotify(finders.getWinnerPlayer()));
+            state = State.Finalized;
         }
-        monitor.notify(new WinningPlayerNotify(finders.getWinnerPlayer()));
     }
 
     public void waitRequest() {
@@ -229,6 +233,7 @@ public class BattleEngine {
 
         personSet.getPerson(agentPerson).subtractHealthPoints(lostHealthPoints);
         personSet.getPerson(agentPerson).subtractSpecialPoints(lostSpecialPoints);
+        personSet.getPerson(agentPerson).subtractSpeedPoints(ACT_SPEED_POINTS_COST);
 
         java.util.Map<Integer, AffectedPersonResult> affectedPersonResults = new HashMap<Integer, AffectedPersonResult>();
 
@@ -466,6 +471,16 @@ public class BattleEngine {
             return alivePersons;
         }
 
+        private Iterable<Integer> getAlivePersons() {
+            List<Integer> alivePersons = new LinkedList<Integer>();
+            for (Integer personId : personSet.getPersons()) {
+                if (definitions.isPersonAlive(personId)) {
+                    alivePersons.add(personId);
+                }
+            }
+            return alivePersons;
+        }
+
         private List<Integer> orderPersonsToAct() {
             List<Integer> orderedPlayers = orderPlayersByDescendingAlivePersons(
                     getAlivePlayers());
@@ -518,12 +533,37 @@ public class BattleEngine {
                     throw new IllegalStateException("There is more than one player alive.");
             }
         }
+
+        /**
+         * The next person to act is that have most speed points and minimum of
+         * {@link #ACT_SPEED_POINTS_COST}.
+         *
+         * @return
+         */
+        private Integer nextPersonToAct() {
+            Integer selected = null;
+            for (int person : getAlivePersons()) {
+                if (log.isDebugEnabled()) {
+                    log.debug(String.format("Person(%d).speedPoints: %f", person, personSet.getPerson(person).getSpeedPoints()));
+                }
+
+                if (personSet.getPerson(person).getSpeedPoints() >= ACT_SPEED_POINTS_COST) {
+                    if (selected == null
+                            || personSet.getPerson(person).getSpeedPoints() > personSet.getPerson(selected).getSpeedPoints()
+                            || (personSet.getPerson(person).getSpeedPoints() == personSet.getPerson(selected).getSpeedPoints()
+                            && personSet.getPerson(person).getHealthPoints() < personSet.getPerson(selected).getHealthPoints())) {
+                        selected = person;
+                    }
+                }
+            }
+            return selected;
+        }
     }
 
     private class Definitions {
 
         private boolean isPersonAlive(int person) {
-            return personSet.getPerson(person).getHealthPoints() <= 0;
+            return personSet.getPerson(person).getHealthPoints() > 0;
         }
 
         private boolean isPlayerAlive(int player) {
@@ -663,18 +703,25 @@ public class BattleEngine {
             return persons.get(personId);
         }
 
+        private Iterable<Integer> getPersons() {
+            return persons.keySet();
+        }
+
         public class PersonData {
 
             private final int id;
             private Integer playerId;
             private int healthPoints;
             private int specialPoints;
+            private float speedPoints;
             private final Person person;
             private MapCoordinate position;
 
             public PersonData(Person person, int id) {
                 this.person = person;
                 this.id = id;
+                this.healthPoints = person.getMaximumHealthPoints();
+                this.specialPoints = person.getMaximumSpecialPoints();
             }
 
             private int getHealthPoints() {
@@ -739,6 +786,22 @@ public class BattleEngine {
             private void subtractSpecialPoints(int lostSpecialPoints) {
                 this.specialPoints = java.lang.Math.max(0,
                         this.specialPoints - lostSpecialPoints);
+            }
+
+            private float getSpeedPoints() {
+                return speedPoints;
+            }
+
+            private void subtractSpeedPoints(float lostSpeedPoints) {
+                this.speedPoints -= lostSpeedPoints;
+            }
+
+            public float getSpeed() {
+                return person.getSpeed();
+            }
+
+            private void renewSpeedPoints() {
+                this.speedPoints = person.getSpeed();
             }
         }
     }
@@ -816,5 +879,12 @@ public class BattleEngine {
         public boolean isHits() {
             return hits;
         }
+    }
+
+    public static enum State {
+
+        NotStarted,
+        Started,
+        Finalized
     }
 }

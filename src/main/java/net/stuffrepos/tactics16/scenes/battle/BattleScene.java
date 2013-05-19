@@ -1,14 +1,13 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
+import net.stuffrepos.tactics16.battlegameengine.BattleEngine;
 import net.stuffrepos.tactics16.battlegameengine.BattleEvent;
 import net.stuffrepos.tactics16.battlegameengine.BattleNotify;
 import net.stuffrepos.tactics16.battlegameengine.BattleRequest;
@@ -19,7 +18,7 @@ import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.phase.PhaseManager;
-import net.stuffrepos.tactics16.scenes.battle.effects.EffectsSubPhase;
+import net.stuffrepos.tactics16.scenes.MainMenuScene;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.newdawn.slick.GameContainer;
@@ -87,21 +86,21 @@ public class BattleScene extends Phase {
             public void run() {
                 getVisualBattleMap().getBattleGame().getBattleGameEngine().run(
                         new Monitor() {
-                            public void notify(BattleNotify notify) {
-                                eventQueue.add(notify);
-                            }
+                    public void notify(BattleNotify notify) {
+                        eventQueue.add(notify);
+                    }
 
-                            public <T> T request(BattleRequest<T> request) {
-                                eventQueue.add(request);
-                                log.debug("Engine will be blocked by " + request.getClass().getSimpleName());
-                                getVisualBattleMap().getBattleGame().getBattleGameEngine().waitRequest();
-                                log.debug("Engine was unblocked by " + request.getClass().getSimpleName());
-                                assert currentRequestProcessor != null;
-                                T answer = (T) currentRequestProcessor.getAnswer();
-                                currentRequestProcessor = null;
-                                return answer;
-                            }
-                        });
+                    public <T> T request(BattleRequest<T> request) {
+                        eventQueue.add(request);
+                        log.debug("Engine will be blocked by " + request.getClass().getSimpleName());
+                        getVisualBattleMap().getBattleGame().getBattleGameEngine().waitRequest();
+                        log.debug("Engine was unblocked by " + request.getClass().getSimpleName());
+                        assert currentRequestProcessor != null;
+                        T answer = (T) currentRequestProcessor.getAnswer();
+                        currentRequestProcessor = null;
+                        return answer;
+                    }
+                });
             }
         };
 
@@ -135,6 +134,12 @@ public class BattleScene extends Phase {
 
         if (phaseManager.getCurrentPhase() != null) {
             phaseManager.getCurrentPhase().update(container, game, delta);
+        }
+
+        if (BattleEngine.State.Finalized.equals(getVisualBattleMap().getBattleGame().getBattleGameEngine().getState())
+                && !currentEventPhaseRunning
+                && eventQueue.isEmpty()) {
+            MyGame.getInstance().getPhaseManager().change(MainMenuScene.getInstance());
         }
     }
 

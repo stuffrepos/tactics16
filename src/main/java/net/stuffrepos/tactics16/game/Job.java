@@ -15,6 +15,8 @@ public interface Job extends Nameable {
     public int getResistence();
 
     public int getMoviment();
+    
+    public float getSpeed();
 
     public Set<Action> getActions();
 

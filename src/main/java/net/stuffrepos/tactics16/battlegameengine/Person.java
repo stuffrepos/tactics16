@@ -16,7 +16,9 @@ public interface Person {
 
     public int getMaximumHealthPoints();
 
-    public int getMaximumEspecialPoints();
+    public int getMaximumSpecialPoints();
 
     public Collection<Action> getActions();
+
+    public float getSpeed();
 }

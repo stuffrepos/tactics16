@@ -131,12 +131,16 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
         return MAX_HEALTH_POINTS;
     }
 
-    public int getMaximumEspecialPoints() {
+    public int getMaximumSpecialPoints() {
         return MAX_SPECIAL_POINTS;
     }
 
     public Collection<Action> getActions() {
         return new HashSet<Action>(job.getActions());
+    }
+
+    public float getSpeed() {
+        return job.getSpeed();
     }
 
     public class GameActionControl {

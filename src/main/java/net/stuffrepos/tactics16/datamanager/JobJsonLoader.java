@@ -119,6 +119,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         private Set<Action> actions = new HashSet<Action>();
         private JobSpriteActionGroup spriteActionGroup = new JobSpriteActionGroup();
         private int moviment;
+        private float speed = 2.0f;
 
         public JobImpl(String name) {
             this.name = name;
@@ -162,6 +163,14 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
 
         public int getMoviment() {
             return this.moviment;
+        }
+
+        public void setSpeed(float speed) {
+            this.speed = speed;
+        }
+
+        public float getSpeed() {
+            return speed;
         }
     }
     
