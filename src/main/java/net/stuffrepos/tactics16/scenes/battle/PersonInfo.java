@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
+import net.stuffrepos.tactics16.MyGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.animation.TextMovimentAnimation;
@@ -14,7 +15,7 @@ import net.stuffrepos.tactics16.util.Align;
  */
 public class PersonInfo implements VisualEntity {
 
-    private static final Color BACKGROUND_COLOR = new Color(0x77000000);
+    private static final Color BACKGROUND_COLOR = new Color(0,0,0,0);
     private static final double SPEED = 0.05;
     private TextMovimentAnimation textMovimentAnimation;
 
@@ -25,6 +26,7 @@ public class PersonInfo implements VisualEntity {
                 500,
                 SPEED);
         textMovimentAnimation.getDialog().setText(text);
+        textMovimentAnimation.getDialog().setFont(MyGame.FontType.Message);
         textMovimentAnimation.getDialog().setHorizontalAlign(Align.NULL);
         textMovimentAnimation.getDialog().setVerticalAlign(Align.NULL);
         textMovimentAnimation.getDialog().setForegroundColor(type.getColor());
