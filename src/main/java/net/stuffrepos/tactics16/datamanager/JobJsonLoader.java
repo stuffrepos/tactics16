@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import net.stuffrepos.tactics16.battlegameengine.Action;
+import net.stuffrepos.tactics16.battleengine.Action;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -202,7 +202,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         this.name = name;
     }
 
-    public net.stuffrepos.tactics16.battlegameengine.Reach getReach() {
+    public net.stuffrepos.tactics16.battleengine.Reach getReach() {
         return reach;
     }
 

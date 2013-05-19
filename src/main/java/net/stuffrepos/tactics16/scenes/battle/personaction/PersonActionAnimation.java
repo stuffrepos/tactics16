@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.scenes.battle.personaction;
 
 import java.util.Set;
-import net.stuffrepos.tactics16.battlegameengine.Action;
+import net.stuffrepos.tactics16.battleengine.Action;
 
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job.GameAction;

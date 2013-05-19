@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
-import net.stuffrepos.tactics16.battlegameengine.BattleEvent;
+import net.stuffrepos.tactics16.battleengine.BattleEvent;
 import net.stuffrepos.tactics16.phase.Phase;
 
 /**

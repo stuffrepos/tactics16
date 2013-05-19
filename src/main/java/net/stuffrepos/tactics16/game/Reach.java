@@ -6,7 +6,7 @@ import net.stuffrepos.tactics16.util.math.Interval;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Reach implements net.stuffrepos.tactics16.battlegameengine.Reach {
+public class Reach implements net.stuffrepos.tactics16.battleengine.Reach {
 
     private final Interval distance = new Interval(1);
     private int ray = 0;

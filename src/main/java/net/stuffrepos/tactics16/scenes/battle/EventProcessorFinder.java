@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.stuffrepos.tactics16.battlegameengine.BattleEvent;
+import net.stuffrepos.tactics16.battleengine.BattleEvent;
 import org.reflections.Reflections;
 
 /**

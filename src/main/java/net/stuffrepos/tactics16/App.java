@@ -4,6 +4,7 @@ import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.phase.Phase;
+import net.stuffrepos.tactics16.scenes.MainMenuScene;
 import net.stuffrepos.tactics16.scenes.battle.BattleGame;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.Person;
@@ -19,10 +20,12 @@ import org.newdawn.slick.state.StateBasedGame;
 public class App {
 
     public static void main(String[] args) throws SlickException {
-        args = new String[]{"./src/main/resources/game-data"};
+        if (args.length < 1) {
+            args = new String[]{"./src/main/resources/game-data"};
+        }        
         MyGame.createInstance(args[0]);
-        //MyGame.getInstance().start(MainMenuScene.getInstance());
-        MyGame.getInstance().start(bootBattleScene());
+        MyGame.getInstance().start(MainMenuScene.getInstance());
+        //MyGame.getInstance().start(bootBattleScene());
     }
 
     public static BattleScene buildBattleScene() {

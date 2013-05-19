@@ -8,7 +8,7 @@ import net.stuffrepos.tactics16.util.MultiLinearMoviment;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 import java.util.LinkedList;
 import java.util.List;
-import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.scenes.battle.Person;
 import net.stuffrepos.tactics16.scenes.battle.VisualBattleMap;
 

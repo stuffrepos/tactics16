@@ -3,10 +3,10 @@ package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 import java.util.Map.Entry;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
-import net.stuffrepos.tactics16.battlegameengine.Action;
+import net.stuffrepos.tactics16.battleengine.Action;
 
 import net.stuffrepos.tactics16.phase.Phase;
-import net.stuffrepos.tactics16.battlegameengine.events.PersonActionRequest;
+import net.stuffrepos.tactics16.battleengine.events.PersonActionRequest;
 import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.menu.Menu;

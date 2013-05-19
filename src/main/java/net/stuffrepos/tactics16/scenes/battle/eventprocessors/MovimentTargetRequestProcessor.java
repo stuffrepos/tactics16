@@ -5,7 +5,7 @@ import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.MapCursor;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.phase.Phase;
-import net.stuffrepos.tactics16.battlegameengine.events.MovimentTargetRequest;
+import net.stuffrepos.tactics16.battleengine.events.MovimentTargetRequest;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.MapCheckedArea;

@@ -1,6 +1,6 @@
-package net.stuffrepos.tactics16.battlegameengine;
+package net.stuffrepos.tactics16.battleengine;
 
-import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 
 /**
  *

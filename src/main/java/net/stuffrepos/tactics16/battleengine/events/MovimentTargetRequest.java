@@ -1,9 +1,9 @@
-package net.stuffrepos.tactics16.battlegameengine.events;
+package net.stuffrepos.tactics16.battleengine.events;
 
 import java.util.Collection;
-import net.stuffrepos.tactics16.battlegameengine.BattleRequest;
-import net.stuffrepos.tactics16.battlegameengine.Map;
-import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.battleengine.BattleRequest;
+import net.stuffrepos.tactics16.battleengine.Map;
+import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 
 /**
  *

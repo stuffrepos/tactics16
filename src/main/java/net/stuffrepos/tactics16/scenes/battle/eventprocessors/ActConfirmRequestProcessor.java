@@ -3,7 +3,7 @@ package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.Layout;
-import net.stuffrepos.tactics16.battlegameengine.ActConfirmRequest;
+import net.stuffrepos.tactics16.battleengine.ActConfirmRequest;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.menu.Menu;

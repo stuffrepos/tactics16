@@ -2,10 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.stuffrepos.tactics16.battlegameengine.events;
+package net.stuffrepos.tactics16.battleengine.events;
 
-import net.stuffrepos.tactics16.battlegameengine.BattleNotify;
-import net.stuffrepos.tactics16.battlegameengine.Map;
+import net.stuffrepos.tactics16.battleengine.BattleNotify;
+import net.stuffrepos.tactics16.battleengine.Map;
 
 /**
  *

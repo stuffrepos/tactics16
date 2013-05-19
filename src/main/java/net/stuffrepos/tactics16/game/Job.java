@@ -2,7 +2,7 @@ package net.stuffrepos.tactics16.game;
 
 import net.stuffrepos.tactics16.util.Nameable;
 import java.util.Set;
-import net.stuffrepos.tactics16.battlegameengine.Action;
+import net.stuffrepos.tactics16.battleengine.Action;
 
 /**
  *

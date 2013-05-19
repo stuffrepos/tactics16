@@ -2,9 +2,9 @@ package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;
-import net.stuffrepos.tactics16.battlegameengine.Action;
-import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
-import net.stuffrepos.tactics16.battlegameengine.events.ActionTargetRequest;
+import net.stuffrepos.tactics16.battleengine.Action;
+import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.battleengine.events.ActionTargetRequest;
 import net.stuffrepos.tactics16.components.MapCursor;
 
 import net.stuffrepos.tactics16.phase.Phase;

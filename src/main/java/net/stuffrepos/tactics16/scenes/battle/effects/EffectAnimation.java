@@ -3,7 +3,7 @@ package net.stuffrepos.tactics16.scenes.battle.effects;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.animation.EntitiesLayer;
 import net.stuffrepos.tactics16.animation.TemporaryAnimation;
-import net.stuffrepos.tactics16.battlegameengine.events.PerformedActionNotify;
+import net.stuffrepos.tactics16.battleengine.events.PerformedActionNotify;
 import net.stuffrepos.tactics16.game.Job.GameAction;
 import net.stuffrepos.tactics16.scenes.battle.PersonInfo;
 import net.stuffrepos.tactics16.scenes.battle.VisualBattleMap;

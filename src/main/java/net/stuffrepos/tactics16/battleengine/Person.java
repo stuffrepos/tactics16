@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.battlegameengine;
+package net.stuffrepos.tactics16.battleengine;
 
 import java.util.Collection;
 

@@ -5,7 +5,7 @@ import org.newdawn.slick.Graphics;
 import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.animation.GameImage;
-import net.stuffrepos.tactics16.battlegameengine.Map.Square;
+import net.stuffrepos.tactics16.battleengine.Map.Square;
 
 public class Terrain implements Nameable, Square {
 

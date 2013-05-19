@@ -6,7 +6,7 @@ import net.stuffrepos.tactics16.animation.SpriteAnimation;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.animation.VisualEntity;
-import net.stuffrepos.tactics16.battlegameengine.Action;
+import net.stuffrepos.tactics16.battleengine.Action;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.DataObject;
 import net.stuffrepos.tactics16.game.Job;
@@ -16,7 +16,7 @@ import net.stuffrepos.tactics16.util.LifoQueue;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Person extends DataObject implements VisualEntity, net.stuffrepos.tactics16.battlegameengine.Person {
+public class Person extends DataObject implements VisualEntity, net.stuffrepos.tactics16.battleengine.Person {
     
     public static final int MAX_HEALTH_POINTS = 10;        
     public static final int MAX_SPECIAL_POINTS = 10;

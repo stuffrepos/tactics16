@@ -3,7 +3,7 @@ package net.stuffrepos.tactics16.game;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 import net.stuffrepos.tactics16.util.listeners.ListenerManager;
 import org.json.JSONException;

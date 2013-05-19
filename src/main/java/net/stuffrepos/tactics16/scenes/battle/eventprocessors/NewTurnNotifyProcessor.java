@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
-import net.stuffrepos.tactics16.battlegameengine.events.NewTurn;
+import net.stuffrepos.tactics16.battleengine.events.NewTurn;
 import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;

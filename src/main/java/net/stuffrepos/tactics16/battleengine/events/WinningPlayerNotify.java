@@ -1,6 +1,6 @@
-package net.stuffrepos.tactics16.battlegameengine.events;
+package net.stuffrepos.tactics16.battleengine.events;
 
-import net.stuffrepos.tactics16.battlegameengine.BattleNotify;
+import net.stuffrepos.tactics16.battleengine.BattleNotify;
 
 /**
  *

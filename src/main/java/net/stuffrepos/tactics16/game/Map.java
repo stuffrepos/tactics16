@@ -8,14 +8,14 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import net.stuffrepos.tactics16.animation.GameImage;
-import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
-import net.stuffrepos.tactics16.battlegameengine.Map.Square;
+import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.battleengine.Map.Square;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Map implements Nameable, net.stuffrepos.tactics16.battlegameengine.Map {
+public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map {
 
     public static final int MAX_PLAYERS = 4;
     public static final int MIN_PLAYERS = 2;

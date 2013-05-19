@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import net.stuffrepos.tactics16.battlegameengine.BattleEngine;
+import net.stuffrepos.tactics16.battleengine.BattleEngine;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
@@ -25,9 +25,9 @@ public class BattleGame {
     private CacheableValue<BattleEngine> battleGameEngine = new CacheableValue<BattleEngine>() {
         @Override
         protected BattleEngine calculate() {
-            java.util.Map<Integer, net.stuffrepos.tactics16.battlegameengine.Person> persons = new HashMap<Integer, net.stuffrepos.tactics16.battlegameengine.Person>();
+            java.util.Map<Integer, net.stuffrepos.tactics16.battleengine.Person> persons = new HashMap<Integer, net.stuffrepos.tactics16.battleengine.Person>();
             java.util.Map<Integer, Integer> personsPlayers = new HashMap<Integer, Integer>();
-            java.util.Map<Integer, net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate> personsPositions = new HashMap<Integer, net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate>();
+            java.util.Map<Integer, net.stuffrepos.tactics16.battleengine.Map.MapCoordinate> personsPositions = new HashMap<Integer, net.stuffrepos.tactics16.battleengine.Map.MapCoordinate>();
 
             int playerId = 0;
             int personId = 0;
