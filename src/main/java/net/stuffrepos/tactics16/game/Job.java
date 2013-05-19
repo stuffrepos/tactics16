@@ -8,62 +8,17 @@ import java.util.Set;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Job implements Nameable {
+public interface Job extends Nameable {
 
-    private String name;
-    private Integer resistence;
-    private Integer evasiveness;
-    private Set<Action> actions = new HashSet<Action>();
-    private JobSpriteActionGroup spriteActionGroup = new JobSpriteActionGroup();
-    private int moviment;
+    public int getEvasiveness();
 
-    public Job(String name) {
-        this.name = name;
-        /*
-        for (GameAction gameAction : GameAction.values()) {
-            job.put(gameAction, new SpriteAction());
-        }*/
-    }
+    public int getResistence();
 
-    public Integer getEvasiveness() {
-        return evasiveness;
-    }
+    public int getMoviment();
 
-    public void setEvasiveness(Integer evasiveness) {
-        this.evasiveness = evasiveness;
-    }
+    public Set<Action> getActions();
 
-    public Set<Action> getActions() {
-        return actions;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getResistence() {
-        return resistence;
-    }
-
-    public void setResistence(int resistence) {
-        this.resistence = resistence;
-    }
-
-    public JobSpriteActionGroup getSpriteActionGroup() {
-        return spriteActionGroup;
-    }
-
-    public void setMoviment(int moviment) {
-        this.moviment = moviment;
-    }
-
-    public int getMoviment() {
-        return this.moviment;
-    }
+    public JobSpriteActionGroup getSpriteActionGroup();
 
     public enum GameAction {
 
