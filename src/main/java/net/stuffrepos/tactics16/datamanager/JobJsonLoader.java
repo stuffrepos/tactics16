@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import net.stuffrepos.tactics16.battlegameengine.Action;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import net.stuffrepos.tactics16.game.Action;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.JobSpriteActionGroup;
 import net.stuffrepos.tactics16.game.Reach;
@@ -47,7 +47,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
     }
 
     private Action loadAction(JSONObject jsonObject) throws JSONException {
-        Action action = new Action(jsonObject.getString("name"));
+        ActionImpl action = new ActionImpl(jsonObject.getString("name"));
         action.setAccuracy(jsonObject.getInt("accuracy"));
         action.setPower(jsonObject.getInt("power"));
         action.setReach(loadReach(jsonObject.getJSONObject("reach")));
@@ -164,4 +164,53 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             return this.moviment;
         }
     }
+    
+    private static class ActionImpl implements Action {
+    
+    private Integer power;
+    private String name;
+    private Reach reach;    
+    private int accuracy;
+    private int costSpecialPoints;
+
+    public ActionImpl(String name) {
+        this.name = name;
+    }
+
+    public int getPower() {
+        return power;
+    }
+
+    public void setPower(Integer power) {
+        this.power = power;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public net.stuffrepos.tactics16.battlegameengine.Reach getReach() {
+        return reach;
+    }
+
+    public void setReach(Reach reach) {
+        this.reach = reach;
+    }
+
+    public void setAccuracy(Integer accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    public int costSpecialPoints() {
+        return costSpecialPoints;
+    }
+
+    public int getAccuracy() {
+        return this.accuracy;
+    }
+}
 }

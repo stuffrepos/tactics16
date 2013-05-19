@@ -1,9 +1,8 @@
 package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
-import java.util.LinkedList;
-import java.util.List;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;
+import net.stuffrepos.tactics16.battlegameengine.Action;
 import net.stuffrepos.tactics16.battlegameengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.battlegameengine.events.ActionTargetRequest;
 import net.stuffrepos.tactics16.components.MapCursor;
@@ -36,7 +35,7 @@ public class ActionTargetRequestProcessor extends RequestProcessor<ActionTargetR
     public Phase init(final ActionTargetRequest event) {
         return new Phase() {
             private MapCheckedArea mapCheckedArea;
-            private net.stuffrepos.tactics16.game.Action selectedAction;
+            private Action selectedAction;
             private MapCursor targetCursor;
 
             @Override

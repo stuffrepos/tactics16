@@ -1,11 +1,9 @@
 package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
-import net.stuffrepos.tactics16.battlegameengine.events.NewTurn;
 import net.stuffrepos.tactics16.battlegameengine.events.PersonMoved;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.EventProcessor;
-import net.stuffrepos.tactics16.scenes.battle.personaction.PersonActionSubPhase;
 import net.stuffrepos.tactics16.scenes.battle.personaction.PersonMovimentAnimation;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;

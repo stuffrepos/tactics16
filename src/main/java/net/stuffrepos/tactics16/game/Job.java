@@ -1,8 +1,8 @@
 package net.stuffrepos.tactics16.game;
 
 import net.stuffrepos.tactics16.util.Nameable;
-import java.util.HashSet;
 import java.util.Set;
+import net.stuffrepos.tactics16.battlegameengine.Action;
 
 /**
  *

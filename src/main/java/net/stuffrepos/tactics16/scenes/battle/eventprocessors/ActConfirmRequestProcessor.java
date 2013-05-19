@@ -14,8 +14,6 @@ import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.MapCheckedArea;
 import net.stuffrepos.tactics16.scenes.battle.Person;
 import net.stuffrepos.tactics16.scenes.battle.RequestProcessor;
-import net.stuffrepos.tactics16.scenes.battle.personaction.AgilityPointsSelector;
-import net.stuffrepos.tactics16.scenes.battle.personaction.PersonActionSubPhase;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
