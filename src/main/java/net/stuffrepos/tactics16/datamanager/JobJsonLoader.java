@@ -5,14 +5,15 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import net.stuffrepos.tactics16.battleengine.Action;
+import net.stuffrepos.tactics16.battleengine.Reach;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.JobSpriteActionGroup;
-import net.stuffrepos.tactics16.game.Reach;
 import net.stuffrepos.tactics16.scenes.battle.Player;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
+import net.stuffrepos.tactics16.util.math.Interval;
 
 /**
  *
@@ -55,7 +56,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
     }
 
     private Reach loadReach(JSONObject jsonObject) throws JSONException {
-        Reach reach = new Reach();
+        ReachImpl reach = new ReachImpl();
         if (jsonObject.has("distance")) {
             reach.getDistance().setMinMax(jsonObject.getInt("distance"));
         }
@@ -79,7 +80,6 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
 
 
         new JsonKeyIterator(jsonObject.getJSONObject("colors")) {
-
             @Override
             public void iterate(JSONObject jsonObject, String key) throws JSONException {
                 jobSpriteActionGroup.setMapping(
@@ -89,13 +89,11 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         };
 
         new JsonKeyIterator(jsonObject.optJSONObject("limits")) {
-
             @Override
             public void iterate(JSONObject jsonObject, String key) throws JSONException {
                 Player.Color playerColor = Player.Color.valueOf(key.toUpperCase());
 
                 new JsonKeyIterator(jsonObject.getJSONObject(key)) {
-
                     @Override
                     public void iterate(JSONObject jsonObject, String key) throws JSONException {
                         if ("min".equals(key)) {
@@ -173,53 +171,92 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             return speed;
         }
     }
-    
+
     private static class ActionImpl implements Action {
-    
-    private Integer power;
-    private String name;
-    private Reach reach;    
-    private int accuracy;
-    private int costSpecialPoints;
 
-    public ActionImpl(String name) {
-        this.name = name;
+        private Integer power;
+        private String name;
+        private Reach reach;
+        private int accuracy;
+        private int costSpecialPoints;
+
+        public ActionImpl(String name) {
+            this.name = name;
+        }
+
+        public int getPower() {
+            return power;
+        }
+
+        public void setPower(Integer power) {
+            this.power = power;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public net.stuffrepos.tactics16.battleengine.Reach getReach() {
+            return reach;
+        }
+
+        public void setReach(Reach reach) {
+            this.reach = reach;
+        }
+
+        public void setAccuracy(Integer accuracy) {
+            this.accuracy = accuracy;
+        }
+
+        public int costSpecialPoints() {
+            return costSpecialPoints;
+        }
+
+        public int getAccuracy() {
+            return this.accuracy;
+        }
     }
 
-    public int getPower() {
-        return power;
-    }
+    public class ReachImpl implements Reach {
 
-    public void setPower(Integer power) {
-        this.power = power;
-    }
+        private final Interval distance = new Interval(1);
+        private int ray = 0;
+        private boolean clearTrajetory = true;
 
-    public String getName() {
-        return name;
-    }
+        public boolean isClearTrajetory() {
+            return clearTrajetory;
+        }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public void setClearTrajetory(boolean clearTrajetory) {
+            this.clearTrajetory = clearTrajetory;
+        }
 
-    public net.stuffrepos.tactics16.battleengine.Reach getReach() {
-        return reach;
-    }
+        public Interval getDistance() {
+            return distance;
+        }
 
-    public void setReach(Reach reach) {
-        this.reach = reach;
-    }
+        public Integer getMinimum() {
+            return distance.getMin();
+        }
 
-    public void setAccuracy(Integer accuracy) {
-        this.accuracy = accuracy;
-    }
+        public Integer getMaximum() {
+            return distance.getMax();
+        }
 
-    public int costSpecialPoints() {
-        return costSpecialPoints;
-    }
+        public Integer getRay() {
+            return ray;
+        }
 
-    public int getAccuracy() {
-        return this.accuracy;
+        public void setRay(int ray) {
+            this.ray = ray;
+        }
+
+        public boolean getDirect() {
+            return clearTrajetory;
+        }
     }
-}
 }
