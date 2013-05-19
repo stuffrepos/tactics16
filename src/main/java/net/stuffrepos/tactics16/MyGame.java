@@ -172,6 +172,10 @@ public class MyGame {
     public boolean isKeyPressed(GameKey key) {
         return keyMapping.isKeyPressed(key);
     }
+    
+    public boolean isKeyDown(GameKey key) {
+        return keyMapping.isKeyDown(key);
+    }
 
     public KeyMapping getKeyMapping() {
         return keyMapping;
@@ -248,6 +252,15 @@ public class MyGame {
             }
             return false;
 
+        }
+        
+        private boolean isKeyDown(GameKey gameKey) {
+            for (Integer key : mapping.get(gameKey)) {
+                if (gameContainer.getInput().isKeyDown(key)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public Collection<Integer> getKeys(GameKey gameKey) {

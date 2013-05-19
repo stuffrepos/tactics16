@@ -39,7 +39,7 @@ public class JobSpriteTester extends Phase {
     private static final JobSpriteTester instance = new JobSpriteTester();
     private EntitiesBoard board = new EntitiesBoard();
     private SpritesBoard spritesBoard;
-    private static final double MOVIMENT_SPEED = 5.0;    
+    private static final double MOVIMENT_SPEED = 1;    
     private static final Color[] COLORS = new Color[]{
         Color.black,
         Color.white,
@@ -108,17 +108,19 @@ public class JobSpriteTester extends Phase {
         backgroundColorCursor.update(delta);
         playerColorModeCursor.update(delta);
         board.update(delta);
+        
+        double movimentSpeed = MOVIMENT_SPEED * delta;
 
         if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
             MyGame.getInstance().getPhaseManager().back();
-        } else if (MyGame.getInstance().isKeyPressed(GameKey.UP)) {
-            spritesBoard.getPosition().addY(-MOVIMENT_SPEED);
-        } else if (MyGame.getInstance().isKeyPressed(GameKey.DOWN)) {
-            spritesBoard.getPosition().addY(MOVIMENT_SPEED);
-        } else if (MyGame.getInstance().isKeyPressed(GameKey.LEFT)) {
-            spritesBoard.getPosition().addX(-MOVIMENT_SPEED);
-        } else if (MyGame.getInstance().isKeyPressed(GameKey.RIGHT)) {
-            spritesBoard.getPosition().addX(MOVIMENT_SPEED);
+        } else if (MyGame.getInstance().isKeyDown(GameKey.UP)) {
+            spritesBoard.getPosition().addY(movimentSpeed);
+        } else if (MyGame.getInstance().isKeyDown(GameKey.DOWN)) {
+            spritesBoard.getPosition().addY(-movimentSpeed);
+        } else if (MyGame.getInstance().isKeyDown(GameKey.LEFT)) {
+            spritesBoard.getPosition().addX(movimentSpeed);
+        } else if (MyGame.getInstance().isKeyDown(GameKey.RIGHT)) {
+            spritesBoard.getPosition().addX(-movimentSpeed);
         }
     }
 
