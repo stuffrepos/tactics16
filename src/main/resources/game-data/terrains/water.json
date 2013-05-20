@@ -3,5 +3,5 @@
     name: "Water",
     allowMoviment: false,
     allowAction: true,
-    images: ["water-0.png","water-1.png","water-2.png","water-3.png"]
+    images: ["water-0.png","water-1.png"]
 }
