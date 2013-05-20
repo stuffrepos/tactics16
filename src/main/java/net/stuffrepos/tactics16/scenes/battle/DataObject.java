@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.game;
+package net.stuffrepos.tactics16.scenes.battle;
 
 import net.stuffrepos.tactics16.util.Nameable;
 
@@ -6,7 +6,7 @@ import net.stuffrepos.tactics16.util.Nameable;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public abstract class DataObject implements Nameable {
+abstract class DataObject implements Nameable {
 
     private String name;
 

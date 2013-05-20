@@ -31,6 +31,8 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         job.setEvasiveness(getRootJson().getInt("evasiveness"));
         job.setResistence(getRootJson().getInt("resistence"));
         job.setMoviment(getRootJson().getInt("moviment"));
+        // Only one decimal points
+        job.setSpeed((float) Math.floor(getRootJson().getDouble("speed") * 10.0) / 10.0f);
 
         job.getSpriteActionGroup().addAnimationGroup(
                 new AnimationGroupJsonLoader(getRootJson().getJSONObject("animationGroup"), getFile()).loadObject());

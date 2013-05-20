@@ -8,7 +8,6 @@ import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.battleengine.Action;
 import net.stuffrepos.tactics16.game.Coordinate;
-import net.stuffrepos.tactics16.game.DataObject;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.util.LifoQueue;
 

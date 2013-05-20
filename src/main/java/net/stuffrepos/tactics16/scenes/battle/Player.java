@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import net.stuffrepos.tactics16.game.DataObject;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Job.GameAction;
 import net.stuffrepos.tactics16.game.JobSpriteActionGroup;

@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.battlegameengine;
 
+import net.stuffrepos.tactics16.battleengine.BattleEngine;
 import junit.framework.TestCase;
 
 /**
