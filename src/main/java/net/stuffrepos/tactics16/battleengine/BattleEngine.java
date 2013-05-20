@@ -82,11 +82,7 @@ public class BattleEngine {
                     log.debug("New turn: " + (turn + 1));
                 }
 
-                monitor.notify(new NewTurn(++turn));
-
-                for (int person : finders.getAlivePersons()) {
-                    personSet.getPerson(person).renewSpeedPoints();
-                }
+                monitor.notify(new NewTurn(++turn, newTurnRenewPersonsSpeeds()));
 
                 Integer selectedPerson;
 
@@ -121,6 +117,22 @@ public class BattleEngine {
 
     public void resumeRequest() {
         this.running = true;
+    }
+
+    private Collection<Entry<Integer, ValueChanged<Float>>> newTurnRenewPersonsSpeeds() {
+        java.util.Map<Integer, ValueChanged<Float>> personsSpeeds = new HashMap<Integer, ValueChanged<Float>>();
+
+        for (int person : finders.getAlivePersons()) {
+            float oldSpeedPoints = personSet.getPerson(person).getSpeedPoints();
+            personSet.getPerson(person).renewSpeedPoints();
+            personsSpeeds.put(
+                    person,
+                    new ValueChanged<Float>(
+                    oldSpeedPoints,
+                    personSet.getPerson(person).getSpeedPoints()));
+        }
+
+        return personsSpeeds.entrySet();
     }
 
     private void personActs(Monitor monitor, Integer personId) {
@@ -886,5 +898,24 @@ public class BattleEngine {
         NotStarted,
         Started,
         Finalized
+    }
+
+    public static class ValueChanged<T> {
+
+        private final T oldValue;
+        private final T newValue;
+
+        public ValueChanged(T oldValue, T newValue) {
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+
+        public T getOldValue() {
+            return oldValue;
+        }
+
+        public T getNewValue() {
+            return newValue;
+        }
     }
 }

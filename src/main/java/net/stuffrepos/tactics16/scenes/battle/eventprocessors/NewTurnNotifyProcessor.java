@@ -1,10 +1,14 @@
 package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
+import java.util.Map.Entry;
+import net.stuffrepos.tactics16.animation.EntitiesLayer;
+import net.stuffrepos.tactics16.battleengine.BattleEngine;
 import net.stuffrepos.tactics16.battleengine.events.NewTurn;
 import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.EventProcessor;
+import net.stuffrepos.tactics16.scenes.battle.PersonInfo;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -22,7 +26,8 @@ public class NewTurnNotifyProcessor extends EventProcessor<NewTurn> {
 
     public Phase init(final NewTurn event) {
         return new Phase() {
-            MessageBox messageBox = new MessageBox("Turn " + event.getCurrentTurn(), getScene().getVisualBattleMap().getVisualMap(), 1000);
+            private MessageBox messageBox = new MessageBox("Turn " + event.getCurrentTurn(), getScene().getVisualBattleMap().getVisualMap(), 1000);
+            private EntitiesLayer personsSpeedsInfos;
             private long time;
 
             @Override
@@ -34,17 +39,39 @@ public class NewTurnNotifyProcessor extends EventProcessor<NewTurn> {
             @Override
             public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
                 super.update(container, game, delta);
-                messageBox.update(delta);
-                this.time += delta;
-                if (this.time > 1000) {
-                    getScene().stopCurrentEventPhase();
+                if (personsSpeedsInfos == null) {
+                    messageBox.update(delta);
+                    this.time += delta;
+                    if (this.time > 1000) {
+                        personsSpeedsInfos = new EntitiesLayer();
+                        for (Entry<Integer, BattleEngine.ValueChanged<Float>> personSpeed : event.getPersonsSpeeds()) {
+                            personsSpeedsInfos.addEntity(
+                                    new PersonInfo(
+                                    getScene().getVisualBattleMap().getBattleGame().getPerson(personSpeed.getKey()), 
+                                    PersonInfo.Type.SPEED, 
+                                    String.format("%.1f", personSpeed.getValue().getNewValue())));
+                        }
+                    }
+                }
+                else {
+                    personsSpeedsInfos.update(delta);
+                    
+                    if (personsSpeedsInfos.isFinalized()) {
+                        getScene().stopCurrentEventPhase();
+                    }
                 }
             }
 
             @Override
             public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
                 super.render(container, game, g);
-                messageBox.render(g);
+                if (personsSpeedsInfos == null) {
+                    messageBox.render(g);
+                }
+                else {
+                    personsSpeedsInfos.render(g);
+                }
+                
             }
         };
     }

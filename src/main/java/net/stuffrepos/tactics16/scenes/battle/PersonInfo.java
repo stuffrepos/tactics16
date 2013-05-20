@@ -50,7 +50,7 @@ public class PersonInfo implements VisualEntity {
 
         DAMAGE(Color.red),
         NEUTRAL(Color.white),
-        AGILITY(Color.green);
+        SPEED(Color.green);
         private final Color color;
 
         Type(Color color) {
