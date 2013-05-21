@@ -12,8 +12,6 @@ import net.stuffrepos.tactics16.game.Job;
  */
 public class PersonToBattle extends DataObject implements EnginePersonConfig {
 
-    public static final int MAX_HEALTH_POINTS = 10;
-    public static final int MAX_SPECIAL_POINTS = 10;
     private final Job job;
     private final PlayerToBattle player;
 
@@ -44,11 +42,11 @@ public class PersonToBattle extends DataObject implements EnginePersonConfig {
     }
 
     public int getMaximumHealthPoints() {
-        return MAX_HEALTH_POINTS;
+        return job.getMaximumHealthPoints();
     }
 
     public int getMaximumSpecialPoints() {
-        return MAX_SPECIAL_POINTS;
+        return job.getMaximumSpecialPoints();
     }
 
     public Collection<Action> getActions() {

@@ -22,6 +22,10 @@ public interface Job extends Nameable {
 
     public JobSpriteActionGroup getSpriteActionGroup();
 
+    public int getMaximumSpecialPoints();
+
+    public int getMaximumHealthPoints();
+
     public enum GameAction {
 
         STOPPED,

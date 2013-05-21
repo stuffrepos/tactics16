@@ -31,6 +31,8 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         job.setEvasiveness(getRootJson().getInt("evasiveness"));
         job.setResistence(getRootJson().getInt("resistence"));
         job.setMoviment(getRootJson().getInt("moviment"));
+        job.setMaximumSpecialPoints(getRootJson().getInt("maximumSpecialPoints"));
+        job.setMaximumSpecialPoints(getRootJson().getInt("maximumHealthPoints"));       
         // Only one decimal points
         job.setSpeed((float) Math.floor(getRootJson().getDouble("speed") * 10.0) / 10.0f);
 
@@ -113,6 +115,8 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
 
     private static class JobImpl implements Job {
 
+        public static final int MAX_HEALTH_POINTS = 10;
+        public static final int MAX_SPECIAL_POINTS = 10;
         private String name;
         private Integer resistence;
         private Integer evasiveness;
@@ -120,6 +124,8 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         private JobSpriteActionGroup spriteActionGroup = new JobSpriteActionGroup();
         private int moviment;
         private float speed = 2.0f;
+        private int maximumSpecialPoints = MAX_SPECIAL_POINTS;
+        private int maximumHealthPoints = MAX_HEALTH_POINTS;
 
         public JobImpl(String name) {
             this.name = name;
@@ -171,6 +177,22 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
 
         public float getSpeed() {
             return speed;
+        }
+
+        public int getMaximumSpecialPoints() {
+            return maximumSpecialPoints;
+        }
+
+        public int getMaximumHealthPoints() {
+            return maximumHealthPoints;
+        }
+
+        public void setMaximumSpecialPoints(int maximumSpecialPoints) {
+            this.maximumSpecialPoints = maximumSpecialPoints;
+        }
+
+        public void setMaximumHealthPoints(int maximumHealthPoints) {
+            this.maximumHealthPoints = maximumHealthPoints;
         }
     }
 
