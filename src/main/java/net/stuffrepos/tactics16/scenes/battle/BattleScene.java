@@ -34,8 +34,7 @@ public class BattleScene extends Phase {
 
     // Layout
     public static final int MAP_GAP = Layout.OBJECT_GAP * 5;
-    private final EventProcessorFinder eventProcessorFinder;
-    private TextBox statusDialog = new TextBox();
+    private final EventProcessorFinder eventProcessorFinder;    
     // Phases    
     private final OptionsSubPhase optionsSubPhase = new OptionsSubPhase(this);
     private PhaseManager phaseManager = new PhaseManager();
@@ -58,11 +57,7 @@ public class BattleScene extends Phase {
             gameActionList.add(gameAction);
         }
 
-        // Positions and Dimensions
-        statusDialog.setWidth(200);
-        statusDialog.getPosition().setXY(
-                Layout.getScreenWidth() - Layout.OBJECT_GAP - statusDialog.getWidth(),
-                Layout.OBJECT_GAP);
+        // Positions and Dimensions        
         getVisualBattleMap().getVisualMap().getPosition().set(
                 Layout.getCentralizedOnObject2D(
                 Layout.getScreenObject2D(), getVisualBattleMap().getVisualMap()));
@@ -109,7 +104,6 @@ public class BattleScene extends Phase {
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-        updateStatusDialog();
         jobAnimationTest.update(delta);
 
         if (MyGame.getInstance().isKeyPressed(GameKey.OPTIONS)) {
@@ -146,19 +140,10 @@ public class BattleScene extends Phase {
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         getVisualBattleMap().render(g);
-        statusDialog.render(g);
 
         if (phaseManager.getCurrentPhase() != null) {
             phaseManager.getCurrentPhase().render(container, game, g);
         }
-    }
-
-    private void updateStatusDialog() {
-        StringBuilder b = new StringBuilder();
-        if (phaseManager.getCurrentPhase() != null) {
-            b.append(phaseManager.getCurrentPhase().toString());
-        }
-        statusDialog.setText(b.toString());
     }
 
     public PhaseManager getPhaseManager() {
