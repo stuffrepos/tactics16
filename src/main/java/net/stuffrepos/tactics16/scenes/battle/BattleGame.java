@@ -92,18 +92,6 @@ public class BattleGame {
         return null;
     }
 
-    public Set<Coordinate> calculateTargetActionRayArea(Coordinate target, Interval ray) {
-        Set<Coordinate> area = new TreeSet<Coordinate>();
-
-        for (java.util.Map.Entry<Coordinate, Integer> e : map.calculateActionDistances(target).entrySet()) {
-            if (ray.valueIn(e.getValue())) {
-                area.add(e.getKey());
-            }
-        }
-
-        return area;
-    }
-
     public Set<Person> getPersonsOnMapPositions(Collection<Coordinate> positions) {
         Set<Person> persons = new HashSet<Person>();
 

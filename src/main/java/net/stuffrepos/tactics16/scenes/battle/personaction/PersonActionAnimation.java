@@ -16,20 +16,14 @@ import net.stuffrepos.tactics16.util.math.Interval;
 public class PersonActionAnimation {
 
     private Person selectedPerson;
-    private final Set<Coordinate> targets;
-    private final VisualBattleMap visualBattleMap;
 
-    public PersonActionAnimation(
-            VisualBattleMap visualBattleMap,
+    public PersonActionAnimation(            
             Person selectedPerson,
             Action selectedAction,
             Coordinate target) {
-        this.visualBattleMap = visualBattleMap;
         this.selectedPerson = selectedPerson;
         this.selectedPerson.getGameActionControl().advance(GameAction.ATTACKING);
-        this.selectedPerson.setSide(target.getX() - selectedPerson.getEnginePerson().getPosition().getX());
-        this.targets = this.visualBattleMap.getBattleGame().calculateTargetActionRayArea(
-                target, new Interval(0, selectedAction.getReach().getRay()));
+        this.selectedPerson.setSide(target.getX() - selectedPerson.getEnginePerson().getPosition().getX());        
     }
 
     public boolean isFinalized() {

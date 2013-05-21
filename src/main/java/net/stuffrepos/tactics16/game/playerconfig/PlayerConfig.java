@@ -1,6 +1,5 @@
 package net.stuffrepos.tactics16.game.playerconfig;
 
-import net.stuffrepos.tactics16.scenes.battle.*;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.animation.SpriteAnimation;
 import java.util.ArrayList;
@@ -23,6 +22,8 @@ import org.newdawn.slick.SlickException;
 public class PlayerConfig {
 
     private static final int SELECTED_ACTION_CHANGE_FRAME_INTERVAL = 100;
+    private static final int DEADING_ACTION_FRAME_COUNT = 16;
+    private static final int DEADING_ACTION_CHANGE_FRAME_INTERVAL = 1000 / DEADING_ACTION_FRAME_COUNT;
     private static PlayerColorMode colorMode = SelectivePlayerColorMode.getInstance();
 
     public static void setColorMode(PlayerColorMode aColorMode) {
@@ -31,9 +32,9 @@ public class PlayerConfig {
             player.jobAnimations.clear();
             player.selectedAnimations.clear();
             player.usedAnimations.clear();
-        }        
+        }
     }
-    
+
     public static PlayerColorMode getColorMode() {
         return colorMode;
     }
@@ -41,75 +42,108 @@ public class PlayerConfig {
     private CacheableMapValue<Job, SpriteAnimation> selectedAnimations =
             new CacheableMapValue<Job, SpriteAnimation>() {
 
-                private Collection<GameImage> createImages(Job job, GameImage image) {
-                    List<GameImage> list = new LinkedList<GameImage>();
-                    final int COUNT = 4;
-                    for (int i = 0; i <= COUNT; ++i) {
-                        float factor = ((float) i / COUNT) * 0.4f + 0.8f;
-                        list.add(createSelectedImage(PlayerConfig.this.getImage(job.getSpriteActionGroup(), image), factor));
-                    }
+        private Collection<GameImage> createImages(Job job, GameImage image) {
+            List<GameImage> list = new LinkedList<GameImage>();
+            final int COUNT = 4;
+            for (int i = 0; i <= COUNT; ++i) {
+                float factor = ((float) i / COUNT) * 0.4f + 0.8f;
+                list.add(createSelectedImage(PlayerConfig.this.getImage(job.getSpriteActionGroup(), image), factor));
+            }
 
-                    return list;
-                }
+            return list;
+        }
 
-                private GameImage createSelectedImage(GameImage image, final float factor) {
-                    return image.clone(new PixelImageCopyIterator(image.getImage()) {
-
-                        @Override
-                        protected org.newdawn.slick.Color iterate(int x, int y, org.newdawn.slick.Color color) {
-                            if (org.newdawn.slick.Color.magenta.equals(color)) {
-                                return org.newdawn.slick.Color.transparent;
-                            } else {
-                                return ColorUtil.applyFactor(color, factor);
-                            }
-                        }
-                    }.build());
-                }
+        private GameImage createSelectedImage(GameImage image, final float factor) {
+            return image.clone(new PixelImageCopyIterator(image.getImage()) {
 
                 @Override
-                protected SpriteAnimation calculate(Job key) {
-                    SpriteAnimation animation = new SpriteAnimation();
-                    SpriteAnimation stoppedAnimation = key.getSpriteActionGroup().getSpriteAction(GameAction.STOPPED);
-                    animation.setChangeFrameInterval(SELECTED_ACTION_CHANGE_FRAME_INTERVAL);
-
-                    for (GameImage sourceImage : stoppedAnimation.getImages()) {
-                        for (GameImage selectedImage : createImages(key, sourceImage)) {
-                            animation.addImage(selectedImage);
-                        }
+                protected org.newdawn.slick.Color iterate(int x, int y, org.newdawn.slick.Color color) {
+                    if (org.newdawn.slick.Color.magenta.equals(color)) {
+                        return org.newdawn.slick.Color.transparent;
+                    } else {
+                        return ColorUtil.applyFactor(color, factor);
                     }
-
-                    return animation;
                 }
-            };
+            }.build());
+        }
+
+        @Override
+        protected SpriteAnimation calculate(Job key) {
+            SpriteAnimation animation = new SpriteAnimation();
+            SpriteAnimation stoppedAnimation = key.getSpriteActionGroup().getSpriteAction(GameAction.STOPPED);
+            animation.setChangeFrameInterval(SELECTED_ACTION_CHANGE_FRAME_INTERVAL);
+
+            for (GameImage sourceImage : stoppedAnimation.getImages()) {
+                for (GameImage selectedImage : createImages(key, sourceImage)) {
+                    animation.addImage(selectedImage);
+                }
+            }
+
+            return animation;
+        }
+    };
+    private CacheableMapValue<Job, SpriteAnimation> deadingAnimations =
+            new CacheableMapValue<Job, SpriteAnimation>() {
+        private GameImage createFadingImage(GameImage image, final float factor) {
+            return image.clone(new PixelImageCopyIterator(image.getImage()) {
+                @Override
+                protected org.newdawn.slick.Color iterate(int x, int y, org.newdawn.slick.Color color) {
+                    if (org.newdawn.slick.Color.magenta.equals(color)) {
+                        return org.newdawn.slick.Color.transparent;
+                    } else {
+                        return ColorUtil.applyFactor(color, factor);
+                    }
+                }
+            }.build());
+        }
+
+        @Override
+        protected SpriteAnimation calculate(Job job) {
+            SpriteAnimation animation = new SpriteAnimation();
+            animation.setChangeFrameInterval(DEADING_ACTION_CHANGE_FRAME_INTERVAL);
+
+            for (int frame = 0; frame < DEADING_ACTION_FRAME_COUNT; ++frame) {
+                float factor = (float) (DEADING_ACTION_FRAME_COUNT - frame) / (float) DEADING_ACTION_FRAME_COUNT;
+                animation.addImage(
+                        createFadingImage(
+                        PlayerConfig.this.getImage(
+                        job.getSpriteActionGroup(),
+                        job.getSpriteActionGroup().getSpriteAction(GameAction.DAMAGED).getImageByIndex(0)),
+                        factor));
+            }
+
+            return animation;
+        }
+    };
     private CacheableMapValue<Job, SpriteAnimation> usedAnimations =
             new CacheableMapValue<Job, SpriteAnimation>() {
 
-                private Collection<GameImage> createImages(Job job, GameImage image) {
-                    List<GameImage> list = new LinkedList<GameImage>();
-                    list.add(createSelectedImage(PlayerConfig.this.getImage(job.getSpriteActionGroup(), image)));
+        private Collection<GameImage> createImages(Job job, GameImage image) {
+            List<GameImage> list = new LinkedList<GameImage>();
+            list.add(createSelectedImage(PlayerConfig.this.getImage(job.getSpriteActionGroup(), image)));
 
-                    return list;
+            return list;
+        }
+
+        private GameImage createSelectedImage(GameImage image) {
+            return image.clone(ImageUtil.grayScale(image.getImage()));
+        }
+
+        @Override
+        protected SpriteAnimation calculate(Job key) {
+            SpriteAnimation animation = new SpriteAnimation();
+            SpriteAnimation stoppedAnimation = key.getSpriteActionGroup().getSpriteAction(GameAction.STOPPED);
+            animation.setChangeFrameInterval(stoppedAnimation.getChangeFrameInterval());
+
+            for (GameImage sourceImage : stoppedAnimation.getImages()) {
+                for (GameImage selectedImage : createImages(key, sourceImage)) {
+                    animation.addImage(selectedImage);
                 }
+            }
 
-                private GameImage createSelectedImage(GameImage image) {
-                    return image.clone(ImageUtil.grayScale(image.getImage()));
-                }
-
-                @Override
-                protected SpriteAnimation calculate(Job key) {
-                    SpriteAnimation animation = new SpriteAnimation();
-                    SpriteAnimation stoppedAnimation = key.getSpriteActionGroup().getSpriteAction(GameAction.STOPPED);
-                    animation.setChangeFrameInterval(stoppedAnimation.getChangeFrameInterval());
-
-                    for (GameImage sourceImage : stoppedAnimation.getImages()) {
-                        for (GameImage selectedImage : createImages(key, sourceImage)) {
-                            animation.addImage(selectedImage);
-                        }
-                    }
-
-                    return animation;
-                }
-            };
+            return animation;
+        }
+    };
     private final int index;
     public static final ArrayList<PlayerColors> PLAYER_COLORS;
     private static final ArrayList<PlayerConfig> PLAYERS;
@@ -146,8 +180,6 @@ public class PlayerConfig {
     public static PlayerConfig getPlayer(int playerIndex) {
         return PLAYERS.get(playerIndex);
     }
-    private PlayerControl control = new HumanPlayerControl();
-    private List<Person> persons = new ArrayList<Person>();
     private CacheableMapValue<Job, CacheableMapValue<Job.GameAction, SpriteAnimation>> jobAnimations = new CacheableMapValue<Job, CacheableMapValue<GameAction, SpriteAnimation>>() {
 
         @Override
@@ -159,11 +191,15 @@ public class PlayerConfig {
                     SpriteAnimation spriteAction;
                     switch (gameAction) {
                         case SELECTED:
-                            spriteAction = getSelectedSpriteAnimation(job);
+                            spriteAction = selectedAnimations.getValue(job);
                             break;
 
                         case USED:
-                            spriteAction = getUsedSpriteAnimation(job);
+                            spriteAction = usedAnimations.getValue(job);
+                            break;
+
+                        case DEADING:
+                            spriteAction = deadingAnimations.getValue(job);
                             break;
 
                         default:
@@ -183,7 +219,7 @@ public class PlayerConfig {
         }
     };
 
-    private PlayerConfig(int index) {        
+    private PlayerConfig(int index) {
         this.index = index;
     }
 
@@ -193,18 +229,6 @@ public class PlayerConfig {
         } catch (SlickException ex) {
             throw new RuntimeException(ex);
         }
-    }
-
-    public List<Person> getPersons() {
-        return persons;
-    }
-
-    private SpriteAnimation getSelectedSpriteAnimation(Job job) {
-        return selectedAnimations.getValue(job);
-    }
-
-    private SpriteAnimation getUsedSpriteAnimation(Job job) {
-        return usedAnimations.getValue(job);
     }
 
     public SpriteAnimation getSpriteAnimation(Job job, Job.GameAction gameAction) {
@@ -217,13 +241,6 @@ public class PlayerConfig {
 
     private PlayerColors getColors() {
         return PLAYER_COLORS.get(index);
-    }
-
-    /**
-     * @return the control
-     */
-    public PlayerControl getControl() {
-        return control;
     }
 
     public static enum Color {

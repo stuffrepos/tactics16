@@ -15,7 +15,7 @@ public interface Job extends Nameable {
     public int getResistence();
 
     public int getMoviment();
-    
+
     public float getSpeed();
 
     public Set<Action> getActions();
@@ -31,6 +31,7 @@ public interface Job extends Nameable {
         SELECTED,
         EFFECT,
         ON_ATTACKING,
-        USED
+        USED,
+        DEADING
     }
 }

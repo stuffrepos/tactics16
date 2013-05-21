@@ -18,9 +18,7 @@ import net.stuffrepos.tactics16.util.LifoQueue;
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class Person implements VisualEntity {
-
-    public static final int MAX_HEALTH_POINTS = 10;
-    public static final int MAX_SPECIAL_POINTS = 10;
+    
     private Job.GameAction currentGameAction;
     private final Coordinate position = new Coordinate();
     private long elapsedTime;
@@ -30,6 +28,7 @@ public class Person implements VisualEntity {
     private final PersonToBattle personToBattle;
     private final BattleGame battleGame;
     private final Player player;
+    private boolean death = false;
 
     public Person(BattleGame battleGame, Player player, PersonToBattle personToBattle, int id) {
         this.battleGame = battleGame;
@@ -55,7 +54,12 @@ public class Person implements VisualEntity {
     }
 
     public void update(int delta) {
-        this.elapsedTime += delta;
+        if (!isFinalized()) {
+            this.elapsedTime += delta;
+            if (Job.GameAction.DEADING.equals(currentGameAction) && getAnimationLoopCount() >= 1) {
+                death = true;
+            }
+        }
     }
 
     public GameImage getCurrentImage() {
@@ -63,13 +67,15 @@ public class Person implements VisualEntity {
     }
 
     public void render(Graphics g) {
-        GameImage image = getCurrentImage();
-        if (image != null) {
-            image.render(
-                    g,
-                    position,
-                    side < 0,
-                    false);
+        if (!isFinalized()) {
+            GameImage image = getCurrentImage();
+            if (image != null) {
+                image.render(
+                        g,
+                        position,
+                        side < 0,
+                        false);
+            }
         }
     }
 
@@ -89,11 +95,11 @@ public class Person implements VisualEntity {
     }
 
     public boolean isFinalized() {
-        return false;
+        return death;
     }
 
     public long getAnimationLoopCount() {
-        SpriteAnimation spriteAction = getJob().getSpriteActionGroup().getSpriteAction(currentGameAction);
+        SpriteAnimation spriteAction = getPlayer().getPlayerConfig().getSpriteAnimation(getJob(), currentGameAction);
         if (spriteAction == null) {
             return 0;
         } else {
@@ -114,11 +120,11 @@ public class Person implements VisualEntity {
     }
 
     public int getMaximumHealthPoints() {
-        return MAX_HEALTH_POINTS;
+        return getEnginePerson().getMaximumHealthPoints();
     }
 
     public int getMaximumSpecialPoints() {
-        return MAX_SPECIAL_POINTS;
+        return getEnginePerson().getMaximumSpecialPoints();
     }
 
     public Collection<Action> getActions() {
