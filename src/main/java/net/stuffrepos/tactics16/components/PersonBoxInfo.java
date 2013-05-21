@@ -98,7 +98,11 @@ public class PersonBoxInfo implements VisualEntity, Object2D {
     }
 
     public int getHeight() {
-        return name.getHeight() + healthPoints.getHeight() + specialPoints.getHeight() + jobAnimationBox.getHeight() + speedPoints.getHeight();
+        return Layout.OBJECT_GAP
+                + jobAnimationBox.getHeight()
+                + healthPoints.getHeight()
+                + specialPoints.getHeight()
+                + speedPoints.getHeight();
     }
 
     public Coordinate getPosition() {

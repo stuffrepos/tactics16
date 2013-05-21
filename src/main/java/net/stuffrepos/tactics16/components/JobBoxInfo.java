@@ -20,13 +20,15 @@ public class JobBoxInfo implements VisualEntity, Object2D {
 
     private Coordinate position = new Coordinate();
     private final Text name;
-    private final PropertyBox defense;
+    private final PropertyBox resistence;
     private final PropertyBox evasiveness;
+    private final PropertyBox speed;
+    private final PropertyBox maxHp;
+    private final PropertyBox maxSp;
     private static final int MIN_WIDTH = 120;
     private EntitiesBoard board = new EntitiesBoard();
     private AnimationBox jobAnimationBox;
     private CacheableValue<Integer> width = new CacheableValue<Integer>() {
-
         @Override
         protected Integer calculate() {
             return Math.max(
@@ -34,35 +36,52 @@ public class JobBoxInfo implements VisualEntity, Object2D {
                     jobAnimationBox.getWidth() + Layout.OBJECT_GAP * 3 + name.getWidth());
         }
     };
-    private final PlayerConfig player;    
+    private final PlayerConfig player;
 
     public JobBoxInfo(Job job, PlayerConfig player) {
         assert player != null;
         assert job != null;
-        this.player = player;        
+        this.player = player;
         jobAnimationBox = new AnimationBox(player.getSpriteAnimation(job, Job.GameAction.STOPPED));
         name = new Text(job.getName());
-        defense = new PropertyBox("Defense", Integer.toString(job.getResistence()), getWidth());
+        resistence = new PropertyBox("Resistence", Integer.toString(job.getResistence()), getWidth());
         evasiveness = new PropertyBox("Evasiveness", Integer.toString(job.getEvasiveness()), getWidth());
+        speed = new PropertyBox("Speed", String.format("%.1f", job.getSpeed()), getWidth());
+        maxHp = new PropertyBox("MaxHP", Integer.toString(job.getMaximumHealthPoints()), getWidth());
+        maxSp = new PropertyBox("MaxSP", Integer.toString(job.getMaximumSpecialPoints()), getWidth());
 
         board.getChildren().add(jobAnimationBox);
         board.getChildren().add(name);
-        board.getChildren().add(defense);
+        board.getChildren().add(resistence);
         board.getChildren().add(evasiveness);
+        board.getChildren().add(speed);
+        board.getChildren().add(maxHp);
+        board.getChildren().add(maxSp);
 
         position.addListener(new Listener<Coordinate>() {
-
             public void onChange(Coordinate source) {
-                jobAnimationBox.getPosition().set(source, Layout.OBJECT_GAP, Layout.OBJECT_GAP);
+                jobAnimationBox.getPosition().set(
+                        source,
+                        Layout.OBJECT_GAP,
+                        Layout.OBJECT_GAP);
                 name.getPosition().setXY(
                         Layout.getRightGap(jobAnimationBox),
                         jobAnimationBox.getTop());
-                defense.getPosition().setXY(
+                resistence.getPosition().setXY(
                         source.getX(),
                         Layout.getBottom(jobAnimationBox));
                 evasiveness.getPosition().setXY(
-                        defense.getLeft(),
-                        Layout.getBottom(defense));
+                        resistence.getLeft(),
+                        Layout.getBottom(resistence));
+                speed.getPosition().setXY(
+                        resistence.getLeft(),
+                        Layout.getBottom(evasiveness));
+                maxHp.getPosition().setXY(
+                        resistence.getLeft(),
+                        Layout.getBottom(speed));
+                maxSp.getPosition().setXY(
+                        resistence.getLeft(),
+                        Layout.getBottom(maxHp));
             }
         });
 
@@ -95,7 +114,13 @@ public class JobBoxInfo implements VisualEntity, Object2D {
     }
 
     public int getHeight() {
-        return name.getHeight() + defense.getHeight() + evasiveness.getHeight() + jobAnimationBox.getHeight();
+        return Layout.OBJECT_GAP
+                + jobAnimationBox.getHeight()
+                + resistence.getHeight()
+                + evasiveness.getHeight()
+                + speed.getHeight()
+                + maxHp.getHeight()
+                + maxSp.getHeight();
     }
 
     public Coordinate getPosition() {
