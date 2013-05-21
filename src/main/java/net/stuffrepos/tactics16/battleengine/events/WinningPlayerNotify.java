@@ -8,13 +8,13 @@ import net.stuffrepos.tactics16.battleengine.BattleNotify;
  */
 public class WinningPlayerNotify implements BattleNotify {
 
-    private final int winnerPlayer;
+    private final Integer winnerPlayer;
 
-    public WinningPlayerNotify(int winnerPlayer) {
+    public WinningPlayerNotify(Integer winnerPlayer) {
         this.winnerPlayer = winnerPlayer;
     }
 
-    public int getWinnerPlayer() {
+    public Integer getWinnerPlayer() {
         return winnerPlayer;
     }
 }

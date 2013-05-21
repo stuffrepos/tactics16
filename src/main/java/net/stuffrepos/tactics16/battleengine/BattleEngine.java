@@ -542,7 +542,7 @@ public class BattleEngine {
             Collection<Integer> aliveObjects = getAlivePlayers();
             switch (aliveObjects.size()) {
                 case 0:
-                    throw new IllegalStateException("There is no one player alive.");
+                    return null;
                 case 1:
                     return aliveObjects.iterator().next();
                 default:
