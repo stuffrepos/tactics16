@@ -465,6 +465,10 @@ public class BattleEngine {
         return personSet.getPerson(id);
     }
 
+    public Integer getPersonOnPosition(MapCoordinate mapPosition) {
+        return personSet.getPersonOnPosition(mapPosition);
+    }
+
     private class Finders {
 
         private Collection<Integer> getAlivePlayers() {
@@ -703,7 +707,13 @@ public class BattleEngine {
         }
 
         public Integer getPersonOnPosition(MapCoordinate position) {
-            return mapPersons.get(position);
+            Integer person = mapPersons.get(position);
+            if (person != null  && definitions.isPersonAlive(person)) {
+                return person;
+            }
+            else {
+                return null;
+            }
         }
 
         private Iterable<Integer> getPlayers() {

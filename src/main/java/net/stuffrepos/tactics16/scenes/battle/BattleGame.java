@@ -82,14 +82,10 @@ public class BattleGame {
     }
 
     public Person getPersonOnMapPosition(Coordinate mapPosition) {
-        for (Player player : players) {
-            for (Person person : player.getPersons()) {
-                if (person.getEnginePerson().getPosition().equals(mapPosition)) {
-                    return person;
-                }
-            }
-        }
-        return null;
+        Integer personId = getEngine().getPersonOnPosition(mapPosition);
+        return personId != null
+                ? getPerson(personId)
+                : null;
     }
 
     public Set<Person> getPersonsOnMapPositions(Collection<Coordinate> positions) {
