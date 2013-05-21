@@ -1,17 +1,17 @@
 package net.stuffrepos.tactics16.animation;
 
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import net.stuffrepos.tactics16.components.MapCursor;
 import org.newdawn.slick.Graphics;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class EntitiesLayer implements VisualEntity {
+public class EntitiesLayer<EntityType extends VisualEntity> implements VisualEntity {
 
-    private List<VisualEntity> children = new LinkedList<VisualEntity>();
+    private List<EntityType> children = new LinkedList<EntityType>();
 
     public void update(int delta) {
         List<VisualEntity> toRemove = new LinkedList<VisualEntity>();
@@ -35,7 +35,11 @@ public class EntitiesLayer implements VisualEntity {
         return children.isEmpty();
     }
 
-    public void addEntity(VisualEntity entity) {
+    public void addEntity(EntityType entity) {
         children.add(entity);
     }
+
+    public Iterable<EntityType> getChildren() {
+        return children;
     }
+}
