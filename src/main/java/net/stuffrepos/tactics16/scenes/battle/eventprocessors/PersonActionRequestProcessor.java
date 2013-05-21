@@ -4,6 +4,7 @@ import java.util.Map.Entry;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.battleengine.Action;
+import net.stuffrepos.tactics16.battleengine.BattleEngine.SelectedAction;
 
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.battleengine.events.PersonActionRequest;
@@ -28,7 +29,7 @@ import org.newdawn.slick.state.StateBasedGame;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class PersonActionRequestProcessor extends RequestProcessor<PersonActionRequest, Action> {
+public class PersonActionRequestProcessor extends RequestProcessor<PersonActionRequest, SelectedAction> {
 
     private final static Log log = LogFactory.getLog(PersonActionRequestProcessor.class);
 
@@ -60,7 +61,7 @@ public class PersonActionRequestProcessor extends RequestProcessor<PersonActionR
                 for (Entry<Action, Boolean> e : event.getClassifyPersonActions().entrySet()) {
                     actionMenu.addOption(new ObjectMenuOption<Action>(e.getKey(), e.getValue()) {
                         public void executeAction() {
-                            answer(getSource());                            
+                            answer(new SelectedAction(getSource()));                            
                         }
 
                         @Override
@@ -80,6 +81,14 @@ public class PersonActionRequestProcessor extends RequestProcessor<PersonActionR
 
                     });
                 }
+                
+                actionMenu.addOption(new CommonMenuOption("No Action", "Just moviment and saves speed") {
+                    @Override
+                    public void executeAction() {
+                        getScene().putPersonOnPosition(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()), Coordinate.fromMapCoordinate(event.getPosition()));
+                        answer(new SelectedAction(null));
+                    }
+                });
 
                 actionMenu.addOption(new CommonMenuOption("Cancel", GameKey.CANCEL, "Back to action selector") {
                     @Override

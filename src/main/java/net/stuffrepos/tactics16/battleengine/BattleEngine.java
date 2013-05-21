@@ -172,22 +172,26 @@ public class BattleEngine {
                     continue;
 
                 case ChooseAction:
-                    selectedAction = monitor.request(new PersonActionRequest(
+                    SelectedAction selectedActionResult = monitor.request(new PersonActionRequest(
                             personId,
                             map,
                             personSet.getPerson(personId).getPosition(),
                             classifyPersonActions(personId)));
 
-                    if (selectedAction == null) {
+                    if (selectedActionResult == null) {
                         personSet.getPerson(personId).setPosition(originalPosition);
                         monitor.notify(new MovimentCancelledNotify(personId, originalPosition, movimentTarget));
                         movimentTarget = null;
                         currentPhase = PersonActPhase.Moviment;
-                    } else if (definitions.isActionEnabled(personId, selectedAction)) {
+                    } else if (selectedActionResult.getAction() == null) {
+                        monitor.notify(new SelectedActionNotify(personId, null));
+                        currentPhase = PersonActPhase.Confirm;
+                    } else if (definitions.isActionEnabled(personId, selectedActionResult.getAction())) {
+                        selectedAction = selectedActionResult.getAction();
                         monitor.notify(new SelectedActionNotify(personId, selectedAction));
                         currentPhase = PersonActPhase.ChooseTarget;
                     } else {
-                        monitor.notify(new NotEnabledActionNotify(personId, selectedAction));
+                        monitor.notify(new NotEnabledActionNotify(personId, selectedActionResult.getAction()));
                     }
                     continue;
 
@@ -213,15 +217,15 @@ public class BattleEngine {
                     continue;
 
                 case Confirm:
-                    Collection<MapCoordinate> actRay = buildActionReachRay(
+                    Collection<MapCoordinate> actRay = selectedAction == null ? null : buildActionReachRay(
                             selectedAction,
                             actionTarget);
                     boolean confirm = monitor.request(new ActConfirmRequest(
-                            personId,
+                            personSet.getPerson(personId),
                             selectedAction,
                             actionTarget,
                             actRay,
-                            findAffectedActionPersons(selectedAction, actionTarget)));
+                            selectedAction == null ? null : findAffectedActionPersons(selectedAction, actionTarget)));
 
                     if (confirm) {
                         performAction(monitor, personId, selectedAction, actionTarget);
@@ -230,7 +234,9 @@ public class BattleEngine {
                         monitor.notify(new ConfirmCancelledNotify(personId,
                                 selectedAction,
                                 actionTarget));
-                        currentPhase = PersonActPhase.ChooseTarget;
+                        currentPhase = selectedAction == null
+                                ? PersonActPhase.ChooseAction
+                                : PersonActPhase.ChooseTarget;
                         continue;
                     }
 
@@ -242,10 +248,11 @@ public class BattleEngine {
     private void performAction(Monitor monitor, Integer agentPerson, Action action, MapCoordinate target) {
         int lostSpecialPoints = definitions.actionLostSpecialPoints(agentPerson, action);
         int lostHealthPoints = definitions.actionLostHealthPoints(agentPerson, action);
+        float lostSpeedPoints = definitions.actionLostSpeedPoints(agentPerson, action);
 
         personSet.getPerson(agentPerson).subtractHealthPoints(lostHealthPoints);
         personSet.getPerson(agentPerson).subtractSpecialPoints(lostSpecialPoints);
-        personSet.getPerson(agentPerson).subtractSpeedPoints(ACT_SPEED_POINTS_COST);
+        personSet.getPerson(agentPerson).subtractSpeedPoints(lostSpeedPoints);
 
         java.util.Map<Integer, AffectedPersonResult> affectedPersonResults = new HashMap<Integer, AffectedPersonResult>();
 
@@ -268,7 +275,7 @@ public class BattleEngine {
         if (log.isDebugEnabled()) {
             log.debug(String.format("Action performed (agentPerson: %d, action: %s, target: %s, affected person: %d)",
                     agentPerson,
-                    action.getName(),
+                    action == null ? "null" : action.getName(),
                     mapCoordinateToString(target),
                     affectedPersonResults.size()));
 
@@ -285,7 +292,7 @@ public class BattleEngine {
                 agentPerson,
                 action,
                 target,
-                buildActionReachRay(action, target),
+                action == null ? null : buildActionReachRay(action, target),
                 affectedPersonResults,
                 lostSpecialPoints,
                 lostHealthPoints));
@@ -377,10 +384,12 @@ public class BattleEngine {
 
     private Collection<Integer> findAffectedActionPersons(Action action, MapCoordinate target) {
         Set<Integer> affectedPersons = new HashSet<Integer>();
-        for (MapCoordinate coordinate : buildActionReachRay(action, target)) {
-            Integer person = personSet.getPersonOnPosition(coordinate);
-            if (person != null) {
-                affectedPersons.add(person);
+        if (action != null) {
+            for (MapCoordinate coordinate : buildActionReachRay(action, target)) {
+                Integer person = personSet.getPersonOnPosition(coordinate);
+                if (person != null) {
+                    affectedPersons.add(person);
+                }
             }
         }
 
@@ -628,11 +637,15 @@ public class BattleEngine {
         }
 
         private int actionLostSpecialPoints(int agentPerson, Action action) {
-            return action.costSpecialPoints();
+            return action == null ? 0 : action.costSpecialPoints();
         }
 
         private int actionLostHealthPoints(int agentPerson, Action action) {
             return 0; //TO-DO
+        }
+
+        private float actionLostSpeedPoints(Integer agentPerson, Action action) {
+            return action == null ? ACT_SPEED_POINTS_COST / 2.0f : ACT_SPEED_POINTS_COST;
         }
     }
 
@@ -938,6 +951,19 @@ public class BattleEngine {
 
         public T getNewValue() {
             return newValue;
+        }
+    }
+
+    public static class SelectedAction {
+
+        private final Action action;
+
+        public SelectedAction(Action action) {
+            this.action = action;
+        }
+
+        public Action getAction() {
+            return action;
         }
     }
 }

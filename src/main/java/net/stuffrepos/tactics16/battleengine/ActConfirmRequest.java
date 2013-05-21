@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package net.stuffrepos.tactics16.battleengine;
 
 import java.util.Collection;
@@ -13,13 +9,13 @@ import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
  */
 public class ActConfirmRequest implements BattleRequest<Boolean> {
 
-    private final Integer person;
+    private final EnginePerson person;
     private final Action selectedAction;
     private final MapCoordinate actionTarget;
     private final Collection<MapCoordinate> actRay;
     private final Collection<Integer> findAffectedActionPersons;
 
-    public ActConfirmRequest(Integer person, Action selectedAction,
+    public ActConfirmRequest(EnginePerson person, Action selectedAction,
             MapCoordinate actionTarget, Collection<MapCoordinate> actRay,
             Collection<Integer> findAffectedActionPersons) {
         this.person = person;
@@ -29,7 +25,7 @@ public class ActConfirmRequest implements BattleRequest<Boolean> {
         this.findAffectedActionPersons = findAffectedActionPersons;
     }
 
-    public Integer getPerson() {
+    public EnginePerson getPerson() {
         return person;
     }
 

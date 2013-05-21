@@ -2,6 +2,7 @@ package net.stuffrepos.tactics16.battleengine.events;
 
 
 import net.stuffrepos.tactics16.battleengine.Action;
+import net.stuffrepos.tactics16.battleengine.BattleEngine;
 import net.stuffrepos.tactics16.battleengine.BattleRequest;
 import net.stuffrepos.tactics16.battleengine.Map;
 import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
@@ -10,7 +11,7 @@ import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class PersonActionRequest implements BattleRequest<Action> {
+public class PersonActionRequest implements BattleRequest<BattleEngine.SelectedAction> {
 
     private final Integer person;
     private final Map map;

@@ -30,10 +30,12 @@ public class PerformedActionNotifyProcessor extends EventProcessor<PerformedActi
             @Override
             public void enter(GameContainer container, StateBasedGame game) throws SlickException {
                 super.enter(container, game);
-                actionAnimation = new PersonActionAnimation(                        
-                        getScene().getVisualBattleMap().getBattleGame().getPerson(event.getAgentPerson()),
-                        event.getAction(),
-                        Coordinate.fromMapCoordinate(event.getTarget()));
+                if (event.getAction() != null) {
+                    actionAnimation = new PersonActionAnimation(                        
+                            getScene().getVisualBattleMap().getBattleGame().getPerson(event.getAgentPerson()),
+                            event.getAction(),
+                            Coordinate.fromMapCoordinate(event.getTarget()));
+                }
             }
 
             @Override
@@ -46,6 +48,9 @@ public class PerformedActionNotifyProcessor extends EventProcessor<PerformedActi
                     if (effectAnimation.isFinalized()) {                           
                         getScene().stopCurrentEventPhase();
                     }
+                }
+                else if (actionAnimation == null) {
+                    getScene().stopCurrentEventPhase();
                 }
                 else if (actionAnimation.isFinalized()) {
                     this.effectAnimation = new EffectAnimation(

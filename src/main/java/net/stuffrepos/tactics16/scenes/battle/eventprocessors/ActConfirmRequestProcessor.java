@@ -55,29 +55,41 @@ public class ActConfirmRequestProcessor extends RequestProcessor<ActConfirmReque
 
             @Override
             public void enter(GameContainer container, StateBasedGame game) {
-                Coordinate visualTargetPosition = getScene().getVisualBattleMap().getVisualMap().getTerrainPosition(Coordinate.fromMapCoordinate(event.getActionTarget()));
-                this.targetRay = getScene().getVisualBattleMap().createMapCheckedArea(
-                        Coordinate.list(event.getActRay()),
-                        0xFF0000);                                
-                this.menu.getPosition().setXY(
-                        visualTargetPosition.getX() + Map.TERRAIN_SIZE + Layout.OBJECT_GAP,
-                        visualTargetPosition.getY() + -Layout.OBJECT_GAP);
-                personsTargets = new LinkedList<Person>();
+                if (event.getSelectedAction() != null) {
+                    Coordinate visualTargetPosition = getScene().getVisualBattleMap().getVisualMap().getTerrainPosition(Coordinate.fromMapCoordinate(event.getActionTarget()));
+                    this.targetRay = getScene().getVisualBattleMap().createMapCheckedArea(
+                            Coordinate.list(event.getActRay()),
+                            0xFF0000);
+                    this.menu.getPosition().setXY(
+                            visualTargetPosition.getX() + Map.TERRAIN_SIZE + Layout.OBJECT_GAP,
+                            visualTargetPosition.getY() + -Layout.OBJECT_GAP);
+                    personsTargets = new LinkedList<Person>();
 
-                for (Coordinate c : this.targetRay.getTerrainPositions()) {
-                    Person person = getScene().getVisualBattleMap().getBattleGame().getPersonOnMapPosition(c);
-                    if (person != null) {
-                        personsTargets.add(person);
-                        person.getGameActionControl().advance(Job.GameAction.SELECTED);
+                    for (Coordinate c : this.targetRay.getTerrainPositions()) {
+                        Person person = getScene().getVisualBattleMap().getBattleGame().getPersonOnMapPosition(c);
+                        if (person != null) {
+                            personsTargets.add(person);
+                            person.getGameActionControl().advance(Job.GameAction.SELECTED);
+                        }
                     }
+                } else {
+                    Coordinate visualTargetPosition = getScene().getVisualBattleMap().getVisualMap().getTerrainPosition(
+                            Coordinate.fromMapCoordinate(event.getPerson().getPosition()));
+                    this.menu.getPosition().setXY(
+                            visualTargetPosition.getX() + Map.TERRAIN_SIZE + Layout.OBJECT_GAP,
+                            visualTargetPosition.getY() + -Layout.OBJECT_GAP);
                 }
             }
 
             @Override
             public void leave(GameContainer container, StateBasedGame game) throws SlickException {
-                targetRay.finalizeEntity();
-                for (Person person : personsTargets) {
-                    person.getGameActionControl().back();
+                if (targetRay != null) {
+                    targetRay.finalizeEntity();
+                }
+                if (personsTargets != null) {
+                    for (Person person : personsTargets) {
+                        person.getGameActionControl().back();
+                    }
                 }
             }
 
