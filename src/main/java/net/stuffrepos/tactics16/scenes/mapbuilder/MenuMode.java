@@ -7,7 +7,7 @@ import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.game.Terrain;
-import net.stuffrepos.tactics16.scenes.SelectMapScene;
+import net.stuffrepos.tactics16.scenes.battleconfig.SelectMapScene;
 import org.newdawn.slick.Graphics;
 import java.io.IOException;
 import net.stuffrepos.tactics16.GameKey;

@@ -1,5 +1,8 @@
-package net.stuffrepos.tactics16.scenes;
+package net.stuffrepos.tactics16.scenes.battleconfig;
 
+import net.stuffrepos.tactics16.scenes.battle.BattleGame;
+import java.util.LinkedList;
+import java.util.List;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
@@ -7,15 +10,14 @@ import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.menu.Menu;
 import net.stuffrepos.tactics16.components.menu.MenuOption;
 import net.stuffrepos.tactics16.components.TextBox;
-import net.stuffrepos.tactics16.scenes.battle.BattleGame;
 import net.stuffrepos.tactics16.game.Job;
-import net.stuffrepos.tactics16.scenes.battle.Person;
-import net.stuffrepos.tactics16.scenes.battle.Player;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.components.JobBoxInfo;
 import net.stuffrepos.tactics16.components.Object2D;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
+import net.stuffrepos.tactics16.game.Map;
+import net.stuffrepos.tactics16.game.playerconfig.PlayerConfig;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.util.cache.CacheableMapValue;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
@@ -31,19 +33,23 @@ public class SelectPersonsScene extends Phase {
 
     @Override
     public void enter(GameContainer container, StateBasedGame game) {
-        battleGame.resetPlayers();
+        players = new LinkedList<PlayerToBattle>();
+        for (int playerId = 0; playerId < map.getPlayerCount(); ++playerId) {
+            players.add(
+                    new PlayerToBattle(
+                    PlayerConfig.getPlayer(playerId),
+                    "Player " + (playerId + 1)));
+        }
         currentPlayer = 0;
     }
 
-    // <editor-fold defaultstate="collapsed" desc="class JobOption">
     private class JobOption implements MenuOption {
 
         private final Job job;
-        private CacheableMapValue<Player, JobBoxInfo> infoBoxes = new CacheableMapValue<Player, JobBoxInfo>() {
-
+        private CacheableMapValue<PlayerToBattle, JobBoxInfo> infoBoxes = new CacheableMapValue<PlayerToBattle, JobBoxInfo>() {
             @Override
-            protected JobBoxInfo calculate(Player key) {
-                return new JobBoxInfo(job, key);
+            protected JobBoxInfo calculate(PlayerToBattle player) {
+                return new JobBoxInfo(job, player.getPlayerConfig());
             }
         };
 
@@ -53,21 +59,22 @@ public class SelectPersonsScene extends Phase {
 
         @Override
         public void executeAction() {
-            getCurrentPlayer().getPersons().add(
-                    new Person(
+            getCurrentPlayer().addPerson(
+                    new PersonToBattle(
                     getCurrentPlayer(),
                     String.format(
                     "Person %d.%d",
                     currentPlayer + 1,
-                    getCurrentPlayer().getPersons().size() + 1), getJob()));
+                    getCurrentPlayer().getPersons().size() + 1),
+                    getJob()));
 
-            if (getCurrentPlayer().getPersons().size() >=
-                    battleGame.getMap().getPlayerInitialPosition(currentPlayer).size()) {
+            if (getCurrentPlayer().getPersons().size()
+                    >= map.getPlayerInitialPosition(currentPlayer).size()) {
                 currentPlayer++;
             }
 
-            if (currentPlayer >= battleGame.getMap().getPlayerCount()) {
-                MyGame.getInstance().getPhaseManager().advance(new BattleScene(SelectPersonsScene.this.battleGame));
+            if (currentPlayer >= map.getPlayerCount()) {
+                MyGame.getInstance().getPhaseManager().advance(new BattleScene(buildBattleGame()));
             }
 
             updateStatusDialog();
@@ -90,28 +97,30 @@ public class SelectPersonsScene extends Phase {
             return true;
         }
 
-        public JobBoxInfo getJobBoxInfo(Player player) {
+        public JobBoxInfo getJobBoxInfo(PlayerToBattle player) {
             return infoBoxes.getValue(player);
         }
     }// </editor-fold>
-    private BattleGame battleGame;
     private int currentPlayer = 0;
     private TextBox statusDialog = new TextBox();
     private PhaseTitle title;
     private JobBoxInfo jobBoxInfo = null;
     private Menu jobSelector = new Menu();
+    private List<PlayerToBattle> players;
+    private final Map map;
 
-    public BattleGame getGeoGame() {
-        return battleGame;
+    public SelectPersonsScene(Map map) {
+        assert map != null;
+        this.map = map;
     }
 
-    public SelectPersonsScene(SelectMapScene selectMapScene) {
-        this.battleGame = new BattleGame(selectMapScene.getSelectedMap());
+    private BattleGame buildBattleGame() {
+        return new BattleGame(map, players);
     }
 
-    private Player getCurrentPlayer() {        
-        if (currentPlayer < battleGame.getMap().getPlayerCount()) {
-            return this.battleGame.getPlayer(currentPlayer);
+    private PlayerToBattle getCurrentPlayer() {
+        if (players != null && currentPlayer < players.size()) {
+            return players.get(currentPlayer);
         } else {
             return null;
         }
@@ -130,7 +139,6 @@ public class SelectPersonsScene extends Phase {
         }
 
         jobSelector.addOption(new CommonMenuOption("Back", GameKey.CANCEL) {
-
             @Override
             public void executeAction() {
                 MyGame.getInstance().getPhaseManager().back();
@@ -142,14 +150,12 @@ public class SelectPersonsScene extends Phase {
         statusDialog.setMinWidth(50);
 
         jobSelector.getCursor().getCursor().addListener(new Listener<Cursor1D>() {
-
             public void onChange(Cursor1D source) {
                 updateJobInfoBox();
             }
         });
 
         jobSelector.addGeometryListener(new Listener<Object2D>() {
-
             public void onChange(Object2D source) {
                 statusDialog.getPosition().setXY(
                         Layout.getRightGap(source),
@@ -158,7 +164,6 @@ public class SelectPersonsScene extends Phase {
         });
 
         statusDialog.addGeometryListener(new Listener<Object2D>() {
-
             public void onChange(Object2D source) {
                 updateJobInfoBoxPosition();
             }
@@ -168,10 +173,10 @@ public class SelectPersonsScene extends Phase {
     private void updateStatusDialog() {
         StringBuffer buffer = new StringBuffer();
 
-        for (Player player : battleGame.getPlayers()) {
+        for (PlayerToBattle player : players) {
             buffer.append(player.getName());
             buffer.append('\n');
-            for (Person person : player.getPersons()) {
+            for (PersonToBattle person : player.getPersons()) {
                 buffer.append("- ");
                 buffer.append(person.getName());
                 buffer.append(" : ");
@@ -210,8 +215,8 @@ public class SelectPersonsScene extends Phase {
     }
 
     private void updateJobInfoBox() {
-        if (jobSelector.getCursor().getSelected() instanceof JobOption &&
-                getCurrentPlayer() != null) {
+        if (jobSelector.getCursor().getSelected() instanceof JobOption
+                && getCurrentPlayer() != null) {
             jobBoxInfo = ((JobOption) jobSelector.getCursor().getSelected()).getJobBoxInfo(
                     getCurrentPlayer());
             updateJobInfoBoxPosition();

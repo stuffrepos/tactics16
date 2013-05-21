@@ -27,7 +27,7 @@ public class PersonActionAnimation {
         this.visualBattleMap = visualBattleMap;
         this.selectedPerson = selectedPerson;
         this.selectedPerson.getGameActionControl().advance(GameAction.ATTACKING);
-        this.selectedPerson.setSide(target.getX() - selectedPerson.getMapPosition().getX());
+        this.selectedPerson.setSide(target.getX() - selectedPerson.getEnginePerson().getPosition().getX());
         this.targets = this.visualBattleMap.getBattleGame().calculateTargetActionRayArea(
                 target, new Interval(0, selectedAction.getReach().getRay()));
     }

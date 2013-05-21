@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.playercolors;
+package net.stuffrepos.tactics16.game.playerconfig;
 
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.game.JobSpriteActionGroup;

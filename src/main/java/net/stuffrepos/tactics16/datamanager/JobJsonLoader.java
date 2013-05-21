@@ -11,7 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.JobSpriteActionGroup;
-import net.stuffrepos.tactics16.scenes.battle.Player;
+import net.stuffrepos.tactics16.game.playerconfig.PlayerConfig;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
 import net.stuffrepos.tactics16.util.math.Interval;
 
@@ -86,14 +86,14 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             public void iterate(JSONObject jsonObject, String key) throws JSONException {
                 jobSpriteActionGroup.setMapping(
                         ColorUtil.byRgba(Integer.parseInt(key, 16)),
-                        Player.Color.valueOf(jsonObject.getString(key)));
+                        PlayerConfig.Color.valueOf(jsonObject.getString(key)));
             }
         };
 
         new JsonKeyIterator(jsonObject.optJSONObject("limits")) {
             @Override
             public void iterate(JSONObject jsonObject, String key) throws JSONException {
-                Player.Color playerColor = Player.Color.valueOf(key.toUpperCase());
+                PlayerConfig.Color playerColor = PlayerConfig.Color.valueOf(key.toUpperCase());
 
                 new JsonKeyIterator(jsonObject.getJSONObject(key)) {
                     @Override

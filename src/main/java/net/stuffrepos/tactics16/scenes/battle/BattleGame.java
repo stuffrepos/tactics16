@@ -11,7 +11,8 @@ import java.util.TreeSet;
 import net.stuffrepos.tactics16.battleengine.BattleEngine;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
-import net.stuffrepos.tactics16.util.cache.CacheableValue;
+import net.stuffrepos.tactics16.scenes.battleconfig.PersonToBattle;
+import net.stuffrepos.tactics16.scenes.battleconfig.PlayerToBattle;
 import net.stuffrepos.tactics16.util.math.Interval;
 
 /**
@@ -20,47 +21,43 @@ import net.stuffrepos.tactics16.util.math.Interval;
  */
 public class BattleGame {
 
-    private Map map;
-    private List<Player> players = new ArrayList<Player>();
-    private CacheableValue<BattleEngine> battleGameEngine = new CacheableValue<BattleEngine>() {
-        @Override
-        protected BattleEngine calculate() {
-            java.util.Map<Integer, net.stuffrepos.tactics16.battleengine.Person> persons = new HashMap<Integer, net.stuffrepos.tactics16.battleengine.Person>();
-            java.util.Map<Integer, Integer> personsPlayers = new HashMap<Integer, Integer>();
-            java.util.Map<Integer, net.stuffrepos.tactics16.battleengine.Map.MapCoordinate> personsPositions = new HashMap<Integer, net.stuffrepos.tactics16.battleengine.Map.MapCoordinate>();
+    private final Map map;
+    private final List<Player> players;
+    private final BattleEngine battleEngine;
 
-            int playerId = 0;
-            int personId = 0;
-            for (Player player : players) {
-                int playerPersonId = 0;
-                for (Person person : player.getPersons()) {
-                    persons.put(personId, person);
-                    personsPlayers.put(personId, playerId);
-                    personsPositions.put(personId, getPersonInitialPosition(playerId, playerPersonId));
-                    playerPersonId++;
-                    personId++;
-                }
-                playerId++;
-
-            }
-
-            return new BattleEngine(map, persons, personsPlayers, personsPositions);
-        }
-    };
-
-    public BattleGame(Map map) {
+    public BattleGame(Map map, List<PlayerToBattle> playersToBattle) {
         assert map != null : "map is null";
-        setMap(map);
-        resetPlayers();
+        assert playersToBattle != null;
+        assert playersToBattle.size() >= 2;
+        this.map = map;
+        
+        this.players = new ArrayList<Player>(playersToBattle.size());
+        java.util.Map<Integer, net.stuffrepos.tactics16.battleengine.EnginePersonConfig> persons = new HashMap<Integer, net.stuffrepos.tactics16.battleengine.EnginePersonConfig>();
+        java.util.Map<Integer, Integer> personsPlayers = new HashMap<Integer, Integer>();
+        java.util.Map<Integer, net.stuffrepos.tactics16.battleengine.Map.MapCoordinate> personsPositions = new HashMap<Integer, net.stuffrepos.tactics16.battleengine.Map.MapCoordinate>();
 
+        int playerId = 0;
+        int personId = 0;
+        for (PlayerToBattle playerToBattle : playersToBattle) {
+            int playerPersonId = 0;
+            Player player = new Player(playerToBattle.getPlayerConfig());
+            for (PersonToBattle personToBattle : playerToBattle.getPersons()) {
+                persons.put(personId, personToBattle);
+                personsPlayers.put(personId, playerId);
+                personsPositions.put(personId, getPersonInitialPosition(playerId, playerPersonId));
+                player.addPerson(new Person(this, player, personToBattle, personId));
+                playerPersonId++;
+                personId++;
+            }
+            players.add(player);
+            playerId++;
+        }
+
+        battleEngine = new BattleEngine(map, persons, personsPlayers, personsPositions);
     }
 
     public Map getMap() {
         return map;
-    }
-
-    private void setMap(Map map) {
-        this.map = map;
     }
 
     public Iterable<Player> getPlayers() {
@@ -69,13 +66,6 @@ public class BattleGame {
 
     public Player getPlayer(int index) {
         return players.get(index);
-    }
-
-    public void resetPlayers() {
-        players.clear();
-        for (int i = 0; i < map.getPlayerCount(); ++i) {
-            players.add(Player.getPlayer(i));
-        }
     }
 
     public Coordinate getPersonInitialPosition(int player, int person) {
@@ -94,7 +84,7 @@ public class BattleGame {
     public Person getPersonOnMapPosition(Coordinate mapPosition) {
         for (Player player : players) {
             for (Person person : player.getPersons()) {
-                if (person.getMapPosition().equals(mapPosition)) {
+                if (person.getEnginePerson().getPosition().equals(mapPosition)) {
                     return person;
                 }
             }
@@ -161,11 +151,11 @@ public class BattleGame {
         Set<Coordinate> neighboors = new TreeSet<Coordinate>();
 
         for (Coordinate neighboor : new Coordinate[]{
-                    new Coordinate(c, 0, -1),
-                    new Coordinate(c, 0, 1),
-                    new Coordinate(c, -1, 0),
-                    new Coordinate(c, 1, 0)
-                }) {
+            new Coordinate(c, 0, -1),
+            new Coordinate(c, 0, 1),
+            new Coordinate(c, -1, 0),
+            new Coordinate(c, 1, 0)
+        }) {
             if (map.inMap(neighboor) && map.getTerrain(neighboor).getAllowMoviment()) {
                 Person person = this.getPersonOnMapPosition(neighboor);
                 if (person == null || person.getPlayer().equals(player)) {
@@ -181,19 +171,8 @@ public class BattleGame {
         return players.size();
     }
 
-    /**
-     * x = 20
-     *
-     * @param source
-     * @param target
-     * @return
-     */
-    public static List<Coordinate> calculateTrajetory(Coordinate source, Coordinate target) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
-    public BattleEngine getBattleGameEngine() {
-        return battleGameEngine.getValue();
+    public BattleEngine getEngine() {
+        return battleEngine;
     }
 
     public Person getPerson(int personId) {

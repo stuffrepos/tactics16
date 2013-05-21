@@ -7,37 +7,40 @@ import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.battleengine.Action;
+import net.stuffrepos.tactics16.battleengine.EnginePerson;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
+import net.stuffrepos.tactics16.scenes.battleconfig.PersonToBattle;
 import net.stuffrepos.tactics16.util.LifoQueue;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class Person extends DataObject implements VisualEntity, net.stuffrepos.tactics16.battleengine.Person {
-    
-    public static final int MAX_HEALTH_POINTS = 10;        
+public class Person implements VisualEntity {
+
+    public static final int MAX_HEALTH_POINTS = 10;
     public static final int MAX_SPECIAL_POINTS = 10;
     private Job.GameAction currentGameAction;
-    private Job job;
     private final Coordinate position = new Coordinate();
-    private final Coordinate mapPosition = new Coordinate();
     private long elapsedTime;
     private int side = 1;
-    private Player player;
-    private int healthPoints = MAX_HEALTH_POINTS;    
     private GameActionControl gameActionControl = new GameActionControl();
+    private final int id;
+    private final PersonToBattle personToBattle;
+    private final BattleGame battleGame;
+    private final Player player;
 
-    public Person(Player player, String name, Job job) {
-        super(name);
+    public Person(BattleGame battleGame, Player player, PersonToBattle personToBattle, int id) {
+        this.battleGame = battleGame;
         this.player = player;
-        this.job = job;
+        this.personToBattle = personToBattle;
+        this.id = id;
         this.setCurrentGameAction(Job.GameAction.STOPPED);
     }
 
     public Job getJob() {
-        return job;
+        return personToBattle.getJob();
     }
 
     public Coordinate getPosition() {
@@ -56,7 +59,7 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
     }
 
     public GameImage getCurrentImage() {
-        return player.getSpriteAnimation(job, currentGameAction).getImage(elapsedTime);
+        return player.getPlayerConfig().getSpriteAnimation(getJob(), currentGameAction).getImage(elapsedTime);
     }
 
     public void render(Graphics g) {
@@ -70,10 +73,6 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
         }
     }
 
-    public Coordinate getMapPosition() {
-        return mapPosition;
-    }
-
     public void setSide(int side) {
         if (side != 0) {
             this.side = side;
@@ -85,20 +84,16 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
         return player;
     }
 
-    public int getMoviment() {
-        return job.getMoviment();
+    public EnginePerson getEnginePerson() {
+        return battleGame.getEngine().getPerson(id);
     }
-
-    public int getHealthPoints() {
-        return healthPoints;
-    }    
 
     public boolean isFinalized() {
         return false;
     }
 
     public long getAnimationLoopCount() {
-        SpriteAnimation spriteAction = job.getSpriteActionGroup().getSpriteAction(currentGameAction);
+        SpriteAnimation spriteAction = getJob().getSpriteActionGroup().getSpriteAction(currentGameAction);
         if (spriteAction == null) {
             return 0;
         } else {
@@ -107,23 +102,15 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
     }
 
     public int getEvasiveness() {
-        return job.getEvasiveness();
-    }
-
-    public int getDefense() {
-        return job.getResistence();
+        return getJob().getEvasiveness();
     }
 
     public GameActionControl getGameActionControl() {
         return gameActionControl;
     }
 
-    public void decreaseHealthPoints(int hp) {
-        healthPoints -= hp;
-    }
-
     public int getResistence() {
-        return job.getResistence();
+        return getJob().getResistence();
     }
 
     public int getMaximumHealthPoints() {
@@ -135,11 +122,19 @@ public class Person extends DataObject implements VisualEntity, net.stuffrepos.t
     }
 
     public Collection<Action> getActions() {
-        return new HashSet<Action>(job.getActions());
+        return new HashSet<Action>(getJob().getActions());
     }
 
     public float getSpeed() {
-        return job.getSpeed();
+        return getJob().getSpeed();
+    }
+
+    public String getName() {
+        return personToBattle.getName();
+    }
+
+    public Coordinate getMapPosition() {
+        return Coordinate.fromMapCoordinate(getEnginePerson().getPosition());
     }
 
     public class GameActionControl {

@@ -1,7 +1,6 @@
-package net.stuffrepos.tactics16.scenes.battle.playercolors;
+package net.stuffrepos.tactics16.game.playerconfig;
 
 import net.stuffrepos.tactics16.game.JobSpriteActionGroup;
-import net.stuffrepos.tactics16.scenes.battle.Player;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
 import org.newdawn.slick.Color;
 
@@ -22,7 +21,7 @@ public class SelectivePlayerColorMode extends PixelToPixelPlayerColorMode {
 
     @Override
     protected Color getJobColor(PlayerColors playerColors, JobSpriteActionGroup jobSpriteActionGroup, Color originalColor) {
-        Player.Color playerColor = jobSpriteActionGroup.getMapping(originalColor);
+        PlayerConfig.Color playerColor = jobSpriteActionGroup.getMapping(originalColor);
         if (playerColor != null) {
             return playerColors.getMaskedColor(playerColor).getColor(ColorUtil.getBetweenFactor(jobSpriteActionGroup.getPlayerColorMin(playerColor), jobSpriteActionGroup.getPlayerColorMax(playerColor), originalColor), jobSpriteActionGroup.getColorMappingMin(), jobSpriteActionGroup.getColorMappingMax());
         } else {

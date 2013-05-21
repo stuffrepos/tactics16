@@ -28,6 +28,7 @@ public class PersonMovedProcessor extends EventProcessor<PersonMoved> {
                 moviment = new PersonMovimentAnimation(
                         getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()),
                         getScene().getVisualBattleMap(),
+                        event.getOriginalPosition(),
                         event.getMovimentTarget());
             }
 

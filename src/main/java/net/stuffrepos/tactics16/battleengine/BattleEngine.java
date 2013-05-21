@@ -48,7 +48,7 @@ public class BattleEngine {
 
     public BattleEngine(
             Map map,
-            java.util.Map<Integer, Person> persons,
+            java.util.Map<Integer, EnginePersonConfig> persons,
             java.util.Map<Integer, Integer> personsPlayers,
             java.util.Map<Integer, MapCoordinate> personsPositions) {
 
@@ -59,7 +59,7 @@ public class BattleEngine {
 
         this.map = map;
 
-        for (Entry<Integer, Person> e : persons.entrySet()) {
+        for (Entry<Integer, EnginePersonConfig> e : persons.entrySet()) {
             this.personSet.addPerson(
                     e.getKey(),
                     e.getValue(),
@@ -461,6 +461,10 @@ public class BattleEngine {
         return b.toString();
     }
 
+    public EnginePerson getPerson(int id) {
+        return personSet.getPerson(id);
+    }
+
     private class Finders {
 
         private Collection<Integer> getAlivePlayers() {
@@ -692,7 +696,7 @@ public class BattleEngine {
         private java.util.Map<Integer, Collection<Integer>> playerPersons =
                 new HashMap<Integer, Collection<Integer>>();
 
-        private void addPerson(int personId, Person person, MapCoordinate position, int playerId) {
+        private void addPerson(int personId, EnginePersonConfig person, MapCoordinate position, int playerId) {
             persons.put(personId, new PersonData(person, personId));
             persons.get(personId).setPlayer(playerId);
             persons.get(personId).setPosition(position);
@@ -719,28 +723,28 @@ public class BattleEngine {
             return persons.keySet();
         }
 
-        public class PersonData {
+        public class PersonData implements EnginePerson {
 
             private final int id;
             private Integer playerId;
             private int healthPoints;
             private int specialPoints;
             private float speedPoints;
-            private final Person person;
+            private final EnginePersonConfig person;
             private MapCoordinate position;
 
-            public PersonData(Person person, int id) {
+            public PersonData(EnginePersonConfig person, int id) {
                 this.person = person;
                 this.id = id;
                 this.healthPoints = person.getMaximumHealthPoints();
                 this.specialPoints = person.getMaximumSpecialPoints();
             }
 
-            private int getHealthPoints() {
+            public int getHealthPoints() {
                 return healthPoints;
             }
 
-            private int getSpecialPoints() {
+            public int getSpecialPoints() {
                 return specialPoints;
             }
 
@@ -778,7 +782,7 @@ public class BattleEngine {
                 playerPersons.get(playerId).add(this.id);
             }
 
-            private MapCoordinate getPosition() {
+            public MapCoordinate getPosition() {
                 return position;
             }
 
@@ -800,7 +804,7 @@ public class BattleEngine {
                         this.specialPoints - lostSpecialPoints);
             }
 
-            private float getSpeedPoints() {
+            public float getSpeedPoints() {
                 return speedPoints;
             }
 
@@ -814,6 +818,14 @@ public class BattleEngine {
 
             private void renewSpeedPoints() {
                 this.speedPoints = person.getSpeed();
+            }
+
+            public int getMaximumHealthPoints() {
+                return person.getMaximumHealthPoints();
+            }
+
+            public int getMaximumSpecialPoints() {
+                return person.getMaximumSpecialPoints();
             }
         }
     }

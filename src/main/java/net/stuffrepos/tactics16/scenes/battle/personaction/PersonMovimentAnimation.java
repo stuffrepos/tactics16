@@ -23,12 +23,14 @@ public class PersonMovimentAnimation {
     private Coordinate terrainTarget;
     private MultiLinearMoviment moviment;
     private final VisualBattleMap visualBattleMap;
+    private final MapCoordinate originalPosition;
 
-    public PersonMovimentAnimation(Person person, VisualBattleMap visualBattleMap, MapCoordinate terrainTarget) {
+    public PersonMovimentAnimation(Person person, VisualBattleMap visualBattleMap, MapCoordinate originalPosition, MapCoordinate terrainTarget) {
         this.person = person;
         this.visualBattleMap = visualBattleMap;
+        this.originalPosition = originalPosition;
         this.terrainTarget = Coordinate.fromMapCoordinate(terrainTarget);
-        this.person.getGameActionControl().advance(GameAction.WALKING);
+        this.person.getGameActionControl().advance(GameAction.WALKING);        
         this.moviment = new MultiLinearMoviment(
                 this.person.getPosition(),
                 getMinPathGrouped(),
@@ -58,7 +60,7 @@ public class PersonMovimentAnimation {
         }
 
         List<Coordinate> grouped = new LinkedList<Coordinate>();
-        Coordinate origin = getOriginPosition();
+        Coordinate origin = Coordinate.fromMapCoordinate(originalPosition);
         Iterator<Coordinate> minPathIterator = minPath.iterator();
         Coordinate current = null;
 
@@ -86,10 +88,6 @@ public class PersonMovimentAnimation {
 
 
         return grouped;
-    }
-
-    private Coordinate getOriginPosition() {
-        return person.getMapPosition();
     }
 
     public Coordinate getTerrainTarget() {
@@ -129,10 +127,10 @@ public class PersonMovimentAnimation {
         }
 
         public List<Coordinate> getMinPath() {
-            if (costs.get(getOriginPosition()) == null) {
+            if (costs.get(originalPosition) == null) {
                 return null;
             } else {
-                Coordinate c = getOriginPosition();
+                Coordinate c = Coordinate.fromMapCoordinate(originalPosition);
 
                 List<Coordinate> path = new LinkedList<Coordinate>();
 

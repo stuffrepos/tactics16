@@ -14,8 +14,8 @@ import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Job.GameAction;
+import net.stuffrepos.tactics16.game.playerconfig.PlayerConfig;
 import net.stuffrepos.tactics16.phase.Phase;
-import net.stuffrepos.tactics16.scenes.battle.Player;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.cursors.ObjectCursor1D;
@@ -118,7 +118,7 @@ class Animation {
     }
 
     public SpriteAnimation getSpriteAnimation() {
-        return Player.getPlayer(0).getSpriteAnimation(job, gameAction);
+        return PlayerConfig.getPlayer(0).getSpriteAnimation(job, gameAction);
     }
 
     public Job getJob() {

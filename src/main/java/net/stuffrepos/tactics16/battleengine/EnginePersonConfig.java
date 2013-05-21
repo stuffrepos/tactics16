@@ -6,7 +6,7 @@ import java.util.Collection;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public interface Person {
+public interface EnginePersonConfig {
 
     public int getEvasiveness();
 

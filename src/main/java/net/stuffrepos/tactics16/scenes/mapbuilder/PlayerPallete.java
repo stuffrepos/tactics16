@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.game.Map;
-import net.stuffrepos.tactics16.scenes.battle.Player;
+import net.stuffrepos.tactics16.game.playerconfig.PlayerConfig;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
 
 /**
@@ -33,10 +33,10 @@ public class PlayerPallete implements Object2D {
     private static final int[] playerColors;
 
     static {
-       playerColors = new int[Player.PLAYER_COLORS.size()];
+       playerColors = new int[PlayerConfig.PLAYER_COLORS.size()];
 
        for(int i=0; i<playerColors.length; ++i) {           
-           playerColors[i] = ColorUtil.rgba(Player.PLAYER_COLORS.get(i).getDefault());
+           playerColors[i] = ColorUtil.rgba(PlayerConfig.PLAYER_COLORS.get(i).getDefault());
        }
     }
 

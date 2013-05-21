@@ -1,8 +1,7 @@
-package net.stuffrepos.tactics16.scenes.battle.playercolors;
+package net.stuffrepos.tactics16.game.playerconfig;
 
 import java.util.Map;
 import java.util.TreeMap;
-import net.stuffrepos.tactics16.scenes.battle.Player;
 import net.stuffrepos.tactics16.util.image.ColorUtil;
 import org.newdawn.slick.Color;
 
@@ -38,18 +37,18 @@ public class PlayerColors {
             return factor * (maxLimit - minLimit) + minLimit;
         }
     }
-    private Map<Player.Color, MaskedColor> mapping = new TreeMap<Player.Color, MaskedColor>();   
+    private Map<PlayerConfig.Color, MaskedColor> mapping = new TreeMap<PlayerConfig.Color, MaskedColor>();   
 
-    public void setMapping(Player.Color playerColor, int minRgb, int maxRgb) {
+    public void setMapping(PlayerConfig.Color playerColor, int minRgb, int maxRgb) {
         mapping.put(playerColor, new MaskedColor(minRgb, maxRgb));
     }
     
-    public MaskedColor getMaskedColor(Player.Color playerColor) {
+    public MaskedColor getMaskedColor(PlayerConfig.Color playerColor) {
         return mapping.get(playerColor);
     }
 
     public Color getDefault() {
-        return new Color(mapping.get(Player.Color.MAIN).getColor(0.5F, 0.0F, 1.0F));
+        return new Color(mapping.get(PlayerConfig.Color.MAIN).getColor(0.5F, 0.0F, 1.0F));
     }    
     
 }

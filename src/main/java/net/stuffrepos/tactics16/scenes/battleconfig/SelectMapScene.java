@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes;
+package net.stuffrepos.tactics16.scenes.battleconfig;
 
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.game.Map;

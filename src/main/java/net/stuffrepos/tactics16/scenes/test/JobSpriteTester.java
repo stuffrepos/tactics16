@@ -16,10 +16,10 @@ import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.phase.Phase;
-import net.stuffrepos.tactics16.scenes.battle.Player;
-import net.stuffrepos.tactics16.scenes.battle.playercolors.PlayerColorMode;
-import net.stuffrepos.tactics16.scenes.battle.playercolors.SelectivePlayerColorMode;
-import net.stuffrepos.tactics16.scenes.battle.playercolors.SingleColorPlayerColorMode;
+import net.stuffrepos.tactics16.game.playerconfig.PlayerColorMode;
+import net.stuffrepos.tactics16.game.playerconfig.PlayerConfig;
+import net.stuffrepos.tactics16.game.playerconfig.SelectivePlayerColorMode;
+import net.stuffrepos.tactics16.game.playerconfig.SingleColorPlayerColorMode;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.cursors.ObjectCursor1D;
 import net.stuffrepos.tactics16.util.image.DrawerUtil;
@@ -69,7 +69,7 @@ public class JobSpriteTester extends Phase {
     @Override
     public void initResources(GameContainer container, StateBasedGame game) {
         info = new TextBox();
-        info.setText(Player.getColorMode().getClass().getSimpleName());
+        info.setText(PlayerConfig.getColorMode().getClass().getSimpleName());
         info.getPosition().setXY(Layout.OBJECT_GAP, Layout.getScreenHeight() - Layout.OBJECT_GAP - info.getHeight());
         backgroundColorCursor = new ObjectCursor1D<Color>(
                 CollectionUtil.listFromArray(COLORS));
@@ -80,8 +80,8 @@ public class JobSpriteTester extends Phase {
         playerColorModeCursor.getCursor().addListener(new Listener<Cursor1D>() {
 
             public void onChange(Cursor1D source) {
-                Player.setColorMode(playerColorModeCursor.getSelected());
-                info.setText(Player.getColorMode().getClass().getSimpleName());
+                PlayerConfig.setColorMode(playerColorModeCursor.getSelected());
+                info.setText(PlayerConfig.getColorMode().getClass().getSimpleName());
                 rebuildBoard();
             }
         });
@@ -138,7 +138,7 @@ public class JobSpriteTester extends Phase {
 
         public SpritesBoard() {
             for (int playerIndex = 0; playerIndex < Map.MAX_PLAYERS; ++playerIndex) {
-                Player player = Player.getPlayer(playerIndex);
+                PlayerConfig player = PlayerConfig.getPlayer(playerIndex);
 
                 int jobIndex = 0;
                 for (Job job : MyGame.getInstance().getLoader().getJobs()) {

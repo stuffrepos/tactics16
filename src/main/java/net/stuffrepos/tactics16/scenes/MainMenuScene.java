@@ -1,5 +1,7 @@
 package net.stuffrepos.tactics16.scenes;
 
+import net.stuffrepos.tactics16.scenes.battleconfig.SelectPersonsScene;
+import net.stuffrepos.tactics16.scenes.battleconfig.SelectMapScene;
 import net.stuffrepos.tactics16.scenes.test.JobSpriteTester;
 import net.stuffrepos.tactics16.scenes.test.AnimationSpriteTester;
 import net.stuffrepos.tactics16.scenes.test.FontTesterScene;
@@ -93,7 +95,7 @@ public class MainMenuScene extends Phase {
             if (selectMapScene.getSelectedMap() == null) {
                 MyGame.getInstance().getPhaseManager().back();
             } else {
-                MyGame.getInstance().getPhaseManager().advance(new SelectPersonsScene(selectMapScene));
+                MyGame.getInstance().getPhaseManager().advance(new SelectPersonsScene(selectMapScene.getSelectedMap()));
             }
         }
     }, true);

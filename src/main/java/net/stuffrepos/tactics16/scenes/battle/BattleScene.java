@@ -67,11 +67,11 @@ public class BattleScene extends Phase {
                 Layout.getCentralizedOnObject2D(
                 Layout.getScreenObject2D(), getVisualBattleMap().getVisualMap()));
 
-        // Persons Positions
+        // Persons Positions        
         for (int player = 0; player < battleGame.getPlayerCount(); ++player) {
             for (int person = 0; person < battleGame.getPlayer(player).getPersons().size(); ++person) {
                 putPersonOnPosition(
-                        battleGame.getPlayer(player).getPersons().get(person),
+                        battleGame.getPlayer(player).getPerson(person),
                         battleGame.getPersonInitialPosition(player, person));
             }
         }
@@ -84,7 +84,7 @@ public class BattleScene extends Phase {
         engineThread = new Thread() {
             @Override
             public void run() {
-                getVisualBattleMap().getBattleGame().getBattleGameEngine().run(
+                getVisualBattleMap().getBattleGame().getEngine().run(
                         new Monitor() {
                     public void notify(BattleNotify notify) {
                         eventQueue.add(notify);
@@ -93,7 +93,7 @@ public class BattleScene extends Phase {
                     public <T> T request(BattleRequest<T> request) {
                         eventQueue.add(request);
                         log.debug("Engine will be blocked by " + request.getClass().getSimpleName());
-                        getVisualBattleMap().getBattleGame().getBattleGameEngine().waitRequest();
+                        getVisualBattleMap().getBattleGame().getEngine().waitRequest();
                         log.debug("Engine was unblocked by " + request.getClass().getSimpleName());
                         assert currentRequestProcessor != null;
                         T answer = (T) currentRequestProcessor.getAnswer();
@@ -136,7 +136,7 @@ public class BattleScene extends Phase {
             phaseManager.getCurrentPhase().update(container, game, delta);
         }
 
-        if (BattleEngine.State.Finalized.equals(getVisualBattleMap().getBattleGame().getBattleGameEngine().getState())
+        if (BattleEngine.State.Finalized.equals(getVisualBattleMap().getBattleGame().getEngine().getState())
                 && !currentEventPhaseRunning
                 && eventQueue.isEmpty()) {
             MyGame.getInstance().getPhaseManager().change(MainMenuScene.getInstance());
@@ -165,8 +165,7 @@ public class BattleScene extends Phase {
         return phaseManager;
     }
 
-    public void putPersonOnPosition(Person person, Coordinate personMapPosition) {
-        person.getMapPosition().set(personMapPosition);
+    public void putPersonOnPosition(Person person, Coordinate personMapPosition) {                
         person.getPosition().set(getVisualBattleMap().getVisualMap().getPersonPosition(personMapPosition));
     }
 
@@ -181,7 +180,7 @@ public class BattleScene extends Phase {
     public void stopCurrentEventPhase() {
         currentEventPhaseRunning = false;
         if (currentRequestProcessor != null) {
-            getVisualBattleMap().getBattleGame().getBattleGameEngine().resumeRequest();
+            getVisualBattleMap().getBattleGame().getEngine().resumeRequest();
         }
     }
 

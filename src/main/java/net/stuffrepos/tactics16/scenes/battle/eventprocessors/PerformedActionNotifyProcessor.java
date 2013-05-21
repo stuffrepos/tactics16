@@ -3,8 +3,6 @@ package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 import net.stuffrepos.tactics16.battleengine.events.PerformedActionNotify;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.phase.Phase;
-import net.stuffrepos.tactics16.scenes.battle.BattleAction;
-
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.EventProcessor;
 import net.stuffrepos.tactics16.scenes.battle.effects.EffectAnimation;

@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.animation;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import org.newdawn.slick.Graphics;
@@ -37,4 +38,4 @@ public class EntitiesLayer implements VisualEntity {
     public void addEntity(VisualEntity entity) {
         children.add(entity);
     }
-}
+    }

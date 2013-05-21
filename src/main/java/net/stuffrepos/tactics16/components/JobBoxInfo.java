@@ -5,7 +5,7 @@ import net.stuffrepos.tactics16.animation.EntitiesBoard;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
-import net.stuffrepos.tactics16.scenes.battle.Player;
+import net.stuffrepos.tactics16.game.playerconfig.PlayerConfig;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.image.DrawerUtil;
 import net.stuffrepos.tactics16.util.listeners.Listener;
@@ -34,14 +34,12 @@ public class JobBoxInfo implements VisualEntity, Object2D {
                     jobAnimationBox.getWidth() + Layout.OBJECT_GAP * 3 + name.getWidth());
         }
     };
-    private final Player player;
-    private final Job job;
+    private final PlayerConfig player;    
 
-    public JobBoxInfo(Job job, Player player) {
+    public JobBoxInfo(Job job, PlayerConfig player) {
         assert player != null;
         assert job != null;
-        this.player = player;
-        this.job = job;
+        this.player = player;        
         jobAnimationBox = new AnimationBox(player.getSpriteAnimation(job, Job.GameAction.STOPPED));
         name = new Text(job.getName());
         defense = new PropertyBox("Defense", Integer.toString(job.getResistence()), getWidth());

@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle;
+package net.stuffrepos.tactics16.scenes.battleconfig;
 
 import net.stuffrepos.tactics16.util.Nameable;
 
