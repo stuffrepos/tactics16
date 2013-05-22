@@ -23,4 +23,8 @@ public interface EnginePerson {
     public float getSpeed();
 
     public boolean isAlive();
+
+    public int getEvasiveness();
+
+    public int getId();
 }

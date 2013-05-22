@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Concentrates the battle logic.
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
@@ -44,6 +45,9 @@ public class BattleEngine {
     private final Definitions definitions = new Definitions();
     private final Finders finders = new Finders();
     private boolean running;
+    /**
+     * Speed cost for any action.
+     */
     public static final float ACT_SPEED_POINTS_COST = 1.0f;
     public static final int SPECIAL_POINTS_INCREMENT_BY_END_TURN = 1;
     public static final int INITIAL_SPECIAL_POINTS = 0;
@@ -207,7 +211,7 @@ public class BattleEngine {
                 case ChooseTarget:
                     Collection<MapCoordinate> actionRange = buildActionRange(personId, selectedAction);
                     actionTarget = monitor.request(new ActionTargetRequest(
-                            personId,
+                            personSet.getPerson(personId),
                             map,
                             personSet.getPerson(personId).getPosition(),
                             selectedAction,
@@ -476,6 +480,21 @@ public class BattleEngine {
         return personSet.getPersonOnPosition(mapPosition);
     }
 
+    public int calculateDamage(Action action, EnginePerson targetPerson) {
+        return definitions.damage(action, targetPerson.getId());
+    }
+
+    /**
+     * Probability is between 0 and 100
+     *
+     * @param action
+     * @param targetPerson
+     * @return
+     */
+    public int hitProbability(Action action, EnginePerson targetPerson) {
+        return (int) (Math.hitsProbability(action.getAccuracy(), targetPerson.getEvasiveness()) * 100.0);
+    }
+
     private class Finders {
 
         private Collection<Integer> getAlivePlayers() {
@@ -608,31 +627,22 @@ public class BattleEngine {
         }
 
         private boolean hits(Action action, int affectedPerson) {
-            int accuracyDices = dice(action.getAccuracy());
-            int evasivenessDices = dice(personSet.getPerson(affectedPerson).getEvasiveness());
+            double hitProbability = Math.hitsProbability(action.getAccuracy(), personSet.getPerson(affectedPerson).getEvasiveness());
+            double result = java.lang.Math.random();
             if (log.isDebugEnabled()) {
-                log.debug(String.format("Action accuracy: %d/%d - Affected evasiveness: %d/%d",
-                        accuracyDices,
+                log.debug(
+                        String.format(
+                        "Action accuracy: %d / Affected evasiveness: %d / Hit Probability: %f / Result: %f",
                         action.getAccuracy(),
-                        evasivenessDices,
-                        personSet.getPerson(affectedPerson).getEvasiveness()));
+                        personSet.getPerson(affectedPerson).getEvasiveness(),
+                        hitProbability,
+                        result));
             }
-            return accuracyDices >= evasivenessDices;
+            return result <= hitProbability;
         }
 
         private int damage(Action action, int affectedPerson) {
             return java.lang.Math.max(action.getPower() - personSet.getPerson(affectedPerson).getResistence(), 0);
-        }
-
-        private int dice(int quantity) {
-            int result = 0;
-            for (int i = 0; i < quantity; ++i) {
-                if (java.lang.Math.random() < 0.5) {
-                    result++;
-                }
-            }
-
-            return result;
         }
 
         private int actionLostSpecialPoints(int agentPerson, Action action) {
@@ -825,7 +835,7 @@ public class BattleEngine {
                 return position;
             }
 
-            private int getEvasiveness() {
+            public int getEvasiveness() {
                 return person.getEvasiveness();
             }
 
@@ -877,6 +887,10 @@ public class BattleEngine {
                         this.getMaximumSpecialPoints(),
                         this.specialPoints + increment);
             }
+            
+            public int getId() {
+                return id;
+            }
         }
     }
 
@@ -927,6 +941,28 @@ public class BattleEngine {
             }
 
             return coordinates;
+        }
+
+        public static long binomial(int n, int k) {
+            if (k == 0) {
+                return 1;
+            }
+            if (n == 0) {
+                return 0;
+            }
+            return binomial(n - 1, k) + binomial(n - 1, k - 1);
+        }
+
+        public static double hitsProbability(int agentActionAccuracy, int targetEvasiveness) {
+            double p = 0.0;
+            for (int a = 0; a <= agentActionAccuracy; ++a) {
+                for (int t = 0; t <= a; ++t) {
+                    p += Math.binomial(agentActionAccuracy, a)
+                            * Math.binomial(targetEvasiveness, t)
+                            * java.lang.Math.pow(2, -(agentActionAccuracy + targetEvasiveness));
+                }
+            }
+            return java.lang.Math.round(p * 100.0) / 100.0;
         }
     }
 

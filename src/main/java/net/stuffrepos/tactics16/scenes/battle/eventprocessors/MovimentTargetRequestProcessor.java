@@ -2,7 +2,6 @@ package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;
-import net.stuffrepos.tactics16.components.MapCursor;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.battleengine.events.MovimentTargetRequest;
@@ -33,33 +32,32 @@ public class MovimentTargetRequestProcessor extends RequestProcessor<MovimentTar
         return new Phase() {
             private MapCheckedArea mapCheckedArea;
             private Coordinate selectedPersonPosition;
-            private MapCursor movimentCursor;
 
             @Override
             public void enter(GameContainer container, StateBasedGame game) throws SlickException {
                 super.enter(container, game);
                 mapCheckedArea = getScene().getVisualBattleMap().createMapCheckedArea(
                         Coordinate.list(event.getMovimentRange()), MAP_CHECKED_AREA_COLOR);
-                movimentCursor = getScene().getVisualBattleMap().createMapCursor();
                 selectedPersonPosition = Coordinate.fromMapCoordinate(event.getOriginalPosition());
                 getScene().putPersonOnPosition(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()), selectedPersonPosition);
 
                 getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()).getGameActionControl().advance(Job.GameAction.SELECTED);
-                movimentCursor.getCursor().moveTo(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()).getMapPosition());
+                getScene().getVisualBattleMap().createMovimentMapCursor(                        
+                        event.getOriginalPosition());
             }
 
             @Override
-            public void leave(GameContainer container, StateBasedGame game) throws SlickException {                
-                movimentCursor.finalizeEntity();
-                mapCheckedArea.finalizeEntity();                
+            public void leave(GameContainer container, StateBasedGame game) throws SlickException {
+                getScene().getVisualBattleMap().finalizeMapCursor();
+                mapCheckedArea.finalizeEntity();
                 getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()).getGameActionControl().back();
             }
 
             @Override
             public void update(GameContainer container, StateBasedGame game, int delta) {
                 if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
-                    if (mapCheckedArea.inArea(movimentCursor.getCursor().getPosition())) {
-                        answer(movimentCursor.getCursor().getPosition());
+                    if (mapCheckedArea.inArea(getScene().getVisualBattleMap().getMapCursorPosition())) {
+                        answer(getScene().getVisualBattleMap().getMapCursorPosition());
                     }
                 } else if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
                     answer(null);

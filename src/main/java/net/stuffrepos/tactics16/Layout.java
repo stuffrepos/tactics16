@@ -1,6 +1,8 @@
 package net.stuffrepos.tactics16;
 
+import net.stuffrepos.tactics16.components.ActionBoxInfo;
 import net.stuffrepos.tactics16.components.Object2D;
+import net.stuffrepos.tactics16.components.PersonBoxInfo;
 import net.stuffrepos.tactics16.game.Coordinate;
 
 /**
@@ -52,6 +54,10 @@ public class Layout {
 
     public static int getBottomGap(Object2D o) {
         return getBottom(o) + OBJECT_GAP;
+    }
+
+    public static int getTopGap(Object2D o, Object2D self) {
+        return o.getTop() - OBJECT_GAP - self.getHeight();
     }
 
     public static Coordinate getCentralizedOnObject2D(Object2D onCentralize, Object2D toCentralize) {

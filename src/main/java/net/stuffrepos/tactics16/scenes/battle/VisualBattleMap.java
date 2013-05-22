@@ -5,6 +5,9 @@ import java.util.List;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.animation.EntitiesLayer;
 import net.stuffrepos.tactics16.animation.VisualEntity;
+import net.stuffrepos.tactics16.battleengine.Action;
+import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
+import net.stuffrepos.tactics16.components.ActionBoxInfo;
 import net.stuffrepos.tactics16.components.MapCursor;
 import net.stuffrepos.tactics16.components.PersonBoxInfo;
 import net.stuffrepos.tactics16.components.VisualMap;
@@ -18,9 +21,11 @@ public class VisualBattleMap implements VisualEntity {
     private final BattleGame battleGame;
     private final VisualMap visualMap;
     private EntitiesLayer personsLayer = new EntitiesLayer();
-    private EntitiesLayer<MapCursor> cursorsLayer = new EntitiesLayer<MapCursor>();
+    private MapCursor cursor = null;
     private EntitiesLayer checkedAreasLayer = new EntitiesLayer();
     private PersonBoxInfo personBoxInfo = null;
+    private ActionBoxInfo actionBoxInfo = null;
+    private Action currentAction;
 
     public VisualBattleMap(BattleGame battleGame) {
         this.battleGame = battleGame;
@@ -36,19 +41,41 @@ public class VisualBattleMap implements VisualEntity {
         visualMap.update(delta);
         checkedAreasLayer.update(delta);
         personsLayer.update(delta);
-        cursorsLayer.update(delta);
 
-        for (MapCursor cursor : cursorsLayer.getChildren()) {
-            Person personOnCursor = getBattleGame().getPersonOnMapPosition(cursor.getCursor().getPosition());
-            if (personOnCursor != null) {
-                if (personBoxInfo == null || !personOnCursor.equals(personBoxInfo.getPerson())) {
-                    personBoxInfo = new PersonBoxInfo(personOnCursor);
-                    personBoxInfo.getPosition().setXY(
-                            Layout.OBJECT_GAP,
-                            Layout.getScreenHeight() - Layout.OBJECT_GAP - personBoxInfo.getHeight());
-                }
+        if (cursor != null) {
+            if (cursor.isFinalized()) {
+                cursor = null;
             } else {
-                personBoxInfo = null;
+                cursor.update(delta);
+
+                Person personOnCursor = getBattleGame().getPersonOnMapPosition(cursor.getCursor().getPosition());
+                if (personOnCursor != null) {
+                    if (personBoxInfo == null || !personOnCursor.equals(personBoxInfo.getPerson())) {
+                        personBoxInfo = new PersonBoxInfo(personOnCursor);
+                        personBoxInfo.getPosition().setXY(
+                                Layout.OBJECT_GAP,
+                                Layout.getScreenHeight() - Layout.OBJECT_GAP - personBoxInfo.getHeight());
+                    }
+                } else {
+                    personBoxInfo = null;
+                }
+
+                if (personOnCursor != null && currentAction != null) {
+                    if (actionBoxInfo == null
+                            || !personOnCursor.equals(actionBoxInfo.getPerson())
+                            || !currentAction.equals(actionBoxInfo.getAction())) {
+                        actionBoxInfo = new ActionBoxInfo(
+                                getBattleGame().getEngine(),
+                                currentAction,
+                                personOnCursor,
+                                personBoxInfo.getWidth());
+                        actionBoxInfo.getPosition().setXY(
+                                personBoxInfo.getLeft(),
+                                Layout.getTopGap(personBoxInfo, actionBoxInfo));
+                    }
+                } else {
+                    actionBoxInfo = null;
+                }
             }
 
         }
@@ -56,15 +83,27 @@ public class VisualBattleMap implements VisualEntity {
         if (personBoxInfo != null) {
             personBoxInfo.update(delta);
         }
+
+        if (actionBoxInfo != null) {
+            actionBoxInfo.update(delta);
+        }
     }
 
     public void render(Graphics g) {
         visualMap.render(g);
         checkedAreasLayer.render(g);
-        cursorsLayer.render(g);
+
+        if (cursor != null) {
+            cursor.render(g);
+        }
+
         personsLayer.render(g);
         if (personBoxInfo != null) {
             personBoxInfo.render(g);
+        }
+
+        if (actionBoxInfo != null) {
+            actionBoxInfo.render(g);
         }
     }
 
@@ -80,10 +119,25 @@ public class VisualBattleMap implements VisualEntity {
         return visualMap;
     }
 
-    public MapCursor createMapCursor() {
-        MapCursor mapCursor = new MapCursor(visualMap);
-        cursorsLayer.addEntity(mapCursor);
-        return mapCursor;
+    public void createMovimentMapCursor(MapCoordinate initialPosition) {
+        assert cursor == null;
+        this.cursor = new MapCursor(visualMap);
+        this.cursor.getCursor().moveTo(Coordinate.fromMapCoordinate(initialPosition));
+    }
+
+    public void createActionTargetMapCursor(MapCoordinate initialPosition, Action action) {
+        createMovimentMapCursor(initialPosition);
+        currentAction = action;
+    }
+
+    public void finalizeMapCursor() {
+        assert cursor != null;
+        cursor.finalizeEntity();
+        currentAction = null;
+    }
+
+    public Coordinate getMapCursorPosition() {
+        return cursor.getCursor().getPosition();
     }
 
     public MapCheckedArea createMapCheckedArea(List<Coordinate> positions,int color) {

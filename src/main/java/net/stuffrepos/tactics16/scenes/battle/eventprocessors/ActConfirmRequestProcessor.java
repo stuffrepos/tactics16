@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.battleengine.ActConfirmRequest;
+import net.stuffrepos.tactics16.components.ActionBoxInfo;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.menu.Menu;
@@ -32,7 +33,7 @@ public class ActConfirmRequestProcessor extends RequestProcessor<ActConfirmReque
     public Phase init(final ActConfirmRequest event) {
         return new Phase() {
             private Menu menu;
-            private MapCheckedArea targetRay;            
+            private MapCheckedArea targetRay;
             private List<Person> personsTargets;
 
             @Override

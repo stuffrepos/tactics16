@@ -5,6 +5,8 @@ import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.util.Align;
 import net.stuffrepos.tactics16.util.listeners.Listener;
+import org.apache.commons.lang.StringUtils;
+import org.newdawn.slick.Color;
 
 /**
  *
@@ -34,6 +36,17 @@ public class PropertyBox implements VisualEntity, Object2D {
                         source.getY());
             }
         });
+    }
+
+    public PropertyBox(String[] names, String[] values, int width) {
+        this(
+                StringUtils.join(names, "\n"),
+                StringUtils.join(values, "\n"),
+                width);
+    }
+
+    public PropertyBox(int width) {
+        this.width = width;
     }
 
     public Coordinate getPosition() {
@@ -68,5 +81,10 @@ public class PropertyBox implements VisualEntity, Object2D {
 
     public boolean isFinalized() {
         return false;
+    }
+
+    public void setForegroundColor(Color foregroundColor) {
+        propertyName.setColor(foregroundColor);
+        propertyValue.setColor(foregroundColor);
     }
 }

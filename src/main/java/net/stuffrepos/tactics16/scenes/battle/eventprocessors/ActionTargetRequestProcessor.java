@@ -2,10 +2,8 @@ package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;
-import net.stuffrepos.tactics16.battleengine.Action;
 import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.battleengine.events.ActionTargetRequest;
-import net.stuffrepos.tactics16.components.MapCursor;
 
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.game.Coordinate;
@@ -35,29 +33,28 @@ public class ActionTargetRequestProcessor extends RequestProcessor<ActionTargetR
     public Phase init(final ActionTargetRequest event) {
         return new Phase() {
             private MapCheckedArea mapCheckedArea;
-            private Action selectedAction;
-            private MapCursor targetCursor;
 
             @Override
             public void enter(GameContainer container, StateBasedGame game) {
                 mapCheckedArea = getScene().getVisualBattleMap().createMapCheckedArea(
                         Coordinate.list(event.getActionRange()),
                         RANGE_MAP_CHECKED_COLOR);
-                targetCursor = getScene().getVisualBattleMap().createMapCursor();
-                targetCursor.getCursor().moveTo(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()).getMapPosition());
+                getScene().getVisualBattleMap().createActionTargetMapCursor(
+                        event.getPerson().getPosition(),
+                        event.getSelectedAction());
             }
 
             @Override
             public void leave(GameContainer container, StateBasedGame game) throws SlickException {
-                targetCursor.finalizeEntity();
+                getScene().getVisualBattleMap().finalizeMapCursor();
                 mapCheckedArea.finalizeEntity();
             }
 
             @Override
             public void update(GameContainer container, StateBasedGame game, int delta) {
                 if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
-                    if (mapCheckedArea.inArea(targetCursor.getCursor().getPosition())) {
-                        answer(targetCursor.getCursor().getPosition());
+                    if (mapCheckedArea.inArea(getScene().getVisualBattleMap().getMapCursorPosition())) {
+                        answer(getScene().getVisualBattleMap().getMapCursorPosition());
                     }
                 }
 
