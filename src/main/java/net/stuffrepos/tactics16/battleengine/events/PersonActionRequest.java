@@ -1,6 +1,7 @@
 package net.stuffrepos.tactics16.battleengine.events;
 
 
+import java.util.SortedMap;
 import net.stuffrepos.tactics16.battleengine.Action;
 import net.stuffrepos.tactics16.battleengine.BattleEngine;
 import net.stuffrepos.tactics16.battleengine.BattleRequest;
@@ -16,10 +17,10 @@ public class PersonActionRequest implements BattleRequest<BattleEngine.SelectedA
     private final Integer person;
     private final Map map;
     private final MapCoordinate position;
-    private final java.util.Map<Action, Boolean> classifyPersonActions;
+    private final SortedMap<Action, Boolean> classifyPersonActions;
 
     public PersonActionRequest(Integer personId, Map map, MapCoordinate position,
-            java.util.Map<Action, Boolean> classifyPersonActions) {
+            SortedMap<Action, Boolean> classifyPersonActions) {
         this.person = personId;
         this.map = map;
         this.position = position;
@@ -38,7 +39,7 @@ public class PersonActionRequest implements BattleRequest<BattleEngine.SelectedA
         return position;
     }
 
-    public java.util.Map<Action, Boolean> getClassifyPersonActions() {
+    public SortedMap<Action, Boolean> getClassifyPersonActions() {
         return classifyPersonActions;
     }
 }

@@ -6,7 +6,7 @@ import net.stuffrepos.tactics16.util.Nameable;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public interface Action extends Nameable {
+public interface Action extends Nameable, Comparable<Action> {
 
     public int getHealthPointsCost();
     

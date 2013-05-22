@@ -42,7 +42,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         JSONArray actions = getRootJson().getJSONArray("actions");
 
         for (int i = 0; i < actions.length(); ++i) {
-            job.getActions().add(loadAction(actions.getJSONObject(i)));
+            job.getActions().add(loadAction(actions.getJSONObject(i), i));
         }
 
         loadPlayersColorsMapping(getRootJson().getJSONObject("playerColorsMapping"), job.getSpriteActionGroup());
@@ -51,20 +51,20 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         return job;
     }
 
-    private Action loadAction(JSONObject jsonObject) throws JSONException {
-        ActionImpl action = new ActionImpl(jsonObject.getString("name"));
+    private Action loadAction(JSONObject jsonObject, int jobOrder) throws JSONException {
+        ActionImpl action = new ActionImpl(jsonObject.getString("name"), jobOrder);
         action.setAccuracy(jsonObject.getInt("accuracy"));
         action.setPower(jsonObject.getInt("power"));
         action.setReach(loadReach(jsonObject.getJSONObject("reach")));
-        
+
         if (jsonObject.has("healthPointsCost")) {
             action.setHealthPointsCost(jsonObject.getInt("healthPointsCost"));
         }
-        
+
         if (jsonObject.has("specialPointsCost")) {
             action.setSpecialPointsCost(jsonObject.getInt("specialPointsCost"));
         }
-        
+
         return action;
     }
 
@@ -213,9 +213,11 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         private int accuracy;
         private int specialPointsCost;
         private int healthPointsCost;
+        private int jobOrder;
 
-        public ActionImpl(String name) {
+        public ActionImpl(String name, int jobOrder) {
             this.name = name;
+            this.jobOrder = jobOrder;
         }
 
         public int getPower() {
@@ -264,6 +266,14 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
 
         public void setHealthPointsCost(int healthPointsCost) {
             this.healthPointsCost = healthPointsCost;
+        }
+
+        public int compareTo(Action o) {
+            if (o instanceof ActionImpl) {
+                return new Integer(jobOrder).compareTo(((ActionImpl) o).jobOrder);
+            } else {
+                return getName().compareTo(o.getName());
+            }
         }
     }
 

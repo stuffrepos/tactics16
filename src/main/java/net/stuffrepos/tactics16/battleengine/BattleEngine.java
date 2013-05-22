@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
@@ -298,8 +299,8 @@ public class BattleEngine {
                 lostHealthPoints));
     }
 
-    private java.util.Map<Action, Boolean> classifyPersonActions(Integer person) {
-        java.util.Map<Action, Boolean> classifiedActions = new HashMap<Action, Boolean>();
+    private SortedMap<Action, Boolean> classifyPersonActions(Integer person) {
+        SortedMap<Action, Boolean> classifiedActions = new TreeMap<Action, Boolean>();
         for (Action action : personSet.getPerson(person).getActions()) {
             classifiedActions.put(action, definitions.isActionEnabled(person, action));
         }
