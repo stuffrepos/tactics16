@@ -80,7 +80,13 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             reach.getDistance().setMax(jsonObject.getInt("distanceMax"));
         }
         if (jsonObject.has("ray")) {
-            reach.setRay(jsonObject.getInt("ray"));
+            reach.getRay().setMinMax(jsonObject.getInt("ray"));
+        }
+        if (jsonObject.has("rayMin")) {
+            reach.getRay().setMin(jsonObject.getInt("rayMin"));
+        }
+        if (jsonObject.has("rayMax")) {
+            reach.getRay().setMax(jsonObject.getInt("rayMax"));
         }
         if (jsonObject.has("clearTrajectory")) {
             reach.setClearTrajetory(jsonObject.getBoolean("clearTrajectory"));
@@ -280,7 +286,7 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
     public class ReachImpl implements Reach {
 
         private final Interval distance = new Interval(1);
-        private int ray = 0;
+        private final Interval ray = new Interval(0);
         private boolean clearTrajetory = true;
 
         public boolean isClearTrajetory() {
@@ -295,20 +301,24 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             return distance;
         }
 
-        public Integer getMinimum() {
+        public int getDistanceMin() {
             return distance.getMin();
         }
 
-        public Integer getMaximum() {
+        public int getDistanceMax() {
             return distance.getMax();
         }
 
-        public Integer getRay() {
+        public Interval getRay() {
             return ray;
         }
 
-        public void setRay(int ray) {
-            this.ray = ray;
+        public int getRayMin() {
+            return ray.getMin();
+        }
+
+        public int getRayMax() {
+            return ray.getMax();
         }
 
         public boolean getDirect() {

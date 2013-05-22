@@ -6,11 +6,13 @@ package net.stuffrepos.tactics16.battleengine;
  */
 public interface Reach {
 
-    public Integer getMinimum();
+    public int getDistanceMin();
 
-    public Integer getMaximum();
+    public int getDistanceMax();
+    
+    public int getRayMin();
 
-    public Integer getRay();
+    public int getRayMax();
 
     public boolean getDirect();
 }

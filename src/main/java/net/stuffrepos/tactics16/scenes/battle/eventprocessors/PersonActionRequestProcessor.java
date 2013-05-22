@@ -72,10 +72,15 @@ public class PersonActionRequestProcessor extends RequestProcessor<PersonActionR
                             b.append("Power: " + getSource().getPower() + "\n");
                             b.append("Accuracy: " + getSource().getAccuracy() + "\n");
                             b.append(String.format(
-                                    "Reach: %d,%d -> %d\n",
-                                    getSource().getReach().getMinimum(),
-                                    getSource().getReach().getMaximum(),
-                                    getSource().getReach().getRay()));
+                                    "Reach: %d..%d\n",
+                                    getSource().getReach().getDistanceMin(),
+                                    getSource().getReach().getDistanceMax()
+                                    ));
+                            b.append(String.format(
+                                    "Effect: %d..%d",
+                                    getSource().getReach().getRayMin(),
+                                    getSource().getReach().getRayMax()
+                                    ));
                             return b.toString();
                         }
 

@@ -76,6 +76,16 @@
             "distance": 1,            
         }
     },{
+        "name": "Round attack",
+        "power": 3,
+        "accuracy": 2,
+        "specialPointsCost": 1,
+        "reach": {
+            "distance": 0,
+            "rayMin": 1,
+            "rayMax": 1
+        }
+    },{
         "name": "Throw Stone",
         "power": 4,
         "accuracy": 3,

@@ -350,22 +350,8 @@ public class BattleEngine {
      * @return
      */
     private Set<MapCoordinate> buildActionRange(Integer person, Action action) {
-        Set<MapCoordinate> range = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
-
-        for (int distance = action.getReach().getMinimum();
-                distance <= action.getReach().getMaximum();
-                ++distance) {
-            for (int angle = 0; angle < distance * 4; angle++) {
-                int x = personSet.getPerson(person).getPosition().getX()
-                        + Math.integerCosine(distance, angle);
-                int y = personSet.getPerson(person).getPosition().getY()
-                        + Math.integerSine(distance, angle);
-
-                if (inMap(x, y)) {
-                    range.add(new CoordinateImpl(x, y));
-                }
-            }
-        }
+        Set<MapCoordinate> range = findMapNeighbors(
+                personSet.getPerson(person).getPosition(), action.getReach().getDistanceMin(), action.getReach().getDistanceMax());
 
         if (action.getReach().getDirect()) {
             Set<MapCoordinate> onSight = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
@@ -398,9 +384,8 @@ public class BattleEngine {
     }
 
     private Collection<MapCoordinate> buildActionReachRay(Action action, MapCoordinate target) {
-        Set<MapCoordinate> coords = findMapNeighbors(target, 0, action.getReach().getRay());
-        coords.add(target);
-        return coords;
+        return findMapNeighbors(
+                target, action.getReach().getRayMin(), action.getReach().getRayMax());
     }
 
     private Set<MapCoordinate> findMapNeighbors(MapCoordinate current, int minimumRay, Integer maximumRay) {
@@ -409,18 +394,22 @@ public class BattleEngine {
         for (int ray = minimumRay;
                 ray <= maximumRay;
                 ++ray) {
+            if (ray == 0) {
+                if (inMap(current)) {
+                    neighbors.add(current);
+                }
+            } else {
+                for (int angle = 0; angle < ray * 4; angle++) {
+                    int cosine = Math.integerCosine(ray, angle);
+                    int sine = Math.integerSine(ray, angle);
+                    int x = current.getX() + cosine;
+                    int y = current.getY() + sine;
 
-            for (int angle = 0; angle < ray * 4; angle++) {
-                int cosine = Math.integerCosine(ray, angle);
-                int sine = Math.integerSine(ray, angle);
-                int x = current.getX() + cosine;
-                int y = current.getY() + sine;
-
-                if (inMap(x, y)) {
-                    neighbors.add(new CoordinateImpl(x, y));
+                    if (inMap(x, y)) {
+                        neighbors.add(new CoordinateImpl(x, y));
+                    }
                 }
             }
-
         }
 
         return neighbors;
