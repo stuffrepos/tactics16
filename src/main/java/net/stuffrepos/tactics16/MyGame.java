@@ -216,6 +216,8 @@ public class MyGame {
                 DEFAULT_SCREEN_SIZE.width,
                 DEFAULT_SCREEN_SIZE.height,
                 false);
+        app.setShowFPS(getOptions().isDebug());        
+        
         app.start();
     }
 
