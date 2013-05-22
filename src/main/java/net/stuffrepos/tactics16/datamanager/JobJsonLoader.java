@@ -56,6 +56,15 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         action.setAccuracy(jsonObject.getInt("accuracy"));
         action.setPower(jsonObject.getInt("power"));
         action.setReach(loadReach(jsonObject.getJSONObject("reach")));
+        
+        if (jsonObject.has("healthPointsCost")) {
+            action.setHealthPointsCost(jsonObject.getInt("healthPointsCost"));
+        }
+        
+        if (jsonObject.has("specialPointsCost")) {
+            action.setSpecialPointsCost(jsonObject.getInt("specialPointsCost"));
+        }
+        
         return action;
     }
 
@@ -202,7 +211,8 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         private String name;
         private Reach reach;
         private int accuracy;
-        private int costSpecialPoints;
+        private int specialPointsCost;
+        private int healthPointsCost;
 
         public ActionImpl(String name) {
             this.name = name;
@@ -236,12 +246,24 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
             this.accuracy = accuracy;
         }
 
-        public int costSpecialPoints() {
-            return costSpecialPoints;
+        public int getSpecialPointsCost() {
+            return specialPointsCost;
         }
 
         public int getAccuracy() {
             return this.accuracy;
+        }
+
+        public void setSpecialPointsCost(int specialPointsCost) {
+            this.specialPointsCost = specialPointsCost;
+        }
+
+        public int getHealthPointsCost() {
+            return healthPointsCost;
+        }
+
+        public void setHealthPointsCost(int healthPointsCost) {
+            this.healthPointsCost = healthPointsCost;
         }
     }
 

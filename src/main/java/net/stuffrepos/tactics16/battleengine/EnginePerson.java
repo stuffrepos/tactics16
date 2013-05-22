@@ -21,4 +21,6 @@ public interface EnginePerson {
     public float getSpeedPoints();
 
     public float getSpeed();
+
+    public boolean isAlive();
 }

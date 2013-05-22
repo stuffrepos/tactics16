@@ -1,5 +1,8 @@
 package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
+import net.stuffrepos.tactics16.animation.EntitiesSequence;
+import net.stuffrepos.tactics16.animation.EntitiesSequence.EntityBuilder;
+import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.battleengine.events.PerformedActionNotify;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.phase.Phase;
@@ -24,49 +27,57 @@ public class PerformedActionNotifyProcessor extends EventProcessor<PerformedActi
 
     public Phase init(final PerformedActionNotify event) {
         return new Phase() {
-            private PersonActionAnimation actionAnimation;
-            private EffectAnimation effectAnimation;
+            EntitiesSequence sequence;
             
             @Override
             public void enter(GameContainer container, StateBasedGame game) throws SlickException {
                 super.enter(container, game);
                 if (event.getAction() != null) {
-                    actionAnimation = new PersonActionAnimation(                        
-                            getScene().getVisualBattleMap().getBattleGame().getPerson(event.getAgentPerson()),
-                            event.getAction(),
-                            Coordinate.fromMapCoordinate(event.getTarget()));
+                    sequence = new EntitiesSequence(
+                            buildActionAnimation(),
+                            buildEffectAnimation());
+                } else {
+                    sequence = new EntitiesSequence();
                 }
             }
 
             @Override
             public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-                super.update(container, game, delta);                
+                super.update(container, game, delta);
 
-                if (effectAnimation != null) {
-                    effectAnimation.update(delta);
+                sequence.update(delta);
 
-                    if (effectAnimation.isFinalized()) {                           
-                        getScene().stopCurrentEventPhase();
-                    }
-                }
-                else if (actionAnimation == null) {
+                if (sequence.isFinalized()) {
                     getScene().stopCurrentEventPhase();
                 }
-                else if (actionAnimation.isFinalized()) {
-                    this.effectAnimation = new EffectAnimation(
-                            getScene().getVisualBattleMap(),
-                            event);
-                }
+
             }
 
             @Override
             public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
                 super.render(container, game, g);
+                sequence.render(g);
+            }
 
-                if (effectAnimation != null) {
-                    effectAnimation.render(g);
-                }
+            private EntityBuilder buildActionAnimation() {
+                return new EntityBuilder() {
+                    public VisualEntity buildEntity() {
+                        return new PersonActionAnimation(
+                                getScene().getVisualBattleMap().getBattleGame().getPerson(event.getAgentPerson()),
+                                event.getAction(),
+                                Coordinate.fromMapCoordinate(event.getTarget()));
+                    }
+                };
+            }
 
+            private EntityBuilder buildEffectAnimation() {
+                return new EntityBuilder() {
+                    public VisualEntity buildEntity() {
+                        return new EffectAnimation(
+                                getScene().getVisualBattleMap(),
+                                event);
+                    }
+                };
             }
         };
     }

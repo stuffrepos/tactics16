@@ -1,19 +1,17 @@
 package net.stuffrepos.tactics16.scenes.battle.personaction;
 
-import java.util.Set;
+import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.battleengine.Action;
-
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job.GameAction;
 import net.stuffrepos.tactics16.scenes.battle.Person;
-import net.stuffrepos.tactics16.scenes.battle.VisualBattleMap;
-import net.stuffrepos.tactics16.util.math.Interval;
+import org.newdawn.slick.Graphics;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class PersonActionAnimation {
+public class PersonActionAnimation implements VisualEntity {
 
     private Person selectedPerson;
 
@@ -28,5 +26,12 @@ public class PersonActionAnimation {
 
     public boolean isFinalized() {
         return selectedPerson.getAnimationLoopCount() >= 1;
+    }
+
+    public void update(int delta) {
+    }
+
+    public void render(Graphics g) {
+        //Do nothing
     }
 }

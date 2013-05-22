@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
@@ -171,5 +172,15 @@ public class BattleGame {
         }
 
         throw new RuntimeException("Person not found with ID " + personId);
+    }
+
+    public Iterable<Person> getPersons() {
+        List<Person> persons = new LinkedList<Person>();
+        for (Player player : players) {
+            for (Person person : player.getPersons()) {
+                persons.add(person);
+            }
+        }
+        return persons;
     }
 }

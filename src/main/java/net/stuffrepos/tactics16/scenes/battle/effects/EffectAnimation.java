@@ -6,6 +6,7 @@ import net.stuffrepos.tactics16.animation.TemporaryAnimation;
 import net.stuffrepos.tactics16.animation.VisualEntity;
 import net.stuffrepos.tactics16.battleengine.events.PerformedActionNotify;
 import net.stuffrepos.tactics16.game.Job.GameAction;
+import net.stuffrepos.tactics16.scenes.battle.Person;
 import net.stuffrepos.tactics16.scenes.battle.PersonInfo;
 import net.stuffrepos.tactics16.scenes.battle.VisualBattleMap;
 import org.newdawn.slick.Graphics;
@@ -48,7 +49,7 @@ public class EffectAnimation extends EntitiesSequence {
                         layer.addEntity(new PersonInfo(
                                 visualBattleMap.getBattleGame().getPerson(affectedPerson),
                                 PersonInfo.Type.DAMAGE,
-                                String.format("-%d HP", event.getAffectedPersonResult(affectedPerson).getDamage())));
+                                String.format("-%d", event.getAffectedPersonResult(affectedPerson).getDamage())));
                     } else {
                         layer.addEntity(new PersonInfo(
                                 visualBattleMap.getBattleGame().getPerson(affectedPerson),
@@ -56,6 +57,13 @@ public class EffectAnimation extends EntitiesSequence {
                                 "Missed"));
                     }
 
+                }
+                
+                if (event.getAction().getHealthPointsCost() > 0) {
+                    layer.addEntity(new PersonInfo(
+                                visualBattleMap.getBattleGame().getPerson(event.getAgentPerson()),
+                                PersonInfo.Type.DAMAGE,
+                                String.format("-%d", event.getAction().getHealthPointsCost())));
                 }
 
                 return layer;
@@ -69,11 +77,11 @@ public class EffectAnimation extends EntitiesSequence {
             public VisualEntity buildEntity() {
                 EntitiesLayer layer = new EntitiesLayer();
 
-                for (final int affectedPerson : event.getAffectedPersons()) {
-                    if (event.getAffectedPersonResult(affectedPerson).isPersonAlive()) {
-                        visualBattleMap.getBattleGame().getPerson(affectedPerson).getGameActionControl().back();
+                for (final Person person : visualBattleMap.getBattleGame().getPersons()) {
+                    if (person.getEnginePerson().isAlive()) {
+                        person.getGameActionControl().back();
                     } else {
-                        visualBattleMap.getBattleGame().getPerson(affectedPerson).getGameActionControl().advance(GameAction.DEADING);
+                        person.getGameActionControl().advance(GameAction.DEADING);
                         layer.addEntity(new VisualEntity() {
                             public void update(int delta) {
                             }
@@ -82,7 +90,7 @@ public class EffectAnimation extends EntitiesSequence {
                             }
 
                             public boolean isFinalized() {
-                                return visualBattleMap.getBattleGame().getPerson(affectedPerson).isFinalized();
+                                return person.isFinalized();
                             }
                         });
                     }

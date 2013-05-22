@@ -600,7 +600,8 @@ public class BattleEngine {
         }
 
         private boolean isActionEnabled(int person, Action action) {
-            return personSet.getPerson(person).getSpecialPoints() >= action.costSpecialPoints();
+            return personSet.getPerson(person).getSpecialPoints() >= action.getSpecialPointsCost()
+                    && personSet.getPerson(person).getHealthPoints() >= action.getHealthPointsCost();
         }
 
         private boolean isEnemy(int person, int otherPerson) {
@@ -637,11 +638,11 @@ public class BattleEngine {
         }
 
         private int actionLostSpecialPoints(int agentPerson, Action action) {
-            return action == null ? 0 : action.costSpecialPoints();
+            return action == null ? 0 : action.getSpecialPointsCost();
         }
 
         private int actionLostHealthPoints(int agentPerson, Action action) {
-            return 0; //TO-DO
+            return action == null ? 0 : action.getHealthPointsCost();
         }
 
         private float actionLostSpeedPoints(Integer agentPerson, Action action) {
@@ -849,6 +850,10 @@ public class BattleEngine {
 
             public int getMaximumSpecialPoints() {
                 return person.getMaximumSpecialPoints();
+            }
+
+            public boolean isAlive() {
+                return definitions.isPersonAlive(id);
             }
         }
     }

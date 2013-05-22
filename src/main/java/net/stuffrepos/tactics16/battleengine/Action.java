@@ -8,7 +8,9 @@ import net.stuffrepos.tactics16.util.Nameable;
  */
 public interface Action extends Nameable {
 
-    public int costSpecialPoints();
+    public int getHealthPointsCost();
+    
+    public int getSpecialPointsCost();
     
     public int getPower();
 
