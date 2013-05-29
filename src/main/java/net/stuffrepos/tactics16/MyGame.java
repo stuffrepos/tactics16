@@ -72,7 +72,6 @@ public class MyGame {
     private EnumMap<FontType, org.newdawn.slick.Font> fonts;
     //private Font font = new Font("Purisa", Font.PLAIN, 12);
     private Object2D screenObject2D = new Object2D() {
-
         public int getTop() {
             return 0;
         }
@@ -89,15 +88,20 @@ public class MyGame {
             return MyGame.this.getHeight();
         }
     };
+    private final MyGameOptions options;
+
+    public MyGameOptions getOptions() {
+        return options;
+    }
 
     public static MyGame getInstance() {
         return instance;
     }
 
-    public static void createInstance(String dataPath) {
+    public static void createInstance(MyGameOptions options) {
         if (instance == null) {
             try {
-                instance = new MyGame(dataPath);
+                instance = new MyGame(options);
             } catch (SlickException ex) {
                 throw new RuntimeException(ex);
             }
@@ -124,8 +128,9 @@ public class MyGame {
         }
     };
 
-    private MyGame(String dataPath) throws SlickException {
-        loader = new DataManager(new File(dataPath));
+    private MyGame(MyGameOptions options) throws SlickException {
+        this.options = options;
+        loader = new DataManager(new File(options.getDataPath()));
         keyMapping.setMapping(GameKey.UP, Input.KEY_UP);
         keyMapping.setMapping(GameKey.DOWN, Input.KEY_DOWN);
         keyMapping.setMapping(GameKey.LEFT, Input.KEY_LEFT);
@@ -206,6 +211,7 @@ public class MyGame {
         phaseManager.change(new BootstrapPhase());
         AppGameContainer app = new AppGameContainer(game);
 
+        app.setShowFPS(options.isDebug());
         app.setDisplayMode(
                 DEFAULT_SCREEN_SIZE.width,
                 DEFAULT_SCREEN_SIZE.height,

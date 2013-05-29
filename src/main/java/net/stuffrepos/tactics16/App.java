@@ -12,6 +12,11 @@ import net.stuffrepos.tactics16.scenes.battle.BattleGame;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battleconfig.PersonToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PlayerToBattle;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
@@ -22,11 +27,13 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class App {
 
-    public static void main(String[] args) throws SlickException {
-        if (args.length < 1) {
-            args = new String[]{"./src/main/resources/game-data"};
-        }
-        MyGame.createInstance(args[0]);
+    public static void main(String[] args) throws SlickException, ParseException {
+        Options options = new Options();
+        options.addOption(null, "debug", false, "Show menu options for debug purposes");
+        options.addOption(null, "data-path", true, "Path for alternative data");
+
+        CommandLineParser parser = new PosixParser();
+        MyGame.createInstance(new CommandLineOptions(parser.parse(options, args)));
         MyGame.getInstance().start(MainMenuScene.getInstance());
         //MyGame.getInstance().start(bootBattleScene());
     }
@@ -83,5 +90,22 @@ public class App {
                 MyGame.getInstance().getPhaseManager().change(buildBattleScene());
             }
         };
+    }
+
+    private static class CommandLineOptions implements MyGameOptions {
+
+        private final CommandLine cmd;
+
+        private CommandLineOptions(CommandLine cmd) {
+            this.cmd = cmd;
+        }
+
+        public String getDataPath() {
+            return cmd.getOptionValue("data-path", "./src/main/resources/game-data");
+        }
+
+        public boolean isDebug() {
+            return cmd.hasOption("debug");
+        }
     }
 }

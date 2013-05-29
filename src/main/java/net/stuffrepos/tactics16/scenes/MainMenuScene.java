@@ -32,65 +32,8 @@ public class MainMenuScene extends Phase {
     private static final MainMenuScene instance = new MainMenuScene();
     private Text title;
     private TextBox keysHelp;
-    private final Menu mainMenu = new Menu(
-            new CommonMenuOption("Play") {
-
-                @Override
-                public void executeAction() {
-                    MyGame.getInstance().getPhaseManager().advance(selectMapScene);
-
-                }
-            },
-            new CommonMenuOption("Map Creator") {
-
-                @Override
-                public void executeAction() {
-                    MyGame.getInstance().getPhaseManager().advance(MapBuilderScene.getInstance());
-
-                }
-            },
-            new CommonMenuOption("Text Font Tester") {
-
-                @Override
-                public void executeAction() {
-                    MyGame.getInstance().getPhaseManager().advance(FontTesterScene.getInstance());
-
-                }
-            },
-            new CommonMenuOption("Job Sprite Tester") {
-
-                @Override
-                public void executeAction() {
-                    MyGame.getInstance().getPhaseManager().advance(JobSpriteTester.getInstance());
-
-                }
-            },
-            new CommonMenuOption("Animation Tester") {
-
-                @Override
-                public void executeAction() {
-                    MyGame.getInstance().getPhaseManager().advance(AnimationSpriteTester.getInstance());
-
-                }
-            },
-            new CommonMenuOption("Message Box Test") {
-
-                @Override
-                public void executeAction() {
-                    new MessageBox("Message Box Test", MyGame.getInstance().getScreenObject2D()).createPhase(
-                            MyGame.getInstance().getPhaseManager());
-
-                }
-            },
-            new CommonMenuOption("Quit", GameKey.CANCEL) {
-
-                @Override
-                public void executeAction() {
-                    MyGame.getInstance().quit();
-                }
-            });
+    private final Menu mainMenu;
     private SelectMapScene selectMapScene = new SelectMapScene(new Runnable() {
-
         public void run() {
             if (selectMapScene.getSelectedMap() == null) {
                 MyGame.getInstance().getPhaseManager().back();
@@ -101,6 +44,63 @@ public class MainMenuScene extends Phase {
     }, true);
 
     private MainMenuScene() {
+        mainMenu = new Menu();
+        mainMenu.addOption(new CommonMenuOption("Play") {
+            @Override
+            public void executeAction() {
+                MyGame.getInstance().getPhaseManager().advance(selectMapScene);
+
+            }
+        });
+
+        mainMenu.addOption(new CommonMenuOption("Map Creator") {
+            @Override
+            public void executeAction() {
+                MyGame.getInstance().getPhaseManager().advance(MapBuilderScene.getInstance());
+
+            }
+        });
+
+        if (MyGame.getInstance().getOptions().isDebug()) {
+            mainMenu.addOption(new CommonMenuOption("Text Font Tester") {
+                @Override
+                public void executeAction() {
+                    MyGame.getInstance().getPhaseManager().advance(FontTesterScene.getInstance());
+
+                }
+            });
+            mainMenu.addOption(new CommonMenuOption("Job Sprite Tester") {
+                @Override
+                public void executeAction() {
+                    MyGame.getInstance().getPhaseManager().advance(JobSpriteTester.getInstance());
+
+                }
+            });
+            mainMenu.addOption(new CommonMenuOption("Animation Tester") {
+                @Override
+                public void executeAction() {
+                    MyGame.getInstance().getPhaseManager().advance(AnimationSpriteTester.getInstance());
+
+                }
+            });
+            mainMenu.addOption(new CommonMenuOption("Message Box Test") {
+                @Override
+                public void executeAction() {
+                    new MessageBox("Message Box Test", MyGame.getInstance().getScreenObject2D()).createPhase(
+                            MyGame.getInstance().getPhaseManager());
+
+                }
+            });
+
+        }
+
+        mainMenu.addOption(new CommonMenuOption("Quit", GameKey.CANCEL) {
+            @Override
+            public void executeAction() {
+                MyGame.getInstance().quit();
+            }
+        });
+
     }
 
     public static final MainMenuScene getInstance() {
