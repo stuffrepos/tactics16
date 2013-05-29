@@ -99,7 +99,6 @@
         "power": 10,
         "accuracy": 5,
         "specialPointsCost": 5,
-        "healthPointsCost": 3,
         "reach": {
             "distance": 1,
         }

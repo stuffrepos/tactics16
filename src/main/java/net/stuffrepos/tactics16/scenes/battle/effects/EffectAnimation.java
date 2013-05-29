@@ -59,11 +59,11 @@ public class EffectAnimation extends EntitiesSequence {
 
                 }
                 
-                if (event.getAction().getHealthPointsCost() > 0) {
+                if (event.getAgentLostHealthPoints() > 0) {
                     layer.addEntity(new PersonInfo(
                                 visualBattleMap.getBattleGame().getPerson(event.getAgentPerson()),
                                 PersonInfo.Type.DAMAGE,
-                                String.format("-%d", event.getAction().getHealthPointsCost())));
+                                String.format("-%d", event.getAgentLostHealthPoints())));
                 }
 
                 return layer;

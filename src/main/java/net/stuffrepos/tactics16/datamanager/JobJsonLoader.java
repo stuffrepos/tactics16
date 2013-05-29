@@ -57,10 +57,6 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
         action.setPower(jsonObject.getInt("power"));
         action.setReach(loadReach(jsonObject.getJSONObject("reach")));
 
-        if (jsonObject.has("healthPointsCost")) {
-            action.setHealthPointsCost(jsonObject.getInt("healthPointsCost"));
-        }
-
         if (jsonObject.has("specialPointsCost")) {
             action.setSpecialPointsCost(jsonObject.getInt("specialPointsCost"));
         }
@@ -264,14 +260,6 @@ public class JobJsonLoader extends AbstractJsonFileLoader<Job> {
 
         public void setSpecialPointsCost(int specialPointsCost) {
             this.specialPointsCost = specialPointsCost;
-        }
-
-        public int getHealthPointsCost() {
-            return healthPointsCost;
-        }
-
-        public void setHealthPointsCost(int healthPointsCost) {
-            this.healthPointsCost = healthPointsCost;
         }
 
         public int compareTo(Action o) {

@@ -590,8 +590,8 @@ public class BattleEngine {
         }
 
         private boolean isActionEnabled(int person, Action action) {
-            return personSet.getPerson(person).getSpecialPoints() >= action.getSpecialPointsCost()
-                    && personSet.getPerson(person).getHealthPoints() >= action.getHealthPointsCost();
+            return personSet.getPerson(person).getSpecialPoints()
+                    + personSet.getPerson(person).getHealthPoints() >= action.getSpecialPointsCost();
         }
 
         private boolean isEnemy(int person, int otherPerson) {
@@ -628,11 +628,29 @@ public class BattleEngine {
         }
 
         private int actionLostSpecialPoints(int agentPerson, Action action) {
-            return action == null ? 0 : action.getSpecialPointsCost();
+            if (action == null) {
+                return 0;
+            } else if (personSet.getPerson(agentPerson).getSpecialPoints() >= action.getSpecialPointsCost()) {
+                return action.getSpecialPointsCost();
+            } else {
+                return personSet.getPerson(agentPerson).getSpecialPoints();
+            }
         }
 
+        /**
+         * The action uses HP in place of SP if it is not enough for execute
+         * action.
+         *
+         * @param agentPerson
+         * @param action
+         * @return
+         */
         private int actionLostHealthPoints(int agentPerson, Action action) {
-            return action == null ? 0 : action.getHealthPointsCost();
+            if (action == null) {
+                return 0;
+            } else {
+                return -java.lang.Math.min(0, personSet.getPerson(agentPerson).getSpecialPoints() - action.getSpecialPointsCost());
+            }
         }
 
         private float actionLostSpeedPoints(Integer agentPerson, Action action) {
@@ -712,10 +730,9 @@ public class BattleEngine {
 
         public Integer getPersonOnPosition(MapCoordinate position) {
             Integer person = mapPersons.get(position);
-            if (person != null  && definitions.isPersonAlive(person)) {
+            if (person != null && definitions.isPersonAlive(person)) {
                 return person;
-            }
-            else {
+            } else {
                 return null;
             }
         }
