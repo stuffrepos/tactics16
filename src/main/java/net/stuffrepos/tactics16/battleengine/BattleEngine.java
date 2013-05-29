@@ -45,6 +45,8 @@ public class BattleEngine {
     private final Finders finders = new Finders();
     private boolean running;
     public static final float ACT_SPEED_POINTS_COST = 1.0f;
+    public static final int SPECIAL_POINTS_INCREMENT_BY_END_TURN = 1;
+    public static final int INITIAL_SPECIAL_POINTS = 0;
     private State state = State.NotStarted;
 
     public BattleEngine(
@@ -96,6 +98,12 @@ public class BattleEngine {
                     personActs(monitor, selectedPerson);
                     if (finders.getAlivePlayers().size() < 2) {
                         break turnLoop;
+                    }
+                }
+
+                for (int person : personSet.getPersons()) {
+                    if (personSet.getPerson(person).isAlive()) {
+                        personSet.getPerson(person).increaseSpecialPoints(SPECIAL_POINTS_INCREMENT_BY_END_TURN);
                     }
                 }
 
@@ -768,7 +776,7 @@ public class BattleEngine {
                 this.person = person;
                 this.id = id;
                 this.healthPoints = person.getMaximumHealthPoints();
-                this.specialPoints = person.getMaximumSpecialPoints();
+                this.specialPoints = INITIAL_SPECIAL_POINTS;
             }
 
             public int getHealthPoints() {
@@ -861,6 +869,13 @@ public class BattleEngine {
 
             public boolean isAlive() {
                 return definitions.isPersonAlive(id);
+            }
+
+            private void increaseSpecialPoints(int increment) {
+                assert increment > 0;
+                this.specialPoints = java.lang.Math.min(
+                        this.getMaximumSpecialPoints(),
+                        this.specialPoints + increment);
             }
         }
     }
