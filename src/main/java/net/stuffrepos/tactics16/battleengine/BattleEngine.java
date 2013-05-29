@@ -275,6 +275,7 @@ public class BattleEngine {
             if (hits) {
                 damage = definitions.damage(action, affectedPerson);
                 personSet.getPerson(affectedPerson).subtractHealthPoints(damage);
+                personSet.getPerson(affectedPerson).increaseSpecialPoints(damage);
             }
 
             affectedPersonResults.put(
