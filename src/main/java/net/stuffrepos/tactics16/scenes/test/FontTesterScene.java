@@ -10,6 +10,7 @@ import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.Text;
 import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.phase.Phase;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -62,6 +63,13 @@ public class FontTesterScene extends Phase {
         messageBox.setBackgroundColor(MessageBox.DEFAULT_BACKGROUND_COLOR);
         messageBox.setFlat(true);
         entitiesBoard.getChildren().add(messageBox);
+        
+        Text personInfo = new Text();
+        personInfo.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(messageBox));
+        personInfo.setText("Person Information");
+        personInfo.setFont(MyGame.FontType.Message);
+        personInfo.setColor(Color.cyan);
+        entitiesBoard.getChildren().add(personInfo);
     }
 
     @Override
