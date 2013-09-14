@@ -81,6 +81,10 @@ public class PersonActionRequestProcessor extends RequestProcessor<PersonActionR
                                     getSource().getReach().getRayMin(),
                                     getSource().getReach().getRayMax()
                                     ));
+                            b.append(String.format(
+                                    "\nSP Cost: %d",
+                                    getSource().getSpecialPointsCost()
+                                    ));
                             return b.toString();
                         }
 
