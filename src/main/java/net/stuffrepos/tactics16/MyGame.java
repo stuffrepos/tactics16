@@ -41,7 +41,7 @@ public class MyGame {
         PhaseTitle,
         Message
     }
-    private static final String COMMON_FONT_NAME = "Liberation Mono";
+    private static final String COMMON_FONT_NAME = "Purisa";
     private static final String TITLE_FONT_NAME = "Purisa";
     private static final Dimension DEFAULT_SCREEN_SIZE = new Dimension(800, 600);
     private static MyGame instance;
@@ -144,10 +144,10 @@ public class MyGame {
 
     private void initResources(GameContainer gameContainer) throws SlickException {
         fonts = new EnumMap<FontType, org.newdawn.slick.Font>(FontType.class);
-        fonts.put(FontType.Common, createUnicodeFont(COMMON_FONT_NAME, Font.PLAIN, 12));
-        fonts.put(FontType.Message, createUnicodeFont(MyGame.COMMON_FONT_NAME, Font.BOLD, 16));
+        fonts.put(FontType.Common, createUnicodeFont(COMMON_FONT_NAME, Font.BOLD, 16));
+        fonts.put(FontType.Message, createUnicodeFont(MyGame.COMMON_FONT_NAME, Font.BOLD, 20));
         fonts.put(FontType.MainTitle, createUnicodeFont(TITLE_FONT_NAME, Font.BOLD, 48));
-        fonts.put(FontType.PhaseTitle, createUnicodeFont(TITLE_FONT_NAME, Font.BOLD, 24));        
+        fonts.put(FontType.PhaseTitle, createUnicodeFont(TITLE_FONT_NAME, Font.BOLD, 28));        
         this.gameContainer = gameContainer;
         loader.loadDirectory(loader.getDataDirectory());
     }
