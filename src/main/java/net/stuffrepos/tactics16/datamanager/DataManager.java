@@ -1,28 +1,22 @@
 package net.stuffrepos.tactics16.datamanager;
 
-import java.awt.image.BufferedImage;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.DataGroup;
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.javabasic.FileUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.newdawn.slick.Image;
 import org.newdawn.slick.ImageBuffer;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.opengl.EmptyImageData;
-import org.newdawn.slick.opengl.ImageData;
-import org.newdawn.slick.opengl.Texture;
-import org.newdawn.slick.opengl.TextureImpl;
 
 /**
  *
@@ -30,6 +24,13 @@ import org.newdawn.slick.opengl.TextureImpl;
  */
 public class DataManager {
 
+    private static enum ObjectType {
+
+        Job,
+        Map,
+        Terrain
+    }
+    private static final Log log = LogFactory.getLog(DataManager.class);
     private DataGroup<Job> jobs = new DataGroup<Job>();
     private DataGroup<Terrain> terrains = new DataGroup<Terrain>();
     private MapManager maps;
@@ -65,43 +66,13 @@ public class DataManager {
 
     public DataManager(File dataDirectory) {
         this.dataDirectory = dataDirectory;
-        maps = new MapManager(new File(dataDirectory,"maps"));
+        maps = new MapManager(new File(dataDirectory, "maps"));
     }
 
     public void loadDirectory(File directory) {
-        List<File> jobFiles = new LinkedList<File>();
-        List<File> terrainFiles = new LinkedList<File>();
-        List<File> mapFiles = new LinkedList<File>();
+        EnumMap<ObjectType, List<File>> objects = _loadDirectory(directory);
 
-        for (File file : directory.listFiles()) {
-            if (file.isDirectory()) {
-                loadDirectory(file);
-            } else {
-                try {
-                    if ("json".equals(FileUtil.getExtension(file))) {
-
-                        JSONObject jsonObject = loadJsonObjectFromFile(file);
-
-                        if ("job".equals(jsonObject.getString("objectType"))) {
-                            jobFiles.add(file);
-                        } else if ("terrain".equals(jsonObject.getString("objectType"))) {
-                            terrainFiles.add(file);
-                        } else if ("map".equals(jsonObject.getString("objectType"))) {
-                            mapFiles.add(file);
-                        } else {
-                            throw new RuntimeException(
-                                    "Unknown objectType \"" + jsonObject.getString("objectType") + "\"");
-                        }
-                    }
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                } catch (JSONException ex) {
-                    throw new RuntimeException("File: " + file.getAbsolutePath(), ex);
-                }
-            }
-        }
-
-        for (File file : jobFiles) {
+        for (File file : objects.get(ObjectType.Job)) {
             try {
                 getJobs().add(new JobJsonLoader(file).loadObject());
             } catch (IOException ex) {
@@ -111,7 +82,7 @@ public class DataManager {
             }
         }
 
-        for (File file : terrainFiles) {
+        for (File file : objects.get(ObjectType.Terrain)) {
             try {
                 getTerrains().add(new TerrainJsonLoader(file).loadObject());
             } catch (IOException ex) {
@@ -121,7 +92,7 @@ public class DataManager {
             }
         }
 
-        for (File file : mapFiles) {
+        for (File file : objects.get(ObjectType.Map)) {
             try {
                 getMaps().add(new MapJsonLoader(file).loadObject());
             } catch (IOException ex) {
@@ -131,6 +102,50 @@ public class DataManager {
             }
         }
 
+    }
+
+    private EnumMap<ObjectType, List<File>> _loadDirectory(File directory) {
+        EnumMap<ObjectType, List<File>> objects = new EnumMap<ObjectType, List<File>>(ObjectType.class);
+        for (ObjectType objectType : ObjectType.values()) {
+            objects.put(objectType, new LinkedList<File>());
+        }
+
+        for (File file : directory.listFiles()) {
+            if (file.isDirectory()) {
+                for (EnumMap.Entry<ObjectType, List<File>> e : _loadDirectory(file).entrySet()) {
+                    objects.get(e.getKey()).addAll(e.getValue());
+                }
+            } else {
+                try {
+                    if ("json".equals(FileUtil.getExtension(file))) {
+                        JSONObject jsonObject = loadJsonObjectFromFile(file);
+
+                        ObjectType foundObjectType = null;
+
+                        for (ObjectType objectType : ObjectType.values()) {
+                            if (objectType.name().toLowerCase().equals(jsonObject.getString("objectType"))) {
+                                foundObjectType = objectType;
+                                break;
+                            }
+                        }
+
+
+                        if (foundObjectType == null) {
+                            throw new RuntimeException(
+                                    "Unknown objectType \"" + jsonObject.getString("objectType") + "\"");
+                        } else {
+                            objects.get(foundObjectType).add(file);
+                        }
+
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (JSONException ex) {
+                    throw new RuntimeException("File: " + file.getAbsolutePath(), ex);
+                }
+            }
+        }
+        return objects;
     }
 
     public JSONObject loadJsonObjectFromFile(File file) throws IOException, JSONException {
