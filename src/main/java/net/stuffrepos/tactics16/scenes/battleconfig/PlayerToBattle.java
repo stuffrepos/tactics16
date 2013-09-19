@@ -4,9 +4,6 @@ import net.stuffrepos.tactics16.game.playerconfig.PlayerConfig;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import net.stuffrepos.tactics16.animation.SpriteAnimation;
-import net.stuffrepos.tactics16.game.Job;
-import org.newdawn.slick.Color;
 
 /**
  *
@@ -16,10 +13,12 @@ public class PlayerToBattle extends DataObject {
 
     private final PlayerConfig playerConfig;
     private List<PersonToBattle> persons = new LinkedList<PersonToBattle>();
+    private final ControllerToBattle controller;
 
-    public PlayerToBattle(PlayerConfig playerConfig, String name) {
+    public PlayerToBattle(PlayerConfig playerConfig, ControllerToBattle controller, String name) {
         super(name);
         this.playerConfig = playerConfig;
+        this.controller = controller;
     }
 
     public Collection<PersonToBattle> getPersons() {

@@ -10,6 +10,7 @@ import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.MainMenuScene;
 import net.stuffrepos.tactics16.scenes.battle.BattleGame;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
+import net.stuffrepos.tactics16.scenes.battleconfig.ControllerToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PersonToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PlayerToBattle;
 import org.apache.commons.cli.CommandLine;
@@ -58,7 +59,7 @@ public class App {
     private static List<PlayerToBattle> createPlayers(Map map) {
         List<PlayerToBattle> players = new LinkedList<PlayerToBattle>();
         for (int playerId = 0; playerId < map.getPlayerCount(); ++playerId) {
-            PlayerToBattle player = new PlayerToBattle(PlayerConfig.getPlayer(playerId), "PlayerConfig " + (playerId + 1));
+            PlayerToBattle player = new PlayerToBattle(PlayerConfig.getPlayer(playerId), new ControllerToBattle("Any"), "PlayerConfig " + (playerId + 1));
             player.addPerson(createPerson(player));
             players.add(player);
         }

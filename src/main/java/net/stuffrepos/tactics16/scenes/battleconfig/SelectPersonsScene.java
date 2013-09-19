@@ -33,13 +33,6 @@ public class SelectPersonsScene extends Phase {
 
     @Override
     public void enter(GameContainer container, StateBasedGame game) {
-        players = new LinkedList<PlayerToBattle>();
-        for (int playerId = 0; playerId < map.getPlayerCount(); ++playerId) {
-            players.add(
-                    new PlayerToBattle(
-                    PlayerConfig.getPlayer(playerId),
-                    "Player " + (playerId + 1)));
-        }
         currentPlayer = 0;
     }
 
@@ -106,12 +99,13 @@ public class SelectPersonsScene extends Phase {
     private PhaseTitle title;
     private JobBoxInfo jobBoxInfo = null;
     private Menu jobSelector = new Menu();
-    private List<PlayerToBattle> players;
+    private final List<PlayerToBattle> players;
     private final Map map;
 
-    public SelectPersonsScene(Map map) {
+    public SelectPersonsScene(Map map, List<PlayerToBattle> players) {
         assert map != null;
         this.map = map;
+        this.players = players;
     }
 
     private BattleGame buildBattleGame() {

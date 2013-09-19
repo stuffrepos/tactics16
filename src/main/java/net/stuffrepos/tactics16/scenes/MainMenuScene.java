@@ -1,11 +1,8 @@
 package net.stuffrepos.tactics16.scenes;
 
-import net.stuffrepos.tactics16.scenes.battleconfig.SelectPersonsScene;
-import net.stuffrepos.tactics16.scenes.battleconfig.SelectMapScene;
 import net.stuffrepos.tactics16.scenes.test.JobSpriteTester;
 import net.stuffrepos.tactics16.scenes.test.AnimationSpriteTester;
 import net.stuffrepos.tactics16.scenes.test.FontTesterScene;
-import java.awt.Font;
 import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.scenes.mapbuilder.MapBuilderScene;
 import net.stuffrepos.tactics16.MyGame;
@@ -18,6 +15,7 @@ import net.stuffrepos.tactics16.components.Text;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.menu.Menu;
 import net.stuffrepos.tactics16.phase.Phase;
+import net.stuffrepos.tactics16.scenes.battleconfig.BattleConfigScene;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -33,22 +31,13 @@ public class MainMenuScene extends Phase {
     private Text title;
     private TextBox keysHelp;
     private final Menu mainMenu;
-    private SelectMapScene selectMapScene = new SelectMapScene(new Runnable() {
-        public void run() {
-            if (selectMapScene.getSelectedMap() == null) {
-                MyGame.getInstance().getPhaseManager().back();
-            } else {
-                MyGame.getInstance().getPhaseManager().advance(new SelectPersonsScene(selectMapScene.getSelectedMap()));
-            }
-        }
-    }, true);
 
     private MainMenuScene() {
         mainMenu = new Menu();
         mainMenu.addOption(new CommonMenuOption("Play") {
             @Override
             public void executeAction() {
-                MyGame.getInstance().getPhaseManager().advance(selectMapScene);
+                MyGame.getInstance().getPhaseManager().advance(new BattleConfigScene());
 
             }
         });
