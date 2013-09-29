@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battleconfig;
 
+import net.stuffrepos.tactics16.scenes.battle.CpuPlayerControl;
 import net.stuffrepos.tactics16.scenes.battle.PlayerControl;
 
 /**
@@ -13,7 +14,7 @@ public class CpuControllerToBattle implements ControllerToBattle{
     }
 
     public PlayerControl newPlayerControl() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new CpuPlayerControl();
     }
     
 }

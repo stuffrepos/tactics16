@@ -11,6 +11,7 @@ import net.stuffrepos.tactics16.scenes.MainMenuScene;
 import net.stuffrepos.tactics16.scenes.battle.BattleGame;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battleconfig.ControllerToBattle;
+import net.stuffrepos.tactics16.scenes.battleconfig.CpuControllerToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.HumanControllerToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PersonToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PlayerToBattle;
@@ -60,7 +61,10 @@ public class App {
     private static List<PlayerToBattle> createPlayers(Map map) {
         List<PlayerToBattle> players = new LinkedList<PlayerToBattle>();
         for (int playerId = 0; playerId < map.getPlayerCount(); ++playerId) {
-            PlayerToBattle player = new PlayerToBattle(PlayerConfig.getPlayer(playerId), new HumanControllerToBattle(), "PlayerConfig " + (playerId + 1));
+            ControllerToBattle controller = playerId % 2 == 0
+                    ? new HumanControllerToBattle()
+                    : new CpuControllerToBattle();
+            PlayerToBattle player = new PlayerToBattle(PlayerConfig.getPlayer(playerId), controller, "PlayerConfig " + (playerId + 1));
             player.addPerson(createPerson(player));
             players.add(player);
         }
@@ -68,7 +72,7 @@ public class App {
     }
 
     private static PersonToBattle createPerson(PlayerToBattle player) {
-        return new PersonToBattle(player, "Person " + (1 + (int) (Math.random() * 98)), getJob());        
+        return new PersonToBattle(player, "Person " + (1 + (int) (Math.random() * 98)), getJob());
     }
 
     private static Job getJob() {

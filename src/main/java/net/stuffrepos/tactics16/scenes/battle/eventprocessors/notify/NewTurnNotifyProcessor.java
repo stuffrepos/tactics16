@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.notify;
 
 import java.util.Map.Entry;
 import net.stuffrepos.tactics16.animation.EntitiesLayer;
