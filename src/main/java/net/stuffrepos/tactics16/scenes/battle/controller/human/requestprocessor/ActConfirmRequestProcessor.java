@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
+package net.stuffrepos.tactics16.scenes.battle.controller.human.requestprocessor;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +14,7 @@ import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.MapCheckedArea;
 import net.stuffrepos.tactics16.scenes.battle.Person;
-import net.stuffrepos.tactics16.scenes.battle.RequestProcessor;
+import net.stuffrepos.tactics16.scenes.battle.eventprocessors.RequestProcessor;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;

@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
+import net.stuffrepos.tactics16.scenes.battle.controller.PlayerController;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,9 +14,9 @@ public class Player {
 
     private final PlayerConfig playerConfig;
     private final List<Person> persons = new LinkedList<Person>();
-    private final PlayerControl control;
+    private final PlayerController control;
 
-    Player(PlayerConfig playerConfig, PlayerControl control) {
+    Player(PlayerConfig playerConfig, PlayerController control) {
         this.playerConfig = playerConfig;
         this.control = control;
     }
@@ -36,7 +37,7 @@ public class Player {
         return persons.get(index);
     }
     
-    public PlayerControl getControl() {
+    public PlayerController getControl() {
         return control;
     }
 }

@@ -313,7 +313,7 @@ public class BattleEngine {
                 lostHealthPoints));
     }
 
-    private SortedMap<Action, Boolean> classifyPersonActions(Integer person) {
+    public SortedMap<Action, Boolean> classifyPersonActions(Integer person) {
         SortedMap<Action, Boolean> classifiedActions = new TreeMap<Action, Boolean>();
         for (Action action : personSet.getPerson(person).getActions()) {
             classifiedActions.put(action, definitions.isActionEnabled(person, action));
@@ -321,7 +321,7 @@ public class BattleEngine {
         return classifiedActions;
     }
 
-    private Collection<MapCoordinate> buildMovimentRange(int person) {
+    public Collection<MapCoordinate> buildMovimentRange(int person) {
         return buildMovimentRange(
                 person,
                 personSet.getPerson(person).getPosition(),
@@ -357,21 +357,29 @@ public class BattleEngine {
         return range;
     }
 
+    public Set<MapCoordinate> buildActionRange(Integer person, Action action) {
+        return buildActionRange(person, action, null);
+    }
+
     /**
      *
      * @param person
      * @param action
      * @return
      */
-    private Set<MapCoordinate> buildActionRange(Integer person, Action action) {
+    public Set<MapCoordinate> buildActionRange(Integer person, Action action, MapCoordinate personPosition) {
+        if (personPosition == null) {
+            personPosition = personSet.getPerson(person).getPosition();
+        }
+        
         Set<MapCoordinate> range = findMapNeighbors(
-                personSet.getPerson(person).getPosition(), action.getReach().getDistanceMin(), action.getReach().getDistanceMax());
+                personPosition, action.getReach().getDistanceMin(), action.getReach().getDistanceMax());
 
         if (action.getReach().getDirect()) {
             Set<MapCoordinate> onSight = new TreeSet<MapCoordinate>(CoordinateComparator.getInstance());
 
             for (MapCoordinate coordinate : range) {
-                if (onSight(personSet.getPerson(person).getPosition(), coordinate)) {
+                if (onSight(personPosition, coordinate)) {
                     onSight.add(coordinate);
                 }
             }

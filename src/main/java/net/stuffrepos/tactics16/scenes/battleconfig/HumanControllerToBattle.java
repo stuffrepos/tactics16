@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.scenes.battleconfig;
 
-import net.stuffrepos.tactics16.scenes.battle.HumanPlayerControl;
-import net.stuffrepos.tactics16.scenes.battle.PlayerControl;
+import net.stuffrepos.tactics16.scenes.battle.controller.human.HumanPlayerController;
+import net.stuffrepos.tactics16.scenes.battle.controller.PlayerController;
 
 /**
  *
@@ -13,8 +13,8 @@ public class HumanControllerToBattle implements ControllerToBattle{
         return "Human";
     }
 
-    public PlayerControl newPlayerControl() {
-        return new HumanPlayerControl();
+    public PlayerController newPlayerControl() {
+        return new HumanPlayerController();
     }
     
 }

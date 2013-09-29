@@ -1,5 +1,8 @@
 package net.stuffrepos.tactics16.scenes.battle;
 
+import java.lang.reflect.InvocationTargetException;
+import net.stuffrepos.tactics16.scenes.battle.eventprocessors.EventProcessorFinder;
+import net.stuffrepos.tactics16.scenes.battle.eventprocessors.RequestProcessor;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -48,9 +51,14 @@ public class BattleScene extends Phase {
     private boolean currentEventPhaseRunning = false;
 
     public BattleScene(BattleGame battleGame) {
-        this.notifyEventProcessorFinder = new EventProcessorFinder(
-                this,
-                "net.stuffrepos.tactics16.scenes.battle.eventprocessors");
+        this.notifyEventProcessorFinder = new EventProcessorFinder<EventProcessor>(
+                "net.stuffrepos.tactics16.scenes.battle.eventprocessors.notify",
+                EventProcessor.class) {
+            @Override
+            protected EventProcessor instantiateProcessor(Class<? extends EventProcessor> clazz) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
+                return clazz.getConstructor(BattleScene.class).newInstance(BattleScene.this);
+            }
+        };
         this.visualBattleMap = new VisualBattleMap(battleGame);
         this.jobAnimationTest = new JobAnimationTest(battleGame);
 

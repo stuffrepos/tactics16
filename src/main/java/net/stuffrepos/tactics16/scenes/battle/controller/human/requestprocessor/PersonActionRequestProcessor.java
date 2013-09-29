@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
+package net.stuffrepos.tactics16.scenes.battle.controller.human.requestprocessor;
 
 import java.util.Map.Entry;
 import net.stuffrepos.tactics16.GameKey;
@@ -16,7 +16,7 @@ import net.stuffrepos.tactics16.game.Coordinate;
 
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
-import net.stuffrepos.tactics16.scenes.battle.RequestProcessor;
+import net.stuffrepos.tactics16.scenes.battle.eventprocessors.RequestProcessor;
 import net.stuffrepos.tactics16.util.cursors.Cursor1D;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 import org.apache.commons.logging.Log;

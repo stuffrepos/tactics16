@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
+package net.stuffrepos.tactics16.scenes.battle.controller.human.requestprocessor;
 
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;
@@ -8,7 +8,7 @@ import net.stuffrepos.tactics16.battleengine.events.MovimentTargetRequest;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.MapCheckedArea;
-import net.stuffrepos.tactics16.scenes.battle.RequestProcessor;
+import net.stuffrepos.tactics16.scenes.battle.eventprocessors.RequestProcessor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.newdawn.slick.GameContainer;

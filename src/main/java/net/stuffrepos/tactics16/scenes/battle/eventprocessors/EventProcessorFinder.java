@@ -1,28 +1,29 @@
-package net.stuffrepos.tactics16.scenes.battle;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import net.stuffrepos.tactics16.battleengine.BattleEvent;
+import net.stuffrepos.tactics16.scenes.battle.EventProcessor;
 import org.reflections.Reflections;
 
 /**
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class EventProcessorFinder {
+public abstract class EventProcessorFinder<EventProcessorType extends EventProcessor> {
 
-    private final Map<Class, EventProcessor> processors;
+    private final Map<Class, EventProcessorType> processors;
 
-    public EventProcessorFinder(BattleScene battleScene, String packageName) {
-        processors = new HashMap<Class, EventProcessor>();
+    public EventProcessorFinder(String packageName, Class<? extends EventProcessor> eventProcessorSuperClass) {
+        processors = new HashMap<Class, EventProcessorType>();
 
-        for (Class<? extends EventProcessor> eventProcessorClass : new Class[]{EventProcessor.class, RequestProcessor.class}) {
+        for (Class<? extends EventProcessorType> eventProcessorClass : new Class[]{eventProcessorSuperClass}) {
             Reflections reflections = new Reflections(packageName);
-            for (Class<? extends EventProcessor> clazz : reflections.getSubTypesOf(eventProcessorClass)) {
+            for (Class<? extends EventProcessorType> clazz : reflections.getSubTypesOf(eventProcessorClass)) {
                 System.out.println(clazz.getName());
                 try {
-                    EventProcessor processor = (EventProcessor) clazz.getConstructor(BattleScene.class).newInstance(battleScene);
+                    EventProcessorType processor = instantiateProcessor(clazz);
                     processors.put(processor.getEventClass(), processor);
                 } catch (IllegalArgumentException ex) {
                     throw new RuntimeException(ex);
@@ -41,17 +42,16 @@ public class EventProcessorFinder {
         }
     }
 
-    public EventProcessor getEventProcessor(BattleEvent event) {
-        EventProcessor processor = processors.get(event.getClass());
+    protected abstract EventProcessorType instantiateProcessor(Class<? extends EventProcessorType> clazz)
+            throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException;
+
+    public EventProcessorType getEventProcessor(BattleEvent event) {
+        EventProcessorType processor = processors.get(event.getClass());
 
         if (processor == null) {
             throw new RuntimeException("Processor not found for " + event.getClass());
         } else {
             return processor;
         }
-
-
-
-
     }
 }

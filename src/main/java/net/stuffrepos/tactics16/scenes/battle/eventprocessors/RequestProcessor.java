@@ -1,6 +1,8 @@
-package net.stuffrepos.tactics16.scenes.battle;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
 
 import net.stuffrepos.tactics16.battleengine.BattleEvent;
+import net.stuffrepos.tactics16.scenes.battle.BattleScene;
+import net.stuffrepos.tactics16.scenes.battle.EventProcessor;
 
 /**
  *

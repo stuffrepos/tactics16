@@ -1,7 +1,7 @@
 package net.stuffrepos.tactics16.scenes.battleconfig;
 
-import net.stuffrepos.tactics16.scenes.battle.CpuPlayerControl;
-import net.stuffrepos.tactics16.scenes.battle.PlayerControl;
+import net.stuffrepos.tactics16.scenes.battle.controller.cpu.CpuPlayerController;
+import net.stuffrepos.tactics16.scenes.battle.controller.PlayerController;
 
 /**
  *
@@ -13,8 +13,8 @@ public class CpuControllerToBattle implements ControllerToBattle{
         return "CPU";
     }
 
-    public PlayerControl newPlayerControl() {
-        return new CpuPlayerControl();
+    public PlayerController newPlayerControl() {
+        return new CpuPlayerController();
     }
     
 }

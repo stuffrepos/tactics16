@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.scenes.battleconfig;
 
-import net.stuffrepos.tactics16.scenes.battle.PlayerControl;
+import net.stuffrepos.tactics16.scenes.battle.controller.PlayerController;
 import net.stuffrepos.tactics16.util.Nameable;
 
 /**
@@ -9,6 +9,6 @@ import net.stuffrepos.tactics16.util.Nameable;
  */
 public interface ControllerToBattle extends Nameable {
 
-    public PlayerControl newPlayerControl();
+    public PlayerController newPlayerControl();
 
 }
