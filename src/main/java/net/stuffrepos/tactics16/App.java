@@ -15,6 +15,7 @@ import net.stuffrepos.tactics16.scenes.battleconfig.CpuControllerToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.HumanControllerToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PersonToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PlayerToBattle;
+import net.stuffrepos.tactics16.scenes.battleconfig.cpuia.RandomCpuIa;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Options;
@@ -63,7 +64,7 @@ public class App {
         for (int playerId = 0; playerId < map.getPlayerCount(); ++playerId) {
             ControllerToBattle controller = playerId % 2 == 0
                     ? new HumanControllerToBattle()
-                    : new CpuControllerToBattle();
+                    : new CpuControllerToBattle(RandomCpuIa.getInstance());
             PlayerToBattle player = new PlayerToBattle(PlayerConfig.getPlayer(playerId), controller, "PlayerConfig " + (playerId + 1));
             player.addPerson(createPerson(player));
             players.add(player);

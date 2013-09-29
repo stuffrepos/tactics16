@@ -8,6 +8,7 @@ import net.stuffrepos.tactics16.game.playerconfig.PlayerConfig;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.phase.PhaseManager;
 import net.stuffrepos.tactics16.scenes.MainMenuScene;
+import net.stuffrepos.tactics16.scenes.battleconfig.cpuia.RandomCpuIa;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
@@ -32,7 +33,7 @@ public class BattleConfigScene extends Phase {
         super.enter(container, game);
         controllers = new ControllerToBattle[]{
             new HumanControllerToBattle(),
-            new CpuControllerToBattle()
+            new CpuControllerToBattle(RandomCpuIa.getInstance())
         };
         MyGame.getInstance().getPhaseManager().advance(selectMapScene);
     }

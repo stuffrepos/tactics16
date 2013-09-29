@@ -24,6 +24,11 @@ import net.stuffrepos.tactics16.scenes.battle.controller.PlayerController;
 public class CpuPlayerController implements PlayerController {
 
     private CpuCommand cpuCommand;
+    private final CpuIa ia;
+
+    public CpuPlayerController(CpuIa ia) {
+        this.ia = ia;
+    }
 
     public EventProcessor getEventProcessor(final BattleScene battleScene, final BattleRequest request) {
         return new EventProcessorFinder<CpuRequestProcessor>("net.stuffrepos.tactics16.scenes.battle.controller.cpu.requestprocessor", CpuRequestProcessor.class) {
@@ -36,42 +41,11 @@ public class CpuPlayerController implements PlayerController {
 
     private CpuCommand getCpuCommand(BattleScene battleScene, BattleRequest request) {
         if (request instanceof MovimentTargetRequest) {
-            MovimentTargetRequest movimentRequest = (MovimentTargetRequest) request;
-            MapCoordinate movimentTarget = random(
-                    battleScene.getVisualBattleMap().getBattleGame().getEngine().buildMovimentRange(movimentRequest.getPerson().getId()));
-            Action action = randomAction(
+            cpuCommand = ia.buildCpuCommand(
                     battleScene.getVisualBattleMap().getBattleGame().getEngine(),
-                    movimentRequest.getPerson().getId());
-            MapCoordinate actionTarget = null;
-            if (action != null) {
-                actionTarget = random(
-                        battleScene.getVisualBattleMap().getBattleGame().getEngine().buildActionRange(
-                        movimentRequest.getPerson().getId(),
-                        action,
-                        movimentTarget));
-            }
-
-
-            cpuCommand = new CpuCommand(movimentTarget, action, actionTarget);
+                    ((MovimentTargetRequest) request).getPerson().getId());
         }
 
         return cpuCommand;
-    }
-
-    private Action randomAction(BattleEngine engine, int personId) {
-        Map<Action, Boolean> classifiedActions = engine.classifyPersonActions(personId);
-        List<Action> actions = new ArrayList<Action>(classifiedActions.size());
-        for (Map.Entry<Action, Boolean> e : classifiedActions.entrySet()) {
-            if (e.getValue()) {
-                actions.add(e.getKey());
-            }
-        }
-        actions.add(null);
-        return random(actions);
-    }
-
-    private <T> T random(Collection<T> coordinates) {
-        Object[] targets = coordinates.toArray(new Object[0]);
-        return (T) targets[new Random().nextInt(targets.length)];
     }
 }
