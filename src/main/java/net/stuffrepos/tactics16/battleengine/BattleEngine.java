@@ -226,7 +226,11 @@ public class BattleEngine {
                         monitor.notify(new ChoosedTarget(personId, actionTarget));
                         currentPhase = PersonActPhase.Confirm;
                     } else {
-                        monitor.notify(new OutOfReachNotify(personId, selectedAction));
+                        monitor.notify(new OutOfReachNotify(
+                                personSet.getPerson(personId),
+                                selectedAction,
+                                actionRange,
+                                actionTarget));
                     }
                     continue;
 
