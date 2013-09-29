@@ -82,8 +82,7 @@ public class PerformedActionNotifyProcessor extends EventProcessor<PerformedActi
         };
     }
 
-    @Override
-    public Class getEventClass() {
+   public static Class getObjectClass() {
         return PerformedActionNotify.class;
     }
 }

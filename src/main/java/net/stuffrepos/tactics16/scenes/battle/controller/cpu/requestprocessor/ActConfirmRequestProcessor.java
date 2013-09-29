@@ -15,8 +15,7 @@ public class ActConfirmRequestProcessor extends CpuRequestProcessor<ActConfirmRe
         super(battleScene, cpuCommand);
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return ActConfirmRequest.class;
     }
 

@@ -18,8 +18,7 @@ public class ActionTargetRequestProcessor extends CpuRequestProcessor<ActionTarg
         super(battleScene, cpuCommand);
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return ActionTargetRequest.class;
     }
 

@@ -20,8 +20,22 @@ public class HumanPlayerController implements PlayerController {
         protected EventProcessorFinder calculate(final BattleScene battleScene) {
             return new EventProcessorFinder<RequestProcessor>("net.stuffrepos.tactics16.scenes.battle.controller.human.requestprocessor", RequestProcessor.class) {
                 @Override
-                protected RequestProcessor instantiateProcessor(Class<? extends RequestProcessor> clazz) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-                    return clazz.getConstructor(BattleScene.class).newInstance(battleScene);
+                protected RequestProcessor instantiateProcessor(Class<? extends RequestProcessor> clazz) {
+                    try {
+                        return clazz.getConstructor(BattleScene.class).newInstance(battleScene);
+                    } catch (NoSuchMethodException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (SecurityException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (InstantiationException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (IllegalAccessException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (IllegalArgumentException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (InvocationTargetException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             };
         }

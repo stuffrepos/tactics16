@@ -66,8 +66,7 @@ public class MovimentTargetRequestProcessor extends RequestProcessor<MovimentTar
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return MovimentTargetRequest.class;
     }
 }

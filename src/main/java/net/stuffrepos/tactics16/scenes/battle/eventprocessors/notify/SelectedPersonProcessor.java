@@ -19,8 +19,7 @@ public class SelectedPersonProcessor extends EventProcessor<SelectedPersonNotify
         return null;
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return SelectedPersonNotify.class;
     }
     

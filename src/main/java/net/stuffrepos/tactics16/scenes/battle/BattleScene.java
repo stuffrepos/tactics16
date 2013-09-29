@@ -16,7 +16,6 @@ import net.stuffrepos.tactics16.battleengine.BattleNotify;
 import net.stuffrepos.tactics16.battleengine.BattleRequest;
 import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.battleengine.Monitor;
-import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.phase.Phase;
@@ -55,8 +54,22 @@ public class BattleScene extends Phase {
                 "net.stuffrepos.tactics16.scenes.battle.eventprocessors.notify",
                 EventProcessor.class) {
             @Override
-            protected EventProcessor instantiateProcessor(Class<? extends EventProcessor> clazz) throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-                return clazz.getConstructor(BattleScene.class).newInstance(BattleScene.this);
+            protected EventProcessor instantiateProcessor(Class<? extends EventProcessor> clazz) {
+                try {
+                    return clazz.getConstructor(BattleScene.class).newInstance(BattleScene.this);
+                } catch (NoSuchMethodException ex) {
+                    throw new RuntimeException(ex);
+                } catch (SecurityException ex) {
+                    throw new RuntimeException(ex);
+                } catch (InstantiationException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IllegalAccessException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IllegalArgumentException ex) {
+                    throw new RuntimeException(ex);
+                } catch (InvocationTargetException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         };
         this.visualBattleMap = new VisualBattleMap(battleGame);

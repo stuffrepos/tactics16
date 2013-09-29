@@ -32,8 +32,7 @@ public class MovimentCancelledNotifyProcessor extends EventProcessor<MovimentCan
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return MovimentCancelledNotify.class;
     }
 }

@@ -30,8 +30,7 @@ public class ChooseActionCancelledNotifyProcessor extends EventProcessor<ChooseA
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return ChooseActionCancelled.class;
     }
 }

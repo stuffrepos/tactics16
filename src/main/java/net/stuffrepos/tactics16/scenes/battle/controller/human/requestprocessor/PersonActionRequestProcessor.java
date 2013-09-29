@@ -123,8 +123,7 @@ public class PersonActionRequestProcessor extends RequestProcessor<PersonActionR
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return PersonActionRequest.class;
     }
 }

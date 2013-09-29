@@ -76,8 +76,7 @@ public class NewTurnNotifyProcessor extends EventProcessor<NewTurn> {
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return NewTurn.class;
     }
 }

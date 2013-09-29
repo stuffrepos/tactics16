@@ -22,8 +22,7 @@ public class PersonActionRequestProcessor extends CpuRequestProcessor<PersonActi
         super(battleScene, cpuCommand);
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return PersonActionRequest.class;
     }
 

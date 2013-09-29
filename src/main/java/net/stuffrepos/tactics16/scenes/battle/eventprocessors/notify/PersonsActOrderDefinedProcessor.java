@@ -19,8 +19,7 @@ public class PersonsActOrderDefinedProcessor extends EventProcessor<PersonsActOr
         return null;
     }
     
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return PersonsActOrderDefined.class;
     }
 }

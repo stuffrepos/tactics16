@@ -20,6 +20,4 @@ public abstract class EventProcessor<EventType extends BattleEvent> {
     }
 
     public abstract Phase init(EventType event);
-
-    public abstract Class getEventClass();
 }

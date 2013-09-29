@@ -106,8 +106,7 @@ public class ActConfirmRequestProcessor extends RequestProcessor<ActConfirmReque
         };
     }
 
-    @Override
-    public Class getEventClass() {
+   public static Class getObjectClass() {
         return ActConfirmRequest.class;
     }
 }

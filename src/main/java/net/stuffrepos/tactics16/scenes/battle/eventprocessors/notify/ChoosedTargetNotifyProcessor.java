@@ -30,8 +30,7 @@ public class ChoosedTargetNotifyProcessor extends EventProcessor<ChoosedTarget> 
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return ChoosedTarget.class;
     }
 }

@@ -22,8 +22,7 @@ public class MovimentTargetRequestProcessor extends CpuRequestProcessor<Moviment
         super(battleScene, cpuCommand);
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return MovimentTargetRequest.class;
     }
 

@@ -30,8 +30,7 @@ public class ConfirmCancelledNotifyNotifyProcessor extends EventProcessor<Confir
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return ConfirmCancelledNotify.class;
     }
 }

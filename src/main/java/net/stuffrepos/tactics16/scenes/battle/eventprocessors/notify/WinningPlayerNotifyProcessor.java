@@ -61,8 +61,7 @@ public class WinningPlayerNotifyProcessor extends EventProcessor<WinningPlayerNo
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return WinningPlayerNotify.class;
     }
 }

@@ -66,8 +66,7 @@ public class ActionTargetRequestProcessor extends RequestProcessor<ActionTargetR
         };
     }
 
-    @Override
-    public Class getEventClass() {
+    public static Class getObjectClass() {
         return ActionTargetRequest.class;
     }
 }
