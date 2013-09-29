@@ -5,6 +5,7 @@ import java.util.SortedMap;
 import net.stuffrepos.tactics16.battleengine.Action;
 import net.stuffrepos.tactics16.battleengine.BattleEngine;
 import net.stuffrepos.tactics16.battleengine.BattleRequest;
+import net.stuffrepos.tactics16.battleengine.EnginePerson;
 import net.stuffrepos.tactics16.battleengine.Map;
 import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 
@@ -14,20 +15,20 @@ import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
  */
 public class PersonActionRequest implements BattleRequest<BattleEngine.SelectedAction> {
 
-    private final Integer person;
+    private final EnginePerson person;
     private final Map map;
     private final MapCoordinate position;
     private final SortedMap<Action, Boolean> classifyPersonActions;
 
-    public PersonActionRequest(Integer personId, Map map, MapCoordinate position,
+    public PersonActionRequest(EnginePerson person, Map map, MapCoordinate position,
             SortedMap<Action, Boolean> classifyPersonActions) {
-        this.person = personId;
+        this.person = person;
         this.map = map;
         this.position = position;
         this.classifyPersonActions = classifyPersonActions;
     }
 
-    public int getPerson() {
+    public EnginePerson getPerson() {
         return person;
     }
 
@@ -42,4 +43,10 @@ public class PersonActionRequest implements BattleRequest<BattleEngine.SelectedA
     public SortedMap<Action, Boolean> getClassifyPersonActions() {
         return classifyPersonActions;
     }
+
+    public int getPlayer() {
+        return person.getPlayerId();
+    }
+    
+
 }

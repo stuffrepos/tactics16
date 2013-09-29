@@ -40,4 +40,8 @@ public class ActionTargetRequest implements BattleRequest<MapCoordinate> {
     public Collection<MapCoordinate> getActionRange() {
         return actionRange;
     }
+
+    public int getPlayer() {
+        return person.getPlayerId();
+    }
 }

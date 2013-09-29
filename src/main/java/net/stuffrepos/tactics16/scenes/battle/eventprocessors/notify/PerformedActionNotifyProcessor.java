@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.notify;
 
 import net.stuffrepos.tactics16.animation.EntitiesSequence;
 import net.stuffrepos.tactics16.animation.EntitiesSequence.EntityBuilder;

@@ -1,6 +1,9 @@
-package net.stuffrepos.tactics16.battleengine;
+package net.stuffrepos.tactics16.battleengine.events;
 
 import java.util.Collection;
+import net.stuffrepos.tactics16.battleengine.Action;
+import net.stuffrepos.tactics16.battleengine.BattleRequest;
+import net.stuffrepos.tactics16.battleengine.EnginePerson;
 import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 
 /**
@@ -43,5 +46,9 @@ public class ActConfirmRequest implements BattleRequest<Boolean> {
 
     public Collection<Integer> getFindAffectedActionPersons() {
         return findAffectedActionPersons;
+    }
+
+    public int getPlayer() {
+        return person.getPlayerId();
     }
 }

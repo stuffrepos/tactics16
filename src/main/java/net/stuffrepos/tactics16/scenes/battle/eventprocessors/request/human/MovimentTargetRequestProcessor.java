@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
 
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;
@@ -39,9 +39,9 @@ public class MovimentTargetRequestProcessor extends RequestProcessor<MovimentTar
                 mapCheckedArea = getScene().getVisualBattleMap().createMapCheckedArea(
                         Coordinate.list(event.getMovimentRange()), MAP_CHECKED_AREA_COLOR);
                 selectedPersonPosition = Coordinate.fromMapCoordinate(event.getOriginalPosition());
-                getScene().putPersonOnPosition(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()), selectedPersonPosition);
+                getScene().putPersonOnPosition(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson().getId()), selectedPersonPosition);
 
-                getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()).getGameActionControl().advance(Job.GameAction.SELECTED);
+                getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson().getId()).getGameActionControl().advance(Job.GameAction.SELECTED);
                 getScene().getVisualBattleMap().createMovimentMapCursor(                        
                         event.getOriginalPosition());
             }
@@ -50,7 +50,7 @@ public class MovimentTargetRequestProcessor extends RequestProcessor<MovimentTar
             public void leave(GameContainer container, StateBasedGame game) throws SlickException {
                 getScene().getVisualBattleMap().finalizeMapCursor();
                 mapCheckedArea.finalizeEntity();
-                getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()).getGameActionControl().back();
+                getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson().getId()).getGameActionControl().back();
             }
 
             @Override

@@ -2,6 +2,7 @@ package net.stuffrepos.tactics16.battleengine.events;
 
 import java.util.Collection;
 import net.stuffrepos.tactics16.battleengine.BattleRequest;
+import net.stuffrepos.tactics16.battleengine.EnginePerson;
 import net.stuffrepos.tactics16.battleengine.Map;
 import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 
@@ -14,9 +15,9 @@ public class MovimentTargetRequest implements BattleRequest<MapCoordinate> {
     private final MapCoordinate originalPosition;
     private final Collection<MapCoordinate> movimentRange;
     private final Map map;
-    private final Integer person;
+    private final EnginePerson person;
 
-    public MovimentTargetRequest(Integer person, Map map, MapCoordinate originalPosition, Collection<MapCoordinate> movimentRange) {
+    public MovimentTargetRequest(EnginePerson person, Map map, MapCoordinate originalPosition, Collection<MapCoordinate> movimentRange) {
         this.person = person;
         this.map = map;
         this.originalPosition = originalPosition;
@@ -36,7 +37,11 @@ public class MovimentTargetRequest implements BattleRequest<MapCoordinate> {
         return map;
     }
 
-    public Integer getPerson() {
+    public EnginePerson getPerson() {
         return person;
+    }
+
+    public int getPlayer() {        
+        return person.getPlayerId();
     }
 }

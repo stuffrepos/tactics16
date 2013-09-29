@@ -1,5 +1,6 @@
 package net.stuffrepos.tactics16.battleengine;
 
+import net.stuffrepos.tactics16.battleengine.events.ActConfirmRequest;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -164,7 +165,7 @@ public class BattleEngine {
                         log.debug("Moviment range: " + mapCoordinateListToString(movimentRange));
                     }
                     movimentTarget = monitor.request(new MovimentTargetRequest(
-                            personId,
+                            personSet.getPerson(personId),
                             map,
                             personSet.getPerson(personId).getPosition(),
                             movimentRange));
@@ -186,7 +187,7 @@ public class BattleEngine {
 
                 case ChooseAction:
                     SelectedAction selectedActionResult = monitor.request(new PersonActionRequest(
-                            personId,
+                            personSet.getPerson(personId),
                             map,
                             personSet.getPerson(personId).getPosition(),
                             classifyPersonActions(personId)));
@@ -891,6 +892,10 @@ public class BattleEngine {
             
             public int getId() {
                 return id;
+            }
+
+            public int getPlayerId() {
+                return playerId;
             }
         }
     }

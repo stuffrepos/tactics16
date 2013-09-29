@@ -27,4 +27,6 @@ public interface EnginePerson {
     public int getEvasiveness();
 
     public int getId();
+    
+    public int getPlayerId();
 }

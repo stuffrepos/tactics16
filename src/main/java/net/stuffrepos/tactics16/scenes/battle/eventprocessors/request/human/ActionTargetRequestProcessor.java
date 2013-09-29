@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
 
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.MyGame;

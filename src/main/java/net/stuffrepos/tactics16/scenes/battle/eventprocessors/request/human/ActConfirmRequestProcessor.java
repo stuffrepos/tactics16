@@ -1,9 +1,9 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
 
 import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.Layout;
-import net.stuffrepos.tactics16.battleengine.ActConfirmRequest;
+import net.stuffrepos.tactics16.battleengine.events.ActConfirmRequest;
 import net.stuffrepos.tactics16.components.ActionBoxInfo;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;

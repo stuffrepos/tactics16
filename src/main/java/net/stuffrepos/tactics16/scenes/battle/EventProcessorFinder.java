@@ -3,8 +3,6 @@ package net.stuffrepos.tactics16.scenes.battle;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import net.stuffrepos.tactics16.battleengine.BattleEvent;
 import org.reflections.Reflections;
 
@@ -16,11 +14,11 @@ public class EventProcessorFinder {
 
     private final Map<Class, EventProcessor> processors;
 
-    public EventProcessorFinder(BattleScene battleScene) {
+    public EventProcessorFinder(BattleScene battleScene, String packageName) {
         processors = new HashMap<Class, EventProcessor>();
 
         for (Class<? extends EventProcessor> eventProcessorClass : new Class[]{EventProcessor.class, RequestProcessor.class}) {
-            Reflections reflections = new Reflections("net.stuffrepos.tactics16.scenes.battle.eventprocessor");
+            Reflections reflections = new Reflections(packageName);
             for (Class<? extends EventProcessor> clazz : reflections.getSubTypesOf(eventProcessorClass)) {
                 System.out.println(clazz.getName());
                 try {

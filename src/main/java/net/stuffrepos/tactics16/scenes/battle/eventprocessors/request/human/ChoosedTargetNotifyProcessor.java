@@ -1,6 +1,6 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
 
-import net.stuffrepos.tactics16.battleengine.events.ChooseActionCancelled;
+import net.stuffrepos.tactics16.battleengine.events.ChoosedTarget;
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.scenes.battle.BattleScene;
 import net.stuffrepos.tactics16.scenes.battle.EventProcessor;
@@ -12,13 +12,13 @@ import org.newdawn.slick.state.StateBasedGame;
  *
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
-public class ChooseActionCancelledNotifyProcessor extends EventProcessor<ChooseActionCancelled> {
+public class ChoosedTargetNotifyProcessor extends EventProcessor<ChoosedTarget> {
 
-    public ChooseActionCancelledNotifyProcessor(BattleScene battleScene) {
+    public ChoosedTargetNotifyProcessor(BattleScene battleScene) {
         super(battleScene);
     }
 
-    public Phase init(final ChooseActionCancelled event) {
+    public Phase init(final ChoosedTarget event) {
         return new Phase() {
 
             @Override
@@ -32,6 +32,6 @@ public class ChooseActionCancelledNotifyProcessor extends EventProcessor<ChooseA
 
     @Override
     public Class getEventClass() {
-        return ChooseActionCancelled.class;
+        return ChoosedTarget.class;
     }
 }

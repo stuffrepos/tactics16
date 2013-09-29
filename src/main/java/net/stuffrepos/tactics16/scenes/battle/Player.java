@@ -13,9 +13,11 @@ public class Player {
 
     private final PlayerConfig playerConfig;
     private final List<Person> persons = new LinkedList<Person>();
+    private final PlayerControl control;
 
-    Player(PlayerConfig playerConfig) {
+    Player(PlayerConfig playerConfig, PlayerControl control) {
         this.playerConfig = playerConfig;
+        this.control = control;
     }
 
     public PlayerConfig getPlayerConfig() {
@@ -32,5 +34,9 @@ public class Player {
     
     public Person getPerson(int index) {
         return persons.get(index);
+    }
+    
+    public PlayerControl getControl() {
+        return control;
     }
 }

@@ -34,7 +34,7 @@ public class BattleScene extends Phase {
 
     // Layout
     public static final int MAP_GAP = Layout.OBJECT_GAP * 5;
-    private final EventProcessorFinder eventProcessorFinder;    
+    private final EventProcessorFinder notifyEventProcessorFinder;
     // Phases    
     private final OptionsSubPhase optionsSubPhase = new OptionsSubPhase(this);
     private PhaseManager phaseManager = new PhaseManager();
@@ -48,7 +48,9 @@ public class BattleScene extends Phase {
     private boolean currentEventPhaseRunning = false;
 
     public BattleScene(BattleGame battleGame) {
-        this.eventProcessorFinder = new EventProcessorFinder(this);
+        this.notifyEventProcessorFinder = new EventProcessorFinder(
+                this,
+                "net.stuffrepos.tactics16.scenes.battle.eventprocessors");
         this.visualBattleMap = new VisualBattleMap(battleGame);
         this.jobAnimationTest = new JobAnimationTest(battleGame);
 
@@ -150,7 +152,7 @@ public class BattleScene extends Phase {
         return phaseManager;
     }
 
-    public void putPersonOnPosition(Person person, Coordinate personMapPosition) {                
+    public void putPersonOnPosition(Person person, Coordinate personMapPosition) {
         person.getPosition().set(getVisualBattleMap().getVisualMap().getPersonPosition(personMapPosition));
     }
 
@@ -176,7 +178,15 @@ public class BattleScene extends Phase {
                 log.debug("Event polled: " + event.getClass().getSimpleName());
             }
 
-            EventProcessor eventProcessor = eventProcessorFinder.getEventProcessor(event);
+            EventProcessor eventProcessor;
+            if (event instanceof BattleNotify) {
+                eventProcessor = notifyEventProcessorFinder.getEventProcessor(event);
+            } else if (event instanceof BattleRequest) {
+                BattleRequest request = (BattleRequest) event;
+                eventProcessor = visualBattleMap.getBattleGame().getPlayer(request.getPlayer()).getControl().getEventProcessor(this, request);
+            } else {
+                throw new RuntimeException("Unknown battle event class: " + event.getClass());
+            }
 
             if (log.isDebugEnabled()) {
                 log.debug("Event processor found: " + eventProcessor.getClass().getSimpleName());
@@ -197,5 +207,4 @@ public class BattleScene extends Phase {
                 getVisualBattleMap().getBattleGame().getPerson(person),
                 Coordinate.fromMapCoordinate(originalPosition));
     }
-    
 }

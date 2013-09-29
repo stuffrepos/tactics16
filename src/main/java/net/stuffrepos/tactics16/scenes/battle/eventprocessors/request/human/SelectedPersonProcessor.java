@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
 
 import net.stuffrepos.tactics16.phase.Phase;
 import net.stuffrepos.tactics16.battleengine.events.SelectedPersonNotify;

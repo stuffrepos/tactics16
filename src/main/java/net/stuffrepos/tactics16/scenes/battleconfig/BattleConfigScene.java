@@ -31,8 +31,8 @@ public class BattleConfigScene extends Phase {
     public void enter(GameContainer container, StateBasedGame game) throws SlickException {
         super.enter(container, game);
         controllers = new ControllerToBattle[]{
-            new ControllerToBattle("Human"),
-            new ControllerToBattle("CPU")
+            new HumanControllerToBattle(),
+            new CpuControllerToBattle()
         };
         MyGame.getInstance().getPhaseManager().advance(selectMapScene);
     }

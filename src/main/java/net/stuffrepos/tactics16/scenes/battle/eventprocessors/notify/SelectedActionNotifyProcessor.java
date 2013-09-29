@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.notify;
 
 import net.stuffrepos.tactics16.battleengine.events.NewTurn;
 import net.stuffrepos.tactics16.battleengine.events.SelectedActionNotify;

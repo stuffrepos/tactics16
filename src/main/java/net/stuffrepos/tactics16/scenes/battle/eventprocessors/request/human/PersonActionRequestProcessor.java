@@ -1,4 +1,4 @@
-package net.stuffrepos.tactics16.scenes.battle.eventprocessors;
+package net.stuffrepos.tactics16.scenes.battle.eventprocessors.request.human;
 
 import java.util.Map.Entry;
 import net.stuffrepos.tactics16.GameKey;
@@ -94,7 +94,7 @@ public class PersonActionRequestProcessor extends RequestProcessor<PersonActionR
                 actionMenu.addOption(new CommonMenuOption("No Action", "Just moviment and saves speed") {
                     @Override
                     public void executeAction() {
-                        getScene().putPersonOnPosition(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()), Coordinate.fromMapCoordinate(event.getPosition()));
+                        getScene().putPersonOnPosition(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson().getId()), Coordinate.fromMapCoordinate(event.getPosition()));
                         answer(new SelectedAction(null));
                     }
                 });
@@ -102,14 +102,14 @@ public class PersonActionRequestProcessor extends RequestProcessor<PersonActionR
                 actionMenu.addOption(new CommonMenuOption("Cancel", GameKey.CANCEL, "Back to action selector") {
                     @Override
                     public void executeAction() {
-                        getScene().putPersonOnPosition(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()), Coordinate.fromMapCoordinate(event.getPosition()));
+                        getScene().putPersonOnPosition(getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson().getId()), Coordinate.fromMapCoordinate(event.getPosition()));
                         answer(null);
                     }
                 });
 
                 actionMenu.getPosition().setXY(
-                        getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()).getPosition().getX() + Map.TERRAIN_SIZE,
-                        getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson()).getPosition().getY() - Map.TERRAIN_SIZE);
+                        getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson().getId()).getPosition().getX() + Map.TERRAIN_SIZE,
+                        getScene().getVisualBattleMap().getBattleGame().getPerson(event.getPerson().getId()).getPosition().getY() - Map.TERRAIN_SIZE);
                 actionStatus.getPosition().setXY(
                         Layout.getRightGap(actionMenu),
                         actionMenu.getPosition().getY());

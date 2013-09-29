@@ -41,7 +41,7 @@ public class BattleGame {
         int personId = 0;
         for (PlayerToBattle playerToBattle : playersToBattle) {
             int playerPersonId = 0;
-            Player player = new Player(playerToBattle.getPlayerConfig());
+            Player player = new Player(playerToBattle.getPlayerConfig(), playerToBattle.getController().newPlayerControl());
             for (PersonToBattle personToBattle : playerToBattle.getPersons()) {
                 persons.put(personId, personToBattle);
                 personsPlayers.put(personId, playerId);

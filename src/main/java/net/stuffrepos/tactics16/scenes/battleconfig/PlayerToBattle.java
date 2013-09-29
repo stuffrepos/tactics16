@@ -33,5 +33,9 @@ public class PlayerToBattle extends DataObject {
         return playerConfig;
     }
 
+    public ControllerToBattle getController() {
+        return this.controller;
+    }
+
 
 }
