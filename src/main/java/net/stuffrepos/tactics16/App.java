@@ -55,6 +55,12 @@ public class App {
     private static Map buildMap() {
         Map map = new Map("Direct", 8, 8);
         map.setPersonInitialPosition(0, new Coordinate(0, 0));
+        map.setPersonInitialPosition(0, new Coordinate(0, 1));
+        map.setPersonInitialPosition(0, new Coordinate(1, 0));
+        map.setPersonInitialPosition(0, new Coordinate(1, 1));
+        map.setPersonInitialPosition(1, new Coordinate(6, 6));
+        map.setPersonInitialPosition(1, new Coordinate(6, 7));
+        map.setPersonInitialPosition(1, new Coordinate(7, 6));
         map.setPersonInitialPosition(1, new Coordinate(7, 7));
         return map;
     }
@@ -66,7 +72,9 @@ public class App {
                     ? new HumanControllerToBattle()
                     : new CpuControllerToBattle(RandomCpuIa.getInstance());
             PlayerToBattle player = new PlayerToBattle(PlayerConfig.getPlayer(playerId), controller, "PlayerConfig " + (playerId + 1));
-            player.addPerson(createPerson(player));
+            for (int person = 0; person < map.getPlayerInitialPosition(playerId).size(); ++person) {
+                player.addPerson(createPerson(player));
+            }
             players.add(player);
         }
         return players;

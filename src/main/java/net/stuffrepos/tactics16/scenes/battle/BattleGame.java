@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import net.stuffrepos.tactics16.battleengine.BattleData;
 import net.stuffrepos.tactics16.battleengine.BattleEngine;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.scenes.battleconfig.PersonToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PlayerToBattle;
-import net.stuffrepos.tactics16.util.math.Interval;
 
 /**
  *
@@ -54,7 +54,9 @@ public class BattleGame {
             playerId++;
         }
 
-        battleEngine = new BattleEngine(map, persons, personsPlayers, personsPositions);
+        battleEngine = new BattleEngine(
+                new BattleData(
+                map, persons, personsPlayers, personsPositions));
     }
 
     public Map getMap() {
