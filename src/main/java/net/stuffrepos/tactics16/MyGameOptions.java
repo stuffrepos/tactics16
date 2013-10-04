@@ -9,4 +9,6 @@ public interface MyGameOptions {
     public String getDataPath();
 
     public boolean isDebug();
+
+    public boolean isTestBattle();
 }

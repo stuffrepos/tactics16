@@ -18,11 +18,16 @@ public class App {
         Options options = new Options();
         options.addOption(null, "debug", false, "Show menu options for debug purposes");
         options.addOption(null, "data-path", true, "Path for alternative data");
+        options.addOption(null, "test-battle", false, "Initialize game with a test battle");
 
         CommandLineParser parser = new PosixParser();
         MyGame.createInstance(new CommandLineOptions(parser.parse(options, args)));
-        MyGame.getInstance().start(MainMenuScene.getInstance());
-        //MyGame.getInstance().start(new TestBattleScene());
+        if (MyGame.getInstance().getOptions().isTestBattle()) {
+            MyGame.getInstance().start(new TestBattleScene());
+        } else {
+            MyGame.getInstance().start(MainMenuScene.getInstance());
+        }
+
     }
 
     private static class CommandLineOptions implements MyGameOptions {
@@ -39,6 +44,10 @@ public class App {
 
         public boolean isDebug() {
             return cmd.hasOption("debug");
+        }
+
+        public boolean isTestBattle() {
+            return cmd.hasOption("test-battle");
         }
     }
 }
