@@ -268,7 +268,7 @@ public class BattleData implements Cloneable {
         }
 
         public int damage(Action action, int affectedPerson) {
-            return java.lang.Math.max(action.getPower() - personSet.getPerson(affectedPerson).getResistence(), 0);
+            return java.lang.Math.max(action.getPower() - personSet.getPerson(affectedPerson).getResistence(), 1);
         }
 
         public int actionLostSpecialPoints(int agentPerson, Action action) {
