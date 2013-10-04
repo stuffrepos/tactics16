@@ -31,10 +31,11 @@ public class NormalCpuIa implements CpuIa {
     }
 
     public CpuCommand buildCpuCommand(BattleEngine engine, int personId) {
-        int maxValue = Integer.MIN_VALUE;
+        double maxValue = Double.NEGATIVE_INFINITY;
         List<CpuCommand> selected = null;
+        BattleData data = engine.cloneData();
         for (CpuCommand command : findCommands(engine, personId)) {
-            int value = calculateCommandValue(engine, personId, command);
+            double value = calculateCommandValue(engine, data, personId, command);
             if (value >= maxValue) {
                 if (value > maxValue) {
                     maxValue = value;
@@ -50,31 +51,45 @@ public class NormalCpuIa implements CpuIa {
         return selected.get(random.nextInt(selected.size()));
     }
 
-    private int calculateCommandValue(BattleEngine engine, int personId, CpuCommand command) {
-        BattleData data = engine.cloneData();
-
-        int friendAffected = 0;
-        int enemyAffected = 0;
-        int lostSpecialPoints = data.getDefinitions().actionLostSpecialPoints(personId, command.getAction());
-        int lostHealthPoints = data.getDefinitions().actionLostHealthPoints(personId, command.getAction());
-        float lostSpeedPoints = data.getDefinitions().actionLostSpeedPoints(personId, command.getAction());
+    private double calculateCommandValue(BattleEngine engine, BattleData data, int agentId, CpuCommand command) {
+        double friendDamage = 0.0;
+        double enemyDamage = 0.0;
+        int lostSpecialPoints = data.getDefinitions().actionLostSpecialPoints(agentId, command.getAction());
+        int lostHealthPoints = data.getDefinitions().actionLostHealthPoints(agentId, command.getAction());
+        double lostSpeedPoints = data.getDefinitions().actionLostSpeedPoints(agentId, command.getAction());
 
         if (command.getAction() != null) {
-            data.getPersonSet().getPerson(personId).setPosition(command.getMovimentTarget());
+            data.getPersonSet().getPerson(agentId).setPosition(command.getMovimentTarget());
             for (int affected : data.getFinders().findAffectedActionPersons(command.getAction(), command.getActionTarget())) {
-                if (engine.getPerson(affected).getPlayerId() == engine.getPerson(personId).getPlayerId()) {
-                    friendAffected++;
+                double damage = data.getDefinitions().damage(command.getAction(), affected)
+                        * BattleData.Math.hitsProbability(
+                        command.getAction().getAccuracy(),
+                        data.getPersonSet().getPerson(agentId).getEvasiveness());
+                if (engine.getPerson(affected).getPlayerId() == engine.getPerson(agentId).getPlayerId()) {
+                    friendDamage += damage;
                 } else {
-                    enemyAffected++;
+                    enemyDamage += damage;
                 }
             }
         }
 
-        return enemyAffected * 5
-                - friendAffected
+        int deltaDistance = 0;
+
+        int playerId = data.getPersonSet().getPerson(agentId).getPlayerId();
+        for (int personId : data.getPersonSet().getPersons()) {
+            if (data.getPersonSet().getPerson(personId).getPlayerId() != playerId) {
+                deltaDistance +=
+                        BattleData.Math.coordinatesDistance(data.getPersonSet().getPerson(personId).getPosition(), command.getMovimentTarget())
+                        - BattleData.Math.coordinatesDistance(data.getPersonSet().getPerson(personId).getPosition(), engine.getPerson(agentId).getPosition());
+            }
+        }
+
+        return enemyDamage * 10.0
+                - deltaDistance
+                - friendDamage * 5.0
                 - lostSpecialPoints
                 - lostHealthPoints
-                - ((int) (lostSpeedPoints * 2.0f));
+                - (lostSpeedPoints * 2.0);
     }
 
     public String getName() {

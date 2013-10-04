@@ -587,5 +587,10 @@ public class BattleData implements Cloneable {
             }
             return java.lang.Math.round(p * 100.0) / 100.0;
         }
+
+        public static int coordinatesDistance(Map.MapCoordinate c1, Map.MapCoordinate c2) {
+            return java.lang.Math.abs(c1.getX() - c2.getX())
+                    + java.lang.Math.abs(c1.getY() - c2.getY());
+        }
     }
 }
