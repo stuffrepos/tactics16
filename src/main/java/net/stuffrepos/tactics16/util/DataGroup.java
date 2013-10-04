@@ -1,10 +1,9 @@
 package net.stuffrepos.tactics16.util;
 
-import java.util.Collections;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import net.stuffrepos.tactics16.animation.SpriteAnimation;
 
 /**
  *
@@ -61,5 +60,9 @@ public class DataGroup<T extends Nameable> implements Iterable<T> {
 
     public int size() {
         return map.size();
+    }
+
+    public Collection<T> getValues() {
+        return map.values();
     }
 }

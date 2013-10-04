@@ -2,6 +2,7 @@ package net.stuffrepos.tactics16;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Job;
 import net.stuffrepos.tactics16.game.Map;
@@ -14,6 +15,7 @@ import net.stuffrepos.tactics16.scenes.battleconfig.CpuControllerToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.HumanControllerToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PersonToBattle;
 import net.stuffrepos.tactics16.scenes.battleconfig.PlayerToBattle;
+import net.stuffrepos.tactics16.scenes.battleconfig.cpuia.NormalCpuIa;
 import net.stuffrepos.tactics16.scenes.battleconfig.cpuia.RandomCpuIa;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -25,6 +27,8 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class TestBattleScene extends Phase {
 
+    private static Random random = new Random();
+    
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         super.init(container, game);
@@ -78,10 +82,11 @@ public class TestBattleScene extends Phase {
     }
 
     private static Job getJob() {
-        for (Job job : MyGame.getInstance().getLoader().getJobs()) {
-            return job;
+        Job[] jobs = MyGame.getInstance().getLoader().getJobs().getValues().toArray(new Job[0]);
+        if (jobs.length > 0) {
+            return jobs[random.nextInt(jobs.length)];
+        } else {
+            throw new RuntimeException("No job found");
         }
-
-        throw new RuntimeException("No job found");
     }
 }
