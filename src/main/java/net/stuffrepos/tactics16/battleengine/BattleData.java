@@ -216,7 +216,7 @@ public class BattleData implements Cloneable {
             }
 
             public void increaseSpecialPoints(int increment) {
-                assert increment > 0;
+                assert increment >= 0;
                 this.specialPoints = java.lang.Math.min(
                         this.getMaximumSpecialPoints(),
                         this.specialPoints + increment);
