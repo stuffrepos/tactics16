@@ -1,0 +1,9 @@
+{
+    "objectType": "Terrain",
+    "layer": "Obstacle",
+    "name": "Two Crates",
+    "block": false,
+    "image": "two-crates.png",
+    "width": 2,
+    "height": 1,
+}

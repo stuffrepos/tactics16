@@ -21,6 +21,8 @@ public class Terrain implements Nameable {
     private String name;
     private boolean block = false;
     private final Layer layer;
+    private int width = 1;
+    private int height = 1;
 
     public Terrain(Layer layer, String name) {
         this.layer = layer;
@@ -53,5 +55,21 @@ public class Terrain implements Nameable {
 
     public void render(Graphics g, int x, int y) {
         images.get(0).render(g, x, y);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 }

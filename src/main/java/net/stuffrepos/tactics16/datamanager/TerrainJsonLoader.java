@@ -35,6 +35,15 @@ public class TerrainJsonLoader extends AbstractJsonFileLoader<Terrain>{
         } else {
             throw new RuntimeException("Terrain has no images");
         }
+        
+        if (getRootJson().has("width")) {
+            terrain.setWidth(getRootJson().getInt("width"));
+        }
+        
+        if (getRootJson().has("height")) {
+            terrain.setHeight(getRootJson().getInt("height"));
+        }
+        
         return terrain;
     }
 
