@@ -2,9 +2,9 @@ package net.stuffrepos.tactics16.datamanager;
 
 import java.io.File;
 import java.io.IOException;
+import net.stuffrepos.tactics16.game.Terrain;
 import org.json.JSONArray;
 import org.json.JSONException;
-import net.stuffrepos.tactics16.game.Terrain;
 
 /**
  *
@@ -18,9 +18,10 @@ public class TerrainJsonLoader extends AbstractJsonFileLoader<Terrain>{
     
     @Override
     protected Terrain fromJson() throws JSONException {
-        Terrain terrain = new Terrain(getRootJson().getString("name"));
-        terrain.setAllowAction(getRootJson().getBoolean("allowAction"));
-        terrain.setAllowMoviment(getRootJson().getBoolean("allowMoviment"));
+        Terrain terrain = new Terrain(
+                Terrain.Layer.valueOf(getRootJson().getString("layer")),
+                getRootJson().getString("name"));
+        terrain.setBlock(getRootJson().getBoolean("block"));
         if (getRootJson().has("image")) {
             terrain.getImages().add(loadImage(getRootJson().getString("image")));                    
         } else if (getRootJson().has("images")) {

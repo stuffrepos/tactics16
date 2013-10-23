@@ -3,9 +3,7 @@ package net.stuffrepos.tactics16.components;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
-import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
-import net.stuffrepos.tactics16.util.image.Thumbnail;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.SlickException;
 
@@ -15,7 +13,7 @@ import org.newdawn.slick.SlickException;
  */
 public class VisualThumbnailMap {
 
-    public static final int THUMBNAIL_TERRAIN_SIZE = Map.TERRAIN_SIZE / 2;
+    private static final float THUMBNAIL_SCALE = 0.5f;
     private Coordinate position = new Coordinate();
     private Map map;
     private CacheableValue<Image> thumbnail = new CacheableValue<Image>() {
@@ -23,19 +21,14 @@ public class VisualThumbnailMap {
         @Override
         protected Image calculate() {
             try {
-                Image thumb = new Image(
-                        THUMBNAIL_TERRAIN_SIZE * getMap().getWidth(),
-                        THUMBNAIL_TERRAIN_SIZE * getMap().getHeight());
-                final Graphics g = thumb.getGraphics();
-                getMap().iterate(new Map.Iterator() {
-
-                    public void check(int x, int y, Terrain terrain) {
-                        Image terrainThumbnail = Thumbnail.getThumbnail(terrain.getImages().get(0).getImage(), THUMBNAIL_TERRAIN_SIZE, THUMBNAIL_TERRAIN_SIZE, null);                        
-                        g.drawImage(terrainThumbnail, THUMBNAIL_TERRAIN_SIZE * x, THUMBNAIL_TERRAIN_SIZE * y, null);
-                    }
-                });
+                VisualMap visualMap = new VisualMap(map); 
+                Image original = new Image(
+                        visualMap.getWidth(),
+                        visualMap.getHeight());
+                final Graphics g = original.getGraphics();
+                visualMap.render(g, true, null);
                 g.destroy();
-                return thumb;
+                return original.getScaledCopy(THUMBNAIL_SCALE);
             } catch (SlickException ex) {
                 throw new RuntimeException(ex);
             }

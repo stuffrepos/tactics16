@@ -3,6 +3,7 @@ package net.stuffrepos.tactics16.components;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import net.stuffrepos.tactics16.Layout;
+import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
 import net.stuffrepos.tactics16.game.Terrain;
@@ -78,7 +79,7 @@ public class VisualMap extends AbstractObject2D {
         return internalMap.getTerrainPosition(terrainPosition);
     }
 
-    public void render(final Graphics g) {
+    public void render(final Graphics g, boolean obstacles, int[] playerColors) {
         g.setColor(FRONT_COLOR);
         g.fillRect(getLeft(), Layout.getBottom(internalMap), getWidth(), SIDE_SIZE);
         g.setColor(LEFT_COLOR);
@@ -86,15 +87,11 @@ public class VisualMap extends AbstractObject2D {
         g.setColor(RIGHT_COLOR);
         g.fill(rightBorder.getValue());        
 
-        internalMap.render(g);
+        internalMap.render(g, obstacles, playerColors);
     }
 
     public Map getMap() {
         return map;
-    }
-
-    public void render(final Graphics g, int[] playerColors) {
-        internalMap.render(g, playerColors);
     }
 
     public void update(long elapsedTime) {
@@ -126,13 +123,8 @@ public class VisualMap extends AbstractObject2D {
                     getTop() + terrainPosition.getY() * Map.TERRAIN_SIZE);
         }
 
-        public void render(final Graphics g) {
-            render(g, null);
-        }
-
-        public void render(final Graphics g, int[] playerColors) {
-            map.iterate(new Map.Iterator() {
-
+        public void render(final Graphics g, boolean renderObstacles, int[] playerColors) {
+            map.getLayer(Terrain.Layer.Base).iterate(new Map.Iterator() {
                 public void check(int x, int y, Terrain terrain) {
                     if (terrain != null) {
                         map.getTerrainImage(terrain,elapsedTime).render(
@@ -159,6 +151,19 @@ public class VisualMap extends AbstractObject2D {
                             Map.TERRAIN_SIZE);
 
                 }
+            }
+
+            if (renderObstacles) {
+                map.getLayer(Terrain.Layer.Obstacle).iterate(new Map.Iterator() {
+                    public void check(int x, int y, Terrain terrain) {
+                        if (terrain != null) {
+                            map.getTerrainImage(terrain, elapsedTime).render(
+                                    g,
+                                    getLeft() + x * Map.TERRAIN_SIZE,
+                                    getTop() + y * Map.TERRAIN_SIZE);
+                        }
+                    }
+                });
             }
 
         }

@@ -90,7 +90,7 @@ public class VisualBattleMap implements VisualEntity {
     }
 
     public void render(Graphics g) {
-        visualMap.render(g);
+        visualMap.render(g, true, null);
         checkedAreasLayer.render(g);
 
         if (cursor != null) {

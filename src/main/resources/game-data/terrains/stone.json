@@ -1,7 +1,7 @@
 {
-    objectType: "terrain",
-    name: "Stone",
-    allowMoviment: true,
-    allowAction: true,
-    image: "stone.png"
+    "objectType": "Terrain",
+    "layer": "Base",
+    "name": "Stone",
+    "block": false,
+    "image": "stone.png"
 }

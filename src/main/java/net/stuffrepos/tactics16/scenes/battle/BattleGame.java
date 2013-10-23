@@ -143,7 +143,7 @@ public class BattleGame {
             new Coordinate(c, -1, 0),
             new Coordinate(c, 1, 0)
         }) {
-            if (map.inMap(neighboor) && map.getTerrain(neighboor).getAllowMoviment()) {
+            if (map.inMap(neighboor) && !map.getSquare(neighboor).isMovimentBlocked()) {
                 Person person = this.getPersonOnMapPosition(neighboor);
                 if (person == null || person.getPlayer().equals(player)) {
                     neighboors.add(neighboor);

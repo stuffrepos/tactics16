@@ -6,7 +6,6 @@ import net.stuffrepos.tactics16.components.menu.Menu;
 import net.stuffrepos.tactics16.components.menu.CommonMenuOption;
 import net.stuffrepos.tactics16.components.TextBox;
 import net.stuffrepos.tactics16.game.Map;
-import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.scenes.battleconfig.SelectMapScene;
 import org.newdawn.slick.Graphics;
 import java.io.IOException;
@@ -14,6 +13,7 @@ import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.components.MessageBox;
 import net.stuffrepos.tactics16.components.PhaseTitle;
 import net.stuffrepos.tactics16.components.VisualMap;
+import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.phase.Phase;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.state.StateBasedGame;
@@ -32,11 +32,10 @@ public class MenuMode extends Phase {
             @Override
             public void executeAction() {
                 final Map map = new Map(getNewMapName(), Map.MIN_SIZE, Map.MIN_SIZE);
-                map.iterate(new Map.Iterator() {
-
+                map.getLayer(Terrain.Layer.Base).iterate(new Map.Iterator() {
                     public void check(int x, int y, Terrain terrain) {
                         map.setTerrain(x, y,
-                                MyGame.getInstance().getLoader().getTerrains().getRequired("Grass"));
+                                MyGame.getInstance().getLoader().getDefaultTerrain());
                     }
                 });
 
@@ -242,7 +241,7 @@ public class MenuMode extends Phase {
     public void render(GameContainer container, StateBasedGame game, Graphics g) {
         menu.render(g);
         if (visualMap != null) {
-            visualMap.render(g);
+            visualMap.render(g, true, null);
         }
         status.render(g);
         title.render(g);

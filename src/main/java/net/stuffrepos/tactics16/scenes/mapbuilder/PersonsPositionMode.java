@@ -74,7 +74,7 @@ class PersonsPositionMode extends Phase {
     public void render(GameContainer container, StateBasedGame game, Graphics g) {
         title.render(g);
         playerPallete.render(g);
-        visualMap.render(g, this.playerPallete.getPlayerColors());
+        visualMap.render(g, true, this.playerPallete.getPlayerColors());
         status.render(g);
         mapCursor.render(g);
 

@@ -1,7 +1,7 @@
 {
-    objectType: "terrain",
-    name: "Water",
-    allowMoviment: false,
-    allowAction: true,
-    images: ["water-0.png","water-1.png"]
+    "objectType": "Terrain",
+    "layer": "Base",
+    "name": "Water",
+    "block": true,
+    "images": ["water-0.png", "water-1.png"]
 }

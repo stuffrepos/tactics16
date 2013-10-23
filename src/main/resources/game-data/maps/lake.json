@@ -1,146 +1,222 @@
 {
-    "height": 10,
+    "height": 6,
+    "layers": {
+        "Base": [
+            {
+                "terrain": "Stone",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "terrain": "Stone",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "terrain": "Stone",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "terrain": "Stone",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "terrain": "Stone",
+                "x": 0,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 0,
+                "y": 5
+            },
+            {
+                "terrain": "Stone",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 1,
+                "y": 5
+            },
+            {
+                "terrain": "Stone",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "terrain": "Water",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "terrain": "Water",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 2,
+                "y": 5
+            },
+            {
+                "terrain": "Stone",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "terrain": "Water",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "terrain": "Water",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 3,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 3,
+                "y": 5
+            },
+            {
+                "terrain": "Stone",
+                "x": 4,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 4,
+                "y": 5
+            },
+            {
+                "terrain": "Stone",
+                "x": 5,
+                "y": 0
+            },
+            {
+                "terrain": "Stone",
+                "x": 5,
+                "y": 1
+            },
+            {
+                "terrain": "Stone",
+                "x": 5,
+                "y": 2
+            },
+            {
+                "terrain": "Stone",
+                "x": 5,
+                "y": 3
+            },
+            {
+                "terrain": "Stone",
+                "x": 5,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 5,
+                "y": 5
+            }
+        ],
+        "Obstacle": [
+            {
+                "terrain": "Tree",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "terrain": "Tree",
+                "x": 1,
+                "y": 4
+            },
+            {
+                "terrain": "Tree",
+                "x": 4,
+                "y": 1
+            },
+            {
+                "terrain": "Tree",
+                "x": 4,
+                "y": 4
+            }
+        ]
+    },
     "name": "Lake",
     "objectType": "map",
     "personInitialPositions": [
         [{
-            "x": 9,
-            "y": 0
-        }],
-        [{
-            "x": 9,
-            "y": 9
-        }],
-        [{
-            "x": 0,
-            "y": 9
-        }],
-        [{
             "x": 0,
             "y": 0
+        }],
+        [{
+            "x": 5,
+            "y": 5
         }]
     ],
-    "terrains": [
-        [
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Water",
-            "Grass",
-            "Tree",
-            "Tree",
-            "Grass",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Grass",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Tree",
-            "Grass",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Grass",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Grass",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Grass",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Grass",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Grass",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Grass",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Grass",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Grass",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Grass",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Water",
-            "Tree",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Tree",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Water",
-            "Tree",
-            "Grass",
-            "Grass"
-        ],
-        [
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass",
-            "Grass"
-        ]
-    ],
-    "width": 10
+    "width": 6
 }

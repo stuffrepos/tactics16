@@ -1,7 +1,7 @@
 {
-    objectType: "terrain",
-    name: "Tree",
-    allowMoviment: false,
-    allowAction: false,
-    image: "tree.png"
+    "objectType": "Terrain",
+    "layer": "Obstacle",
+    "name": "Tree",
+    "block": true,
+    "image": "tree.png"
 }

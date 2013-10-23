@@ -1,21 +1,34 @@
 package net.stuffrepos.tactics16.game;
 
-import net.stuffrepos.tactics16.util.Nameable;
-import org.newdawn.slick.Graphics;
 import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.animation.GameImage;
-import net.stuffrepos.tactics16.battleengine.Map.Square;
+import net.stuffrepos.tactics16.util.Nameable;
+import org.newdawn.slick.Graphics;
 
-public class Terrain implements Nameable, Square {
+/**
+ *
+ * @author eduardo
+ */
+public class Terrain implements Nameable {
 
+    public static enum Layer {
+
+        Base,
+        Obstacle
+    }
     private List<GameImage> images = new LinkedList<GameImage>();
     private String name;
-    private boolean allowMoviment = true;
-    private boolean allowAction = true;
+    private boolean block = false;
+    private final Layer layer;
 
-    public Terrain(String name) {
+    public Terrain(Layer layer, String name) {
+        this.layer = layer;
         this.name = name;
+    }
+
+    public Layer getLayer() {
+        return layer;
     }
 
     public String getName() {
@@ -26,20 +39,12 @@ public class Terrain implements Nameable, Square {
         this.name = name;
     }
 
-    public boolean getAllowMoviment() {
-        return allowMoviment;
+    public boolean getBlock() {
+        return block;
     }
 
-    public void setAllowMoviment(boolean allowMoviment) {
-        this.allowMoviment = allowMoviment;
-    }
-
-    public boolean getAllowAction() {
-        return allowAction;
-    }
-
-    public void setAllowAction(boolean allowAction) {
-        this.allowAction = allowAction;
+    public void setBlock(boolean block) {
+        this.block = block;
     }
 
     public List<GameImage> getImages() {
@@ -48,13 +53,5 @@ public class Terrain implements Nameable, Square {
 
     public void render(Graphics g, int x, int y) {
         images.get(0).render(g, x, y);
-    }
-
-    public boolean isMovimentBlocked() {
-        return !this.getAllowMoviment();
-    }
-
-    public boolean isActionBlocked() {
-        return !this.getAllowAction();
     }
 }

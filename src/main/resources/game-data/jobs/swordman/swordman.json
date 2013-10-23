@@ -1,14 +1,14 @@
 {
-    objectType: "job",
-    name: "Swordman",
-    resistence: 3,
-    evasiveness: 3,
-    moviment: 4,
-    speed: 1.0,
-    maximumHealthPoints: 10,
-    maximumSpecialPoints: 10,
+    "objectType": "job",
+    "name": "Swordman",
+    "resistence": 3,
+    "evasiveness": 3,
+    "moviment": 4,
+    "speed": 1.0,
+    "maximumHealthPoints": 10,
+    "maximumSpecialPoints": 10,
     
-    playerColorsMapping: {
+    "playerColorsMapping": {
         "colors": {
             "0000FF": "MAIN",
             "9800FE": "MAIN",
@@ -20,7 +20,7 @@
             "secundary": {"min": -0.03, "max": 0.44}
         }
     },
-    animationGroup: {
+    "animationGroup": {
         "animations": {
             "stopped": {
                 "changeFrameInterval": 1000,
@@ -68,7 +68,7 @@
             "centerX": "12"
         }]
     },
-    actions: [{
+    "actions": [{
         "name": "Sword Attack",
         "power": 6,
         "accuracy": 5,

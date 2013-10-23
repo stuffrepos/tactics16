@@ -2,12 +2,14 @@ package net.stuffrepos.tactics16.datamanager;
 
 import java.io.File;
 import java.io.IOException;
+import net.stuffrepos.tactics16.MyGame;
+import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.game.Coordinate;
 import net.stuffrepos.tactics16.game.Map;
+import net.stuffrepos.tactics16.game.Terrain;
 
 /**
  *
@@ -26,15 +28,9 @@ public class MapJsonLoader extends AbstractJsonFileLoader<Map> {
                 getRootJson().getInt("width"),
                 getRootJson().getInt("height"));
 
-        JSONArray terrains = getRootJson().getJSONArray("terrains");
-        for (int x = 0; x < terrains.length(); ++x) {
-            for (int y = 0; y < terrains.getJSONArray(x).length(); ++y) {
-                map.setTerrain(
-                        x,
-                        y,
-                        MyGame.getInstance().getLoader().getTerrains().getRequired(
-                        terrains.getJSONArray(x).getString(y)));
-            }
+        JSONObject layers = getRootJson().getJSONObject("layers");
+        for (Terrain.Layer layer : Terrain.Layer.values()) {
+            jsonToLayer(map.getLayer(layer), layers.getJSONArray(layer.name()));
         }
 
         JSONArray players = getRootJson().getJSONArray("personInitialPositions");
@@ -58,17 +54,12 @@ public class MapJsonLoader extends AbstractJsonFileLoader<Map> {
         jsonObject.put("width", map.getWidth());
         jsonObject.put("height", map.getHeight());
 
-        JSONArray terrains = new JSONArray();
+        JSONObject layers = new JSONObject();
+        jsonObject.put("layers", layers);
 
-        for (int x = 0; x < map.getWidth(); ++x) {
-            terrains.put(x, new JSONArray());
-
-            for (int y = 0; y < map.getHeight(); ++y) {
-                terrains.getJSONArray(x).put(y, map.getTerrain(x, y).getName());
-            }
+        for (Terrain.Layer layer : Terrain.Layer.values()) {
+            layers.put(layer.name(), layerToJson(map.getLayer(layer)));
         }
-
-        jsonObject.put("terrains", terrains);
 
         JSONArray players = new JSONArray();
 
@@ -83,5 +74,26 @@ public class MapJsonLoader extends AbstractJsonFileLoader<Map> {
         jsonObject.put("personInitialPositions", players);
 
         return jsonObject;
+    }
+
+    public static JSONArray layerToJson(Map.Layer layer) throws JSONException {
+        JSONArray objects = new JSONArray();
+        for (java.util.Map.Entry<MapCoordinate, Terrain> e : layer.getObjects()) {
+            JSONObject obj = new JSONObject();
+            obj.put("x", e.getKey().getX());
+            obj.put("y", e.getKey().getY());
+            obj.put("terrain", e.getValue().getName());
+            objects.put(obj);
+        }
+        return objects;
+    }
+
+    private void jsonToLayer(Map.Layer layer, JSONArray objects) throws JSONException {
+        for (int i = 0; i < objects.length(); i++) {
+            JSONObject obj = objects.getJSONObject(i);
+            layer.putObject(
+                    new Coordinate(obj),
+                    MyGame.getInstance().getLoader().getTerrains().get(obj.getString("terrain")));
+        }
     }
 }

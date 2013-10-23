@@ -63,7 +63,7 @@ class TerrainEditMode extends Phase {
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) {
         terrainPallete.render(g);
-        visualMap.render(g);
+        visualMap.render(g, true, null);
         status.render(g);
         mapCursor.render(g);
         title.render(g);
@@ -83,13 +83,12 @@ class TerrainEditMode extends Phase {
 
             if (terrain != null) {
                 builder.append("\nTerrain:");
-                builder.append("\n\tName: " + terrain.getName());
-                builder.append("\n\tAllow Moviment: " + StringUtil.yesNo(terrain.getAllowMoviment()));
-                builder.append("\n\tAllow Action: " + StringUtil.yesNo(terrain.getAllowMoviment()));
+                builder.append("\n\tName: ").append(terrain.getName());
+                builder.append("\n\tBlock: ").append(StringUtil.yesNo(terrain.getBlock()));                
             }
 
             builder.append("\nCursor: ");
-            builder.append("\n\t" + mapCursor.getCursor().toString());
+            builder.append("\n\t").append(mapCursor.getCursor().toString());
 
         }
 

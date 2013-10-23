@@ -1,1 +1,7 @@
-{objectType: "terrain",name: "Grass",allowMoviment: true, allowAction: true, image: "grass.png"}
+{
+    "objectType": "Terrain",
+    "layer": "Base",
+    "name": "Grass",
+    "block": false,
+    "image": "grass.png"
+}

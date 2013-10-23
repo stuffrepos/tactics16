@@ -1,6 +1,6 @@
 package net.stuffrepos.tactics16.game;
 
-import net.stuffrepos.tactics16.MyGame;
+import java.util.EnumMap;
 import net.stuffrepos.tactics16.util.Nameable;
 import net.stuffrepos.tactics16.util.listeners.Listener;
 import net.stuffrepos.tactics16.util.listeners.ListenerManager;
@@ -8,8 +8,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import net.stuffrepos.tactics16.animation.GameImage;
+import net.stuffrepos.tactics16.battleengine.BattleData;
 import net.stuffrepos.tactics16.battleengine.Map.MapCoordinate;
 import net.stuffrepos.tactics16.battleengine.Map.Square;
+import net.stuffrepos.tactics16.util.cache.CacheableMapValue;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  *
@@ -17,20 +21,44 @@ import net.stuffrepos.tactics16.battleengine.Map.Square;
  */
 public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map {
 
+    public static final Log log = LogFactory.getLog(Map.class);
     public static final int MAX_PLAYERS = 4;
     public static final int MIN_PLAYERS = 2;
     public static final int TERRAIN_SIZE = 32;
     public static final int MIN_SIZE = 6;
     public static final int MAX_SIZE = 32;
     private String name;
-    private PersonInitialPositions personInitialPositions = new PersonInitialPositions();
-    private Terrains terrains = new Terrains(0, 0);
+    private final PersonInitialPositions personInitialPositions = new PersonInitialPositions();
+    private int width;
+    private int height;
+    private final EnumMap<Terrain.Layer, Layer> layers;
+    private CacheableMapValue<MapCoordinate, Square> squares = new CacheableMapValue<MapCoordinate, Square>() {
+        @Override
+        protected Square calculate(final MapCoordinate key) {
+            return new Square() {
+                public boolean isMovimentBlocked() {
+                    Terrain terrain = getLayer(Terrain.Layer.Base).getTerrain(key);
+                    Terrain obstacle = getLayer(Terrain.Layer.Obstacle).getTerrain(key);
+                    return (terrain != null && terrain.getBlock()) || (obstacle != null);
+                }
+
+                public boolean isActionBlocked() {
+                    Terrain object = getLayer(Terrain.Layer.Obstacle).getTerrain(key);
+                    return object == null ? false : object.getBlock();
+                }
+            };
+        }
+    };
     private ListenerManager<Map> listenerManager = new ListenerManager<Map>(this);
     private String originalName;
 
     public Map(String name, int width, int height) {
         this.name = name;
         this.originalName = this.name;
+        this.layers = new EnumMap<Terrain.Layer, Layer>(Terrain.Layer.class);
+        for (Terrain.Layer layer : Terrain.Layer.values()) {
+            this.layers.put(layer, new Layer(layer));
+        }
         setWidthHeight(width, height);
     }
 
@@ -42,25 +70,20 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
         this.name = name;
     }
 
-    public void setWidthHeight(int w, int h) {
-        if ((h >= MIN_SIZE && h <= MAX_SIZE) && (w >= MIN_SIZE && w <= MAX_SIZE) && (w != this.getWidth() || h != this.getHeight())) {
-            final Terrains oldTerrains = this.terrains;
-            this.terrains = new Terrains(w, h);
-            if (oldTerrains != null) {
-                iterate(new Iterator() {
+    public void setWidthHeight(int width, int height) {
+        assert width >= MIN_SIZE;
+        assert width <= MAX_SIZE;
+        assert height >= MIN_SIZE;
+        assert height <= MAX_SIZE;
 
-                    public void check(int x, int y, Terrain terrain) {
-                        if (oldTerrains.inPoint(x, y)) {
-                            terrains.setTerrrain(x, y, oldTerrains.get(x, y));
-
-                        } else {
-                            terrains.setTerrrain(x, y, MyGame.getInstance().getLoader().getDefaultTerrain());
-                        }
-                    }
-                });
-            }
-            this.listenerManager.fireChange();
+        int oldWidth = this.width;
+        int oldHeight = this.height;
+        this.width = width;
+        this.height = height;
+        for (Layer layer : layers.values()) {
+            layer.resize(oldWidth, oldHeight);
         }
+        this.listenerManager.fireChange();
     }
 
     public void addHeight(int dh) {
@@ -71,32 +94,16 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
         this.setWidthHeight(this.getWidth() + dw, this.getHeight());
     }
 
-    public void setTerrain(Coordinate position, Terrain terrain) {
-        setTerrain(position.getX(), position.getY(), terrain);
-    }
-
-    public void iterate(Iterator iterator) {
-        for (int x = 0; x < getWidth(); ++x) {
-            for (int y = 0; y < getHeight(); ++y) {
-                iterator.check(x, y, terrains.get(x, y));
-            }
-        }
-    }
-
     public int getHeight() {
-        return terrains.getHeight();
+        return height;
     }
 
     public int getWidth() {
-        return terrains.getWidth();
+        return width;
     }
 
-    public void setTerrain(int x, int y, Terrain terrain) {
-        terrains.setTerrrain(x, y, terrain);
-    }
-
-    public Terrain getTerrain(int x, int y) {
-        return terrains.get(x, y);
+    public Terrain getPositionedOn(Terrain.Layer layer, int x, int y) {
+        return layers.get(layer).getTerrain(x, y);
     }
 
     public void setPersonInitialPosition(Integer player, Coordinate position) {
@@ -112,8 +119,8 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
         return this.personInitialPositions.getPlayerInitialPositions(player);
     }
 
-    public GameImage getTerrainImage(Terrain terrain,long elapsedTime) {
-        return terrain.getImages().get((int) ((elapsedTime / 300L) % terrain.getImages().size()));
+    public GameImage getTerrainImage(Terrain mapObject, long elapsedTime) {
+        return mapObject.getImages().get((int) ((elapsedTime / 300L) % mapObject.getImages().size()));
     }
 
     public void addListener(Listener<Map> listener) {
@@ -124,61 +131,8 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
         return personInitialPositions.getPlayerFromPosition(position);
     }
 
-    public java.util.Map<Coordinate, Integer> calculateActionDistances(Coordinate target) {
-        java.util.Map<Coordinate, Integer> distances = new TreeMap<Coordinate, Integer>();
-        Set<Coordinate> visited = new TreeSet<Coordinate>();
-        Set<Coordinate> current = new TreeSet<Coordinate>();
-
-        current.add(target);
-        visited.add(target);
-        int n = 0;
-
-        while (!current.isEmpty()) {
-            Set<Coordinate> forTest = new TreeSet<Coordinate>();
-
-            for (Coordinate c : current) {
-                //if (getTerrain(c).getAllowAction()) {
-                    distances.put(c, n);
-                //}
-
-                for (Coordinate next : getActionNeighboors(c)) {
-                    if (!visited.contains(next)) {
-                        visited.add(next);
-                        forTest.add(next);
-                    }
-                }
-            }
-
-            n++;
-            current = forTest;
-        }
-
-        return distances;
-    }
-
-    public Iterable<Coordinate> getActionNeighboors(Coordinate c) {
-        Set<Coordinate> neighboors = new TreeSet<Coordinate>();
-
-        for (Coordinate neighboor : new Coordinate[]{
-                    new Coordinate(c, 0, -1),
-                    new Coordinate(c, 0, 1),
-                    new Coordinate(c, -1, 0),
-                    new Coordinate(c, 1, 0)
-                }) {
-            if (inMap(neighboor)) {
-                neighboors.add(neighboor);
-            }
-        }
-
-        return neighboors;
-    }
-
     public boolean inMap(Coordinate c) {
         return c.inRectangle(0, 0, getWidth(), getHeight());
-    }
-
-    public Terrain getTerrain(MapCoordinate position) {
-        return getTerrain(position.getX(), position.getY());
     }
 
     public PersonInitialPositions getPersonInitialPositions() {
@@ -194,12 +148,30 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
     }
 
     public boolean isPlayable() {
-        return personInitialPositions.isPlayable() &&
-                terrains.isPlayable();        
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                if (layers.get(Terrain.Layer.Base).getTerrain(x, y) == null) {
+                    return false;
+                }
+            }
+        }
+        return personInitialPositions.isPlayable();
     }
 
     public Square getSquare(MapCoordinate coordinate) {
-        return getTerrain(coordinate);
+        return squares.getValue(coordinate);
+    }
+
+    public Layer getLayer(Terrain.Layer layer) {
+        return layers.get(layer);
+    }
+
+    public void setTerrain(Coordinate position, Terrain object) {
+        getLayer(object.getLayer()).putObject(position, object);
+    }
+
+    public void setTerrain(int x, int y, Terrain terrain) {
+        setTerrain(new Coordinate(x, y), terrain);
     }
 
     public interface Iterator {
@@ -207,54 +179,49 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
         public void check(int x, int y, Terrain terrain);
     }
 
-    // <editor-fold defaultstate="collapsed" desc="class Terrains">
-    private class Terrains {
+    // <editor-fold defaultstate="collapsed" desc="class Layer">
+    public class Layer {
 
-        private int width;
-        private int height;
-        private Terrain[][] terrains;
+        private final Terrain.Layer layer;
+        private java.util.Map<MapCoordinate, Terrain> terrains =
+                new TreeMap<MapCoordinate, Terrain>(BattleData.CoordinateComparator.getInstance());
 
-        public Terrains(int width, int height) {
-            setWidthHeight(width, height);
+        private Layer(Terrain.Layer layer) {
+            this.layer = layer;
         }
 
-        public void setWidthHeight(int width, int heigth) {
-            assert width >= 0;
-            assert heigth >= 0;
-            this.width = width;
-            this.height = heigth;
-            this.terrains = new Terrain[width][heigth];
+        private Terrain getTerrain(int x, int y) {
+            return terrains.get(new Coordinate(x, y));
         }
 
-        public int getWidth() {
-            return width;
+        private Terrain getTerrain(MapCoordinate coord) {
+            return terrains.get(coord);
         }
 
-        public int getHeight() {
-            return height;
-        }
-
-        public Terrain get(int x, int y) {
-            return terrains[x][y];
-        }
-
-        public void setTerrrain(int x, int y, Terrain terrain) {
-            terrains[x][y] = terrain;
-        }
-
-        private boolean inPoint(int x, int y) {
-            return (x >= 0 && x < width) && (y >= 0 && y < height);
-        }
-
-        public boolean isPlayable() {
-            for(int x=0; x< width; ++x) {
-                for(int y=0; y < height; ++y) {
-                    if (terrains[x][y]==null) {
-                        return false;
-                    }
+        private void resize(int oldWidth, int oldHeight) {
+            for (int x = oldWidth; x > width; x--) {
+                for (int y = oldHeight; y > height; y--) {
+                    terrains.remove(new Coordinate(x, y));
                 }
             }
-            return true;
+        }
+
+        public void putObject(Coordinate position, Terrain object) {
+            assert object.getLayer() != null;
+            assert object.getLayer().equals(this.layer);
+            terrains.put(position.clone(), object);
+        }
+
+        public void iterate(Iterator iterator) {
+            for (int x = 0; x < getWidth(); ++x) {
+                for (int y = 0; y < getHeight(); ++y) {
+                    iterator.check(x, y, getTerrain(x, y));
+                }
+            }
+        }
+
+        public Iterable<java.util.Map.Entry<MapCoordinate, Terrain>> getObjects() {
+            return terrains.entrySet();
         }
     }// </editor-fold>
 

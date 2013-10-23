@@ -1,7 +1,6 @@
 package net.stuffrepos.tactics16.datamanager;
 
 import net.stuffrepos.tactics16.game.Job;
-import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.DataGroup;
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.game.Map;
+import net.stuffrepos.tactics16.game.Terrain;
 import net.stuffrepos.tactics16.util.cache.CacheableValue;
 import net.stuffrepos.tactics16.util.javabasic.FileUtil;
 import org.apache.commons.logging.Log;
@@ -38,7 +38,7 @@ public class DataManager {
     private CacheableValue<Terrain> defaultTerrain = new CacheableValue<Terrain>() {
         @Override
         protected Terrain calculate() {
-            Terrain terrain = new Terrain("Default");
+            Terrain terrain = new Terrain(Terrain.Layer.Base, "Default");
             terrain.getImages().add(new GameImage(buildDefaultImage()));
             return terrain;
         }
@@ -123,7 +123,7 @@ public class DataManager {
                         ObjectType foundObjectType = null;
 
                         for (ObjectType objectType : ObjectType.values()) {
-                            if (objectType.name().toLowerCase().equals(jsonObject.getString("objectType"))) {
+                            if (objectType.name().equalsIgnoreCase(jsonObject.getString("objectType"))) {
                                 foundObjectType = objectType;
                                 break;
                             }
@@ -132,7 +132,7 @@ public class DataManager {
 
                         if (foundObjectType == null) {
                             throw new RuntimeException(
-                                    "Unknown objectType \"" + jsonObject.getString("objectType") + "\"");
+                                    "Unknown objectType \"" + jsonObject.getString("objectType") + "\" from file \"" + file + "\"");
                         } else {
                             objects.get(foundObjectType).add(file);
                         }
