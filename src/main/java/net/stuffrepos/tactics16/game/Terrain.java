@@ -1,8 +1,6 @@
 package net.stuffrepos.tactics16.game;
 
-import java.util.LinkedList;
-import java.util.List;
-import net.stuffrepos.tactics16.animation.GameImage;
+import net.stuffrepos.tactics16.animation.SpriteAnimation;
 import net.stuffrepos.tactics16.util.Nameable;
 import org.newdawn.slick.Graphics;
 
@@ -17,7 +15,7 @@ public class Terrain implements Nameable {
         Base,
         Obstacle
     }
-    private List<GameImage> images = new LinkedList<GameImage>();
+    private SpriteAnimation animation;
     private String name;
     private boolean block = false;
     private final Layer layer;
@@ -49,12 +47,16 @@ public class Terrain implements Nameable {
         this.block = block;
     }
 
-    public List<GameImage> getImages() {
-        return images;
+    public SpriteAnimation getSpriteAnimation() {
+        return animation;
+    }
+    
+    public void setSpriteAnimation(SpriteAnimation animation) {
+        this.animation = animation;
     }
 
-    public void render(Graphics g, int x, int y) {
-        images.get(0).render(g, x, y);
+    public void render(Graphics g, int x, int y) {        
+        animation.getImageByIndex(0).render(g, x, y);
     }
 
     public int getWidth() {

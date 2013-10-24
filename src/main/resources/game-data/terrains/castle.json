@@ -1,0 +1,21 @@
+{
+    "objectType": "Terrain",
+    "layer": "Obstacle",
+    "name": "Castle",
+    "block": true,
+    "animationGroup": {
+        "animations": {
+            "main": {
+                "changeFrameInterval": 500,
+                "images": ["castle-1.png", "castle-2.png"]
+            },
+        },
+        "images": [{
+                "targets": ["castle-1.png", "castle-2.png"],
+                "centerX": "-6",
+                "centerY": "16"
+            }]
+    },
+    "width": 2,
+    "height": 1,
+}

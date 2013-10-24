@@ -1,0 +1,395 @@
+{
+    "height": 8,
+    "layers": {
+        "Base": [
+            {
+                "terrain": "Grass",
+                "x": 0,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 0,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 0,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 0,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 0,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 0,
+                "y": 5
+            },
+            {
+                "terrain": "Grass",
+                "x": 0,
+                "y": 6
+            },
+            {
+                "terrain": "Grass",
+                "x": 0,
+                "y": 7
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 1,
+                "y": 5
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 6
+            },
+            {
+                "terrain": "Grass",
+                "x": 1,
+                "y": 7
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 2,
+                "y": 5
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 6
+            },
+            {
+                "terrain": "Grass",
+                "x": 2,
+                "y": 7
+            },
+            {
+                "terrain": "Grass",
+                "x": 3,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 3,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 3,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "terrain": "Stone",
+                "x": 3,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 3,
+                "y": 5
+            },
+            {
+                "terrain": "Grass",
+                "x": 3,
+                "y": 6
+            },
+            {
+                "terrain": "Grass",
+                "x": 3,
+                "y": 7
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 3
+            },
+            {
+                "terrain": "Stone",
+                "x": 4,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 4,
+                "y": 5
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 6
+            },
+            {
+                "terrain": "Grass",
+                "x": 4,
+                "y": 7
+            },
+            {
+                "terrain": "Grass",
+                "x": 5,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 5,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 5,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 5,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 5,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 5,
+                "y": 5
+            },
+            {
+                "terrain": "Grass",
+                "x": 5,
+                "y": 6
+            },
+            {
+                "terrain": "Grass",
+                "x": 5,
+                "y": 7
+            },
+            {
+                "terrain": "Grass",
+                "x": 6,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 6,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 6,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 6,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 6,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 6,
+                "y": 5
+            },
+            {
+                "terrain": "Grass",
+                "x": 6,
+                "y": 6
+            },
+            {
+                "terrain": "Grass",
+                "x": 6,
+                "y": 7
+            },
+            {
+                "terrain": "Grass",
+                "x": 7,
+                "y": 0
+            },
+            {
+                "terrain": "Grass",
+                "x": 7,
+                "y": 1
+            },
+            {
+                "terrain": "Grass",
+                "x": 7,
+                "y": 2
+            },
+            {
+                "terrain": "Grass",
+                "x": 7,
+                "y": 3
+            },
+            {
+                "terrain": "Grass",
+                "x": 7,
+                "y": 4
+            },
+            {
+                "terrain": "Stone",
+                "x": 7,
+                "y": 5
+            },
+            {
+                "terrain": "Grass",
+                "x": 7,
+                "y": 6
+            },
+            {
+                "terrain": "Grass",
+                "x": 7,
+                "y": 7
+            }
+        ],
+        "Obstacle": [
+            {
+                "terrain": "Tree",
+                "x": 1,
+                "y": 4
+            },
+            {
+                "terrain": "Tree",
+                "x": 2,
+                "y": 3
+            },
+            {
+                "terrain": "Tree",
+                "x": 2,
+                "y": 4
+            },
+            {
+                "terrain": "Castle",
+                "x": 3,
+                "y": 3
+            },
+            {
+                "terrain": "Tree",
+                "x": 3,
+                "y": 6
+            },
+            {
+                "terrain": "Tree",
+                "x": 4,
+                "y": 6
+            },
+            {
+                "terrain": "Tree",
+                "x": 5,
+                "y": 3
+            },
+            {
+                "terrain": "Tree",
+                "x": 5,
+                "y": 4
+            },
+            {
+                "terrain": "Tree",
+                "x": 6,
+                "y": 4
+            }
+        ]
+    },
+    "name": "Castle",
+    "objectType": "map",
+    "personInitialPositions": [
+        [{
+            "x": 0,
+            "y": 5
+        }],
+        [{
+            "x": 4,
+            "y": 2
+        }],
+        [{
+            "x": 4,
+            "y": 5
+        }],
+        [{
+            "x": 3,
+            "y": 7
+        }]
+    ],
+    "width": 8
+}

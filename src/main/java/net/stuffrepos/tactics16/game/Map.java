@@ -121,8 +121,8 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
         return this.personInitialPositions.getPlayerInitialPositions(player);
     }
 
-    public GameImage getTerrainImage(Terrain mapObject, long elapsedTime) {
-        return mapObject.getImages().get((int) ((elapsedTime / 300L) % mapObject.getImages().size()));
+    public GameImage getTerrainImage(Terrain terrain, long elapsedTime) {
+        return terrain.getSpriteAnimation().getImage(elapsedTime);
     }
 
     public void addListener(Listener<Map> listener) {

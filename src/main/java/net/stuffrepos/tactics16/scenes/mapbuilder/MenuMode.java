@@ -32,13 +32,6 @@ public class MenuMode extends Phase {
             @Override
             public void executeAction() {
                 final Map map = new Map(getNewMapName(), Map.MIN_SIZE, Map.MIN_SIZE);
-                map.getLayer(Terrain.Layer.Base).iterate(new Map.Iterator() {
-                    public void check(int x, int y, Terrain terrain) {
-                        map.setTerrain(x, y,
-                                MyGame.getInstance().getLoader().getDefaultTerrain());
-                    }
-                });
-
                 scene.setMap(map);
 
             }

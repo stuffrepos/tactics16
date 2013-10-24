@@ -35,34 +35,6 @@ public class DataManager {
     private DataGroup<Terrain> terrains = new DataGroup<Terrain>();
     private MapManager maps;
     private final File dataDirectory;
-    private CacheableValue<Terrain> defaultTerrain = new CacheableValue<Terrain>() {
-        @Override
-        protected Terrain calculate() {
-            Terrain terrain = new Terrain(Terrain.Layer.Base, "Default");
-            terrain.getImages().add(new GameImage(buildDefaultImage()));
-            return terrain;
-        }
-
-        private ImageBuffer buildDefaultImage() {
-            ImageBuffer ib = new ImageBuffer(Map.TERRAIN_SIZE, Map.TERRAIN_SIZE);
-            for (int x = 0; x < ib.getWidth(); ++x) {
-                for (int y = 0; y < ib.getHeight(); ++y) {
-                    int r = 0;
-                    int g = 0;
-                    int b = 0;
-
-                    if (x == 0 || x == ib.getWidth() - 1 || y == 0 || y == ib.getHeight() - 1) {
-                        r = 255;
-                        g = 255;
-                        b = 255;
-                    }
-
-                    ib.setRGBA(x, y, r, g, b, 255);
-                }
-            }
-            return ib;
-        }
-    };
 
     public DataManager(File dataDirectory) {
         this.dataDirectory = dataDirectory;
@@ -162,10 +134,6 @@ public class DataManager {
 
     public MapManager getMaps() {
         return maps;
-    }
-    
-    public Terrain getDefaultTerrain() {
-        return defaultTerrain.getValue();
     }
 
     public File getDataDirectory() {
