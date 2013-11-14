@@ -136,8 +136,8 @@ public class MyGame {
         keyMapping.setMapping(GameKey.LEFT, Input.KEY_LEFT);
         keyMapping.setMapping(GameKey.RIGHT, Input.KEY_RIGHT);
         keyMapping.setMapping(GameKey.CONFIRM, Input.KEY_ENTER, Input.KEY_SPACE);
-        keyMapping.setMapping(GameKey.CANCEL, Input.KEY_ESCAPE, Input.KEY_BACKSLASH);
-        keyMapping.setMapping(GameKey.OPTIONS, Input.KEY_F1);
+        keyMapping.setMapping(GameKey.CANCEL, Input.KEY_BACK);
+        keyMapping.setMapping(GameKey.OPTIONS, Input.KEY_ESCAPE);
         keyMapping.setMapping(GameKey.PREVIOUS, Input.KEY_PRIOR);
         keyMapping.setMapping(GameKey.NEXT, Input.KEY_NEXT);
     }
