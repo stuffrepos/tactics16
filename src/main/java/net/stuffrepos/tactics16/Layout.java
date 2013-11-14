@@ -52,6 +52,10 @@ public class Layout {
         return getRight(o) + OBJECT_GAP;
     }
 
+    public static double getRightInnerGap(Object2D containerObject, Object2D object) {
+        return getRight(containerObject) - object.getWidth() - OBJECT_GAP;
+    }
+
     public static int getBottomGap(Object2D o) {
         return getBottom(o) + OBJECT_GAP;
     }
