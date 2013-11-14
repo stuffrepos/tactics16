@@ -119,6 +119,12 @@ public class Menu implements Object2D {
         height.clear();
     }
 
+    public void addOptions(MenuOption[] options) {
+        for (MenuOption option : options) {
+            addOption(option);
+        }
+    }
+
     protected void onChangeSelectedOption() {
     }
 

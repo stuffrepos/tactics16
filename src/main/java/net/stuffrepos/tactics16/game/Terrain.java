@@ -55,10 +55,6 @@ public class Terrain implements Nameable {
         this.animation = animation;
     }
 
-    public void render(Graphics g, int x, int y) {        
-        animation.getImageByIndex(0).render(g, x, y);
-    }
-
     public int getWidth() {
         return width;
     }

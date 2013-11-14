@@ -87,15 +87,15 @@ public class TextBox implements Object2D, VisualEntity {
             g.fillRect(
                     x,
                     position.getY(),
-                    getWidth() - 1,
-                    getHeight() - 1);
+                    getWidth(),
+                    getHeight());
         } else {
             DrawerUtil.fill3dRect(
                     g,
                     x,
                     position.getY(),
-                    getWidth() - 1,
-                    getHeight() - 1,
+                    getWidth(),
+                    getHeight(),
                     true);
         }
         g.setColor(this.getForegroundColor());

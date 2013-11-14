@@ -32,10 +32,6 @@ public class MapManager implements Iterable<Map> {
     public void save(Map map) throws IOException {
         getSaveDirectory().mkdirs();
 
-        if (get(map.getOriginalName()) == null) {
-            maps.add(map);
-        }
-
         File originalFile = new File(getSaveDirectory(), map.getOriginalName().toLowerCase() + ".json");
         if (originalFile.exists() && originalFile.isFile()) {
             originalFile.delete();
@@ -52,7 +48,12 @@ public class MapManager implements Iterable<Map> {
         } finally {
             fos.close();
         }
+
+        if (!map.getName().equals(map.getOriginalName())) {
+            maps.remove(map.getOriginalName());
+        }
         map.setOriginalName(map.getName());
+        maps.put(map);
     }
 
     public Map get(String name) {

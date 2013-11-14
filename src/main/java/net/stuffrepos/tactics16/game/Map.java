@@ -2,6 +2,7 @@ package net.stuffrepos.tactics16.game;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import net.stuffrepos.tactics16.util.Nameable;
 import net.stuffrepos.tactics16.util.listeners.Listener;
@@ -176,6 +177,31 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
         setTerrain(new Coordinate(x, y), terrain);
     }
 
+    @Override
+    public Map clone() {
+        Map map = new Map(this.name, this.width, this.height);
+        for (Terrain.Layer layer : Terrain.Layer.values()) {
+            for (int x = 0; x < map.width; ++x) {
+                for (int y = 0; y < map.height; ++y) {
+                    if (this.getLayer(layer).getPositioned(x, y) != null) {
+                        map.getLayer(layer).putObject(
+                                new Coordinate(x, y),
+                                this.getLayer(layer).getPositioned(x, y));
+
+                    }
+                }
+            }
+        }
+
+        for (java.util.Map.Entry<Integer, Set<Coordinate>> e : this.personInitialPositions.players.entrySet()) {
+            for (Coordinate coord : e.getValue()) {
+                map.personInitialPositions.addPosition(e.getKey(), coord);
+            }
+        }
+
+        return map;
+    }
+
     public interface Iterator {
 
         public void check(int x, int y, Terrain terrain);
@@ -247,6 +273,8 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
         }
 
         public void putObject(Coordinate position, Terrain terrain) {
+            assert position != null;
+            assert terrain != null;
             assert terrain.getLayer() != null;
             assert terrain.getLayer().equals(this.layer);
             
@@ -267,6 +295,16 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
                     }
 
                 }
+            }
+            occupied.clear();
+            squares.clear();
+        }
+
+        public void removeTerrain(Coordinate position) {
+            assert position != null;
+            Occupation occupation = occupied.getValue(position);
+            if (occupation != null) {
+                positioned.remove(occupation.positioned);
             }
             occupied.clear();
             squares.clear();

@@ -5,8 +5,9 @@ import org.newdawn.slick.Color;
 import java.awt.Dimension;
 import org.newdawn.slick.Graphics;
 
-public class BorderRectangle {
+public class BorderRectangle implements Object2D {
 
+    private static final int BORDER_SIZE = 3;
     private static Color DEFAULT_COLOR = Color.white;
     private Coordinate position = new Coordinate();
     private Color color;
@@ -33,21 +34,50 @@ public class BorderRectangle {
     }
 
     public void render(Graphics g) {
-        g.setColor(color);
-        drawRect(g,0);
-        g.setColor(Color.black);
-        drawRect(g,1);
-        g.setColor(color);
-        drawRect(g,2);
+        for (int i = 0; i < getBorderSize(); ++i) {
+            g.setColor(i % 2 == 0 ? color : Color.black);
+            drawRect(g, i);
+        }
     }
 
     private void drawRect(Graphics g, int level) {
         g.drawRect(
-                position.getX() - level, position.getY() - level,
-                size.width + level * 2, size.height + level * 2);
+                position.getX() - level - 1,
+                position.getY() - level - 1,
+                size.width + (level + 1) * 2 - 1,
+                size.height + (level + 1) * 2 - 1);
     }
 
     public Coordinate getPosition() {
         return position;
+    }
+
+    public Dimension getSize() {
+        return size;
+    }
+
+    public int getTop() {
+        return position.getY();
+    }
+
+    public int getLeft() {
+        return position.getX();
+    }
+
+    public int getWidth() {
+        return size.width;
+    }
+
+    public int getHeight() {
+        return size.height;
+    }
+
+    public int getBorderSize() {
+        return BORDER_SIZE;
+    }
+
+    public void wrap(Object2D object) {
+        getPosition().setXY(object.getLeft(), object.getTop());
+        getSize().setSize(object.getWidth(), object.getHeight());
     }
 }

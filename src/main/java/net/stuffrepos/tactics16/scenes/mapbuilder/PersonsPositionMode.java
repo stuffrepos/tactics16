@@ -4,17 +4,15 @@ import net.stuffrepos.tactics16.Layout;
 import net.stuffrepos.tactics16.MyGame;
 import net.stuffrepos.tactics16.components.GlowingRectangle;
 import net.stuffrepos.tactics16.components.TextBox;
-import net.stuffrepos.tactics16.game.Coordinate;
 import org.newdawn.slick.Graphics;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import net.stuffrepos.tactics16.GameKey;
 import net.stuffrepos.tactics16.components.MapCursor;
-import net.stuffrepos.tactics16.components.PhaseTitle;
-import net.stuffrepos.tactics16.components.VisualMap;
 import net.stuffrepos.tactics16.phase.Phase;
 import org.newdawn.slick.GameContainer;
+import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 /**
@@ -24,17 +22,13 @@ import org.newdawn.slick.state.StateBasedGame;
 class PersonsPositionMode extends Phase {
 
     private PlayerPallete playerPallete = new PlayerPallete();
-    private PhaseTitle title;
     private final MapBuilderScene scene;
-    private VisualMap visualMap;
     private TextBox status;
     private MapCursor mapCursor;
     private Map<Integer, List<GlowingRectangle>> playerPanels = new TreeMap<Integer, List<GlowingRectangle>>();
 
     public PersonsPositionMode(MapBuilderScene scene) {
         this.scene = scene;
-        this.title = scene.createModeTitle("Set Persons Positions");
-        playerPallete.getPosition().setXY(Layout.OBJECT_GAP, Layout.getBottomGap(title));
         status = new TextBox();
         status.setWidth(200);
         status.getPosition().setXY(
@@ -42,9 +36,10 @@ class PersonsPositionMode extends Phase {
                 playerPallete.getPosition().getY());
     }
 
+    @Override
     public void update(GameContainer container, StateBasedGame game, int delta) {
         playerPallete.update(delta);
-        if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
+        if (MyGame.getInstance().isKeyPressed(GameKey.OPTIONS)) {
             scene.toMenuMode();
         } else if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
             tooglePersonPosition();
@@ -71,10 +66,9 @@ class PersonsPositionMode extends Phase {
         status.setText(b.toString());
     }
 
+    @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) {
-        title.render(g);
         playerPallete.render(g);
-        visualMap.render(g, true, this.playerPallete.getPlayerColors());
         status.render(g);
         mapCursor.render(g);
 
@@ -83,10 +77,6 @@ class PersonsPositionMode extends Phase {
                 glowingRectangle.render(g);
             }
         }
-    }
-
-    public MapCursor getMapCursor() {
-        return mapCursor;
     }
 
     private void tooglePersonPosition() {
@@ -101,11 +91,34 @@ class PersonsPositionMode extends Phase {
         }
     }
 
+    @Override
     public void enter(GameContainer container, StateBasedGame game) {
-        visualMap = new VisualMap(scene.getMap());
-        visualMap.getPosition().setXY(
-                Layout.OBJECT_GAP,
-                Layout.getBottomGap(playerPallete));
-        mapCursor = new MapCursor(visualMap);
+        mapCursor = new MapCursor(scene.getVisualMap());
+        mapCursor.addScreenQuadrantListener(new MapCursor.ScreenQuadrantListener() {
+            public void onChange(boolean cursorOnLeft, boolean cursorOnTop) {
+                if (cursorOnLeft) {
+                    playerPallete.getPosition().setXY(
+                            Layout.getRightInnerGap(Layout.getScreenObject2D(), playerPallete),
+                            Layout.OBJECT_GAP);
+                    status.getPosition().setXY(
+                            Layout.getRightInnerGap(Layout.getScreenObject2D(), status),
+                            Layout.getBottomGap(playerPallete));
+                } else {
+                    playerPallete.getPosition().setXY(
+                            Layout.OBJECT_GAP,
+                            Layout.OBJECT_GAP);
+                    status.getPosition().setXY(
+                            Layout.OBJECT_GAP,
+                            Layout.getBottomGap(playerPallete));
+                }
+            }
+        });
+        scene.setMapPlayersColors(this.playerPallete.getPlayerColors());
+    }
+
+    @Override
+    public void leave(GameContainer container, StateBasedGame game) throws SlickException {
+        super.leave(container, game); //To change body of generated methods, choose Tools | Templates.
+        scene.setMapPlayersColors(null);
     }
 }

@@ -13,7 +13,7 @@ public class DataGroup<T extends Nameable> implements Iterable<T> {
 
     private java.util.Map<String, T> map = new TreeMap<String, T>();
 
-    public boolean add(T data) {
+    public void add(T data) {
 
         T found = this.get(data.getName());
 
@@ -22,8 +22,11 @@ public class DataGroup<T extends Nameable> implements Iterable<T> {
                     data.getName() + "\" already exists");
         }
 
+        put(data);
+    }
+
+    public void put(T data) {
         this.map.put(data.getName(), data);
-        return true;
     }
 
     public T getRequired(String name) {
@@ -64,5 +67,9 @@ public class DataGroup<T extends Nameable> implements Iterable<T> {
 
     public Collection<T> getValues() {
         return map.values();
+    }
+
+    public void remove(String name) {
+        map.remove(name);
     }
 }
