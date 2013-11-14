@@ -65,9 +65,9 @@ public class Cursor1D {
     }
 
     public boolean update(long elapsedTime) {
-        if (getNextKey() != null && MyGame.getInstance().isKeyPressed(getNextKey())) {
+        if (getNextKey() != null && MyGame.getInstance().keys().isPressed(getNextKey())) {
             return moveNext();
-        } else if (getPreviousKey() != null && MyGame.getInstance().isKeyPressed(getPreviousKey())) {
+        } else if (getPreviousKey() != null && MyGame.getInstance().keys().isPressed(getPreviousKey())) {
             return movePrevious();
         } else {
             return false;

@@ -62,7 +62,7 @@ public class AnimationSpriteTester extends Phase {
         spriteAnimationBoard.update(delta);
         info.update(delta);
 
-        if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
+        if (MyGame.getInstance().keys().isPressed(GameKey.CANCEL)) {
             MyGame.getInstance().getPhaseManager().back();
         }
     }

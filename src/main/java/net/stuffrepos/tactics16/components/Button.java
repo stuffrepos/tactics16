@@ -87,7 +87,7 @@ public abstract class Button implements VisualEntity, Object2D {
     public void update(int delta) {
         this.elapsedTime += delta;
 
-        if (selected && MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
+        if (selected && MyGame.getInstance().keys().isPressed(GameKey.CONFIRM)) {
             onButtonPress();
         }
     }

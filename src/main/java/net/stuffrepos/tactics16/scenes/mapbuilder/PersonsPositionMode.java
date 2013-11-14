@@ -39,9 +39,9 @@ class PersonsPositionMode extends Phase {
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) {
         playerPallete.update(delta);
-        if (MyGame.getInstance().isKeyPressed(GameKey.OPTIONS)) {
+        if (MyGame.getInstance().keys().isPressed(GameKey.OPTIONS)) {
             scene.toMenuMode();
-        } else if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
+        } else if (MyGame.getInstance().keys().isPressed(GameKey.CONFIRM)) {
             tooglePersonPosition();
         }
 

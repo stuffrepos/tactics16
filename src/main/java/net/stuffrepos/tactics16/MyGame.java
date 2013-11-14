@@ -5,12 +5,7 @@ import net.stuffrepos.tactics16.phase.PhaseManager;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import net.stuffrepos.tactics16.animation.GameImage;
 import net.stuffrepos.tactics16.components.Object2D;
 import net.stuffrepos.tactics16.phase.Phase;
@@ -18,7 +13,6 @@ import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
@@ -29,7 +23,6 @@ import org.newdawn.slick.state.transition.Transition;
 
 /**
  *
-import tactics16.util.ObjectCursor1D;
  * @author Eduardo H. Bogoni <eduardobogoni@gmail.com>
  */
 public class MyGame {
@@ -65,12 +58,17 @@ public class MyGame {
                 }
             }
         }
+
+        @Override
+        protected void preUpdateState(GameContainer container, int delta) throws SlickException {
+            super.preUpdateState(container, delta);
+            keyMapping.preUpdate(container, delta);
+        }
     };
     private DataManager loader;
     private PhaseManager phaseManager = new PhaseManager(true);
-    private KeyMapping keyMapping = new KeyMapping();
+    private KeyMapping keyMapping;
     private EnumMap<FontType, org.newdawn.slick.Font> fonts;
-    //private Font font = new Font("Purisa", Font.PLAIN, 12);
     private Object2D screenObject2D = new Object2D() {
         public int getTop() {
             return 0;
@@ -131,15 +129,6 @@ public class MyGame {
     private MyGame(MyGameOptions options) throws SlickException {
         this.options = options;
         loader = new DataManager(new File(options.getDataPath()));
-        keyMapping.setMapping(GameKey.UP, Input.KEY_UP);
-        keyMapping.setMapping(GameKey.DOWN, Input.KEY_DOWN);
-        keyMapping.setMapping(GameKey.LEFT, Input.KEY_LEFT);
-        keyMapping.setMapping(GameKey.RIGHT, Input.KEY_RIGHT);
-        keyMapping.setMapping(GameKey.CONFIRM, Input.KEY_ENTER, Input.KEY_SPACE);
-        keyMapping.setMapping(GameKey.CANCEL, Input.KEY_BACK);
-        keyMapping.setMapping(GameKey.OPTIONS, Input.KEY_ESCAPE);
-        keyMapping.setMapping(GameKey.PREVIOUS, Input.KEY_PRIOR);
-        keyMapping.setMapping(GameKey.NEXT, Input.KEY_NEXT);
     }
 
     private void initResources(GameContainer gameContainer) throws SlickException {
@@ -149,6 +138,7 @@ public class MyGame {
         fonts.put(FontType.MainTitle, createUnicodeFont(TITLE_FONT_NAME, Font.BOLD, 48));
         fonts.put(FontType.PhaseTitle, createUnicodeFont(TITLE_FONT_NAME, Font.BOLD, 28));        
         this.gameContainer = gameContainer;
+        this.keyMapping = new KeyMapping();
         loader.loadDirectory(loader.getDataDirectory());
     }
 
@@ -174,15 +164,7 @@ public class MyGame {
         return this.phaseManager;
     }
 
-    public boolean isKeyPressed(GameKey key) {
-        return keyMapping.isKeyPressed(key);
-    }
-    
-    public boolean isKeyDown(GameKey key) {
-        return keyMapping.isKeyDown(key);
-    }
-
-    public KeyMapping getKeyMapping() {
+    public KeyMapping keys() {
         return keyMapping;
     }
 
@@ -238,42 +220,6 @@ public class MyGame {
 
     public PhaseManager.SubPhaseManager getNoMainSubPhaseManager() {
         return noMainPhaseManager;
-    }
-
-    public class KeyMapping {
-
-        private Map<GameKey, List<Integer>> mapping = new TreeMap<GameKey, List<Integer>>();
-
-        private void setMapping(GameKey gameKey, int... keys) {
-            List<Integer> keysList = new ArrayList<Integer>();
-            for (int key : keys) {
-                keysList.add(key);
-            }
-            mapping.put(gameKey, keysList);
-        }
-
-        private boolean isKeyPressed(GameKey gameKey) {
-            for (Integer key : mapping.get(gameKey)) {
-                if (gameContainer.getInput().isKeyPressed(key)) {
-                    return true;
-                }
-            }
-            return false;
-
-        }
-        
-        private boolean isKeyDown(GameKey gameKey) {
-            for (Integer key : mapping.get(gameKey)) {
-                if (gameContainer.getInput().isKeyDown(key)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public Collection<Integer> getKeys(GameKey gameKey) {
-            return mapping.get(gameKey);
-        }
     }
 
     private class BootstrapPhase extends Phase {

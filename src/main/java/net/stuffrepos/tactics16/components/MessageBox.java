@@ -49,7 +49,7 @@ public class MessageBox implements VisualEntity, Object2D {
         this.elapsedTime += delta;
         if (!isFinalized()) {
             for (GameKey gameKey : GameKey.values()) {
-                if (MyGame.getInstance().isKeyPressed(gameKey)) {
+                if (MyGame.getInstance().keys().isPressed(gameKey)) {
                     finalized = true;
                     break;
                 }

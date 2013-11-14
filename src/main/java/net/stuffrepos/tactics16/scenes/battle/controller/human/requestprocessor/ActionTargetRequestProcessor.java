@@ -52,14 +52,14 @@ public class ActionTargetRequestProcessor extends RequestProcessor<ActionTargetR
 
             @Override
             public void update(GameContainer container, StateBasedGame game, int delta) {
-                if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
+                if (MyGame.getInstance().keys().isPressed(GameKey.CONFIRM)) {
                     if (mapCheckedArea.inArea(getScene().getVisualBattleMap().getMapCursorPosition())) {
                         answer(getScene().getVisualBattleMap().getMapCursorPosition());
                     }
                 }
 
 
-                if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
+                if (MyGame.getInstance().keys().isPressed(GameKey.CANCEL)) {
                     answer(null);
                 }
             }

@@ -259,7 +259,7 @@ public class Map implements Nameable, net.stuffrepos.tactics16.battleengine.Map 
             return positioned.get(new Coordinate(x, y));
         }
 
-        private Terrain getOccupied(MapCoordinate coord) {            
+        public Terrain getOccupied(MapCoordinate coord) {            
             Occupation o = occupied.getValue(coord);
             return o == null ? null : o.terrain;
         }

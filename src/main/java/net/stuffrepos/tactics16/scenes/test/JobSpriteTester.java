@@ -111,15 +111,15 @@ public class JobSpriteTester extends Phase {
         
         double movimentSpeed = MOVIMENT_SPEED * delta;
 
-        if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
+        if (MyGame.getInstance().keys().isHitted(GameKey.CANCEL)) {
             MyGame.getInstance().getPhaseManager().back();
-        } else if (MyGame.getInstance().isKeyDown(GameKey.UP)) {
+        } else if (MyGame.getInstance().keys().isHitted(GameKey.UP)) {
             spritesBoard.getPosition().addY(movimentSpeed);
-        } else if (MyGame.getInstance().isKeyDown(GameKey.DOWN)) {
+        } else if (MyGame.getInstance().keys().isHitted(GameKey.DOWN)) {
             spritesBoard.getPosition().addY(-movimentSpeed);
-        } else if (MyGame.getInstance().isKeyDown(GameKey.LEFT)) {
+        } else if (MyGame.getInstance().keys().isHitted(GameKey.LEFT)) {
             spritesBoard.getPosition().addX(movimentSpeed);
-        } else if (MyGame.getInstance().isKeyDown(GameKey.RIGHT)) {
+        } else if (MyGame.getInstance().keys().isHitted(GameKey.RIGHT)) {
             spritesBoard.getPosition().addX(-movimentSpeed);
         }
     }

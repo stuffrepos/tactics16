@@ -55,11 +55,11 @@ public class MovimentTargetRequestProcessor extends RequestProcessor<MovimentTar
 
             @Override
             public void update(GameContainer container, StateBasedGame game, int delta) {
-                if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
+                if (MyGame.getInstance().keys().isPressed(GameKey.CONFIRM)) {
                     if (mapCheckedArea.inArea(getScene().getVisualBattleMap().getMapCursorPosition())) {
                         answer(getScene().getVisualBattleMap().getMapCursorPosition());
                     }
-                } else if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
+                } else if (MyGame.getInstance().keys().isPressed(GameKey.CANCEL)) {
                     answer(null);
                 }
             }

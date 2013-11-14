@@ -110,7 +110,7 @@ public class MainMenuScene extends Phase {
             b.append(gameKey.toString());
             b.append(": ");
             boolean first = true;
-            for (int key : MyGame.getInstance().getKeyMapping().getKeys(gameKey)) {
+            for (int key : MyGame.getInstance().keys().getKeys(gameKey)) {
                 if (first) {
                     first = false;
                 } else {

@@ -76,7 +76,7 @@ public class FontTesterScene extends Phase {
     public void update(GameContainer container, StateBasedGame game, int delta) {
         entitiesBoard.update(delta);
 
-        if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
+        if (MyGame.getInstance().keys().isPressed(GameKey.CANCEL)) {
             MyGame.getInstance().getPhaseManager().back();
         }
     }

@@ -129,7 +129,7 @@ public class BattleScene extends Phase {
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         jobAnimationTest.update(delta);
 
-        if (MyGame.getInstance().isKeyPressed(GameKey.OPTIONS)) {
+        if (MyGame.getInstance().keys().isPressed(GameKey.OPTIONS)) {
             phaseManager.advance(optionsSubPhase);
         }
 

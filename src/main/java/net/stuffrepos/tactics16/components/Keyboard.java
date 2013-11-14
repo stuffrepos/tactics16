@@ -166,7 +166,7 @@ public abstract class Keyboard implements Object2D, VisualEntity {
             button.update(delta);
         }
 
-        if (MyGame.getInstance().isKeyPressed(GameKey.CANCEL)) {
+        if (MyGame.getInstance().keys().isPressed(GameKey.CANCEL)) {
             deleteCharacter();
         }
 

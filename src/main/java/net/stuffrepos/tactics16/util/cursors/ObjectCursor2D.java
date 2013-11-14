@@ -61,13 +61,13 @@ public class ObjectCursor2D<T> {
     }
 
     public void update(long elapsedTime) {
-        if (MyGame.getInstance().isKeyPressed(GameKey.UP)) {
+        if (MyGame.getInstance().keys().isPressed(GameKey.UP)) {
             moveCursor(0, -1);
-        } else if (MyGame.getInstance().isKeyPressed(GameKey.DOWN)) {
+        } else if (MyGame.getInstance().keys().isPressed(GameKey.DOWN)) {
             moveCursor(0, 1);
-        } else if (MyGame.getInstance().isKeyPressed(GameKey.LEFT)) {
+        } else if (MyGame.getInstance().keys().isPressed(GameKey.LEFT)) {
             moveCursor(-1, 0);
-        } else if (MyGame.getInstance().isKeyPressed(GameKey.RIGHT)) {
+        } else if (MyGame.getInstance().keys().isPressed(GameKey.RIGHT)) {
             moveCursor(1, 0);
         }
     }

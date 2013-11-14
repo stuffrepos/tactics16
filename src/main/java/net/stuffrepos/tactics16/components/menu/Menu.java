@@ -100,13 +100,13 @@ public class Menu implements Object2D {
             }
         }
 
-        if (MyGame.getInstance().isKeyPressed(GameKey.CONFIRM)) {
+        if (MyGame.getInstance().keys().isPressed(GameKey.CONFIRM)) {
             this.cursor.getSelected().executeAction();
         }
 
         for (MenuOption option : this.cursor.getList()) {
             if (option.getKey() != null) {
-                if (MyGame.getInstance().isKeyPressed(option.getKey())) {
+                if (MyGame.getInstance().keys().isPressed(option.getKey())) {
                     option.executeAction();
                 }
             }
